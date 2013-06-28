@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fastly-d3 test page</title>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/fastly-d3.js"></script>
+    
+    <style type="text/css">
+    .chart {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .axis .tick text {
+      font-size: 9pt;
+    }
+
+    .line {
+      fill: none;
+      stroke: steelblue;
+      stroke-width: 1.5px;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Hi!</h1>
+    <div id="line" class="chart" style="width: 600px; height: 300px;"></div>
+
+
+    <script>
+      $(function() {
+        line = new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] });
+        line.draw()
+      });
+    </script>
+  </body>
+</html>
