@@ -8,7 +8,8 @@
     
     <style type="text/css">
     .chart {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin-bottom: 20px;
     }
 
     .axis path, .axis line {
@@ -26,17 +27,33 @@
       stroke: steelblue;
       stroke-width: 1.5px;
     }
+
+    .area {
+      fill: lightblue;
+    }
+
     </style>
   </head>
   <body>
-    <h1>Hi!</h1>
-    <div id="line" class="chart" style="width: 600px; height: 300px;"></div>
+    <h1>Fastly Charts Test Page</h1>
+
+    <h3>Area</h3>
+    <div id="area" class="chart" style="width: 600px; height: 200px;"></div>
+
+    <h3>Line</h3>
+    <div id="line" class="chart" style="width: 600px; height: 200px;"></div>
 
 
     <script>
       $(function() {
+        // Test Line Charts
         line = new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] });
-        line.draw()
+        line.draw();
+
+        // Test Area Charts
+        area = new F.Chart.Area({ el: '#area', axes: ['left', 'bottom'] });
+        area.draw();
+
       });
     </script>
   </body>

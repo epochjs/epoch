@@ -121,12 +121,12 @@ class F.Chart.Base
 
 
 #
-# Represents 2D plots (line, area, bar, scatter, etc.)
+# TODO Better Documentation
 #
-class F.Chart.Plot extends F.Chart.Base
-
-
-
+# Represents 2D plots (line, area, bar, scatter, etc.)
+# Primarily this class handles axes and margins for subclasses such
+# as the line plot, etc. Anything that is common to basic 2 dimensional
+# plots can be found here.
 #
 # Options:
 #   margins - chart margins
@@ -134,10 +134,7 @@ class F.Chart.Plot extends F.Chart.Base
 #   ticks - Ticks to send along for each axis (top, bottom, left, right)
 #   tickFormats - maps axes to tick formats (top, bottom, left, right)
 #
-class F.Chart.Line extends F.Chart.Base
-  # Sub-types: time series, multi-series, 
-
-  # Defaults and private class variables
+class F.Chart.Plot extends F.Chart.Base
   defaults =
     margins:
       top: 25
@@ -160,8 +157,6 @@ class F.Chart.Line extends F.Chart.Base
     givenMargins = F.Util.copy(@options.margins) or {}
     super(@options = F.Util.defaults(@options, defaults))
 
-    console.log @options
-
     # Margins are used in a special way and only for making room for axes.
     # However, a user may explicitly set margins in the options, so we need
     # to determine if they did so, and zero out the ones they didn't if no
@@ -180,7 +175,7 @@ class F.Chart.Line extends F.Chart.Base
     @options.tickFormats[position] = fn
 
   hasAxis: (name) ->
-    @options.axes.indexOf(name) > -1 
+    @options.axes.indexOf(name) > -1
 
   # Scales
   x: ->
@@ -214,17 +209,9 @@ class F.Chart.Line extends F.Chart.Base
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
 
-  # Draw / Redraw
+  # Drawing
   draw: ->
-    line = d3.svg.line()
-      .x((d) => (@x() d.x))
-      .y((d) => (@y() d.y))
-
-    @svg.append("path")
-      .datum(@data)
-      .attr("class", "line")
-      .attr("d", line)
-
+    super()
     @drawAxes()
 
   drawAxes: ->
@@ -249,6 +236,40 @@ class F.Chart.Line extends F.Chart.Base
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@width-@margins.left-@margins.right}, 0)")
         .call(@rightAxis())
+
+
+# Basic single line chart
+class F.Chart.Line extends F.Chart.Plot
+  draw: ->
+    line = d3.svg.line()
+      .x((d) => (@x() d.x))
+      .y((d) => (@y() d.y))
+
+    @svg.append("path")
+      .datum(@data)
+      .attr("class", "line")
+      .attr("d", line)
+
+    super()
+
+
+# Basic single area chart
+class F.Chart.Area extends F.Chart.Plot
+  draw: ->
+    area = d3.svg.area()
+      .x((d) => (@x() d.x))
+      .y1((d) => (@y() d.y))
+      .y0(@height - @margins.bottom - @margins.top)
+
+    @svg.append("path")
+      .datum(@data)
+      .attr("class", "area line")
+      .attr("d", area)
+
+    super()
+    
+
+  
 
   
 
