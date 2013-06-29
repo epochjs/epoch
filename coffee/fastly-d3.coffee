@@ -1,25 +1,62 @@
-#
+
 # TODO - Document Me
-#
+# TODO Style Guidelines
+# TODO custom additional classes on elements (e.g. path.requests, etc.)
+
 
 TEST_DATA = [
   { x: 0, y: 0 },
   { x: 1, y: 100 },
   { x: 2, y: 400 },
   { x: 3, y: 900 },
-  { x: 4, y: 1600 },
+  { x: 4, y: 1100 },
   { x: 5, y: 2500 }
 ]
 
+#
 # Global Namespace
+#
+
 window.F ?= {}
 window.F.Chart ?= {}
+window.F.Util ?= {}
+window.F.Formats ?= {}
 
 
 #
-# Formats large numbers using standard postfixes
+# Utility Functions
 #
-F.format_si = (v, fixed=1, fix_integers=false) ->
+
+# Shallow copy from an original source
+F.Util.copy = (original) ->
+  return null unless original?
+  copy = {}
+  copy[k] = v for k, v of original
+  return copy
+
+# Deep defaults copy (recursive)
+F.Util.defaults = (options, defaults) ->
+  result = F.Util.copy(options)
+
+  # Helpers
+  isArray = Array.isArray or (v) -> Object::toString.call(v) == '[object Array]'
+  isObject = (v) -> v == Object(v)
+
+  for k, v of defaults
+    if options[k]? and defaults[k]?
+      if !isArray(options[k]) and isObject(options[k]) and isObject(defaults[k])
+        result[k] = F.Util.defaults(options[k], defaults[k])
+      else
+        result[k] = options[k]
+    else if options[k]?
+      result[k] = options[k]
+    else
+      result[k] = defaults[k]
+
+  return result
+
+# Formats numbers with standard postfixes (e.g. K, M, G)
+F.Util.formatSI = (v, fixed=1, fix_integers=false) ->
   return v if v < 1000
   for i, label of ['K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     base = Math.pow(10, ((i|0)+1)*3)
@@ -27,6 +64,14 @@ F.format_si = (v, fixed=1, fix_integers=false) ->
       q = v/base
       q = q.toFixed(fixed) unless (q|0) == q and !fix_integers
       return "#{q} #{label}" 
+
+#
+# Tick Formatters
+#
+
+F.Formats.regular = (d) -> d
+F.Formats.si = (d) -> F.Util.formatSI(d)
+
 
 
 #
@@ -74,91 +119,140 @@ class F.Chart.Base
   draw: -> # Abstract, must override in child classes
 
 
+
+#
+# Represents 2D plots (line, area, bar, scatter, etc.)
+#
+class F.Chart.Plot extends F.Chart.Base
+
+
+
 #
 # Options:
 #   margins - chart margins
 #   axes - list of axes to display (top, bottom, left, right)
+#   ticks - Ticks to send along for each axis (top, bottom, left, right)
+#   tickFormats - maps axes to tick formats (top, bottom, left, right)
 #
 class F.Chart.Line extends F.Chart.Base
-  # Sub-types: multi-series
+  # Sub-types: time series, multi-series, 
 
+  # Defaults and private class variables
   defaults =
-    margins: {top: 25, right: 50, bottom: 25, left: 50}
+    margins:
+      top: 25
+      right: 50
+      bottom: 25
+      left: 50
     axes: ['left', 'bottom']
+    ticks:
+      top: 14
+      bottom: 14
+      left: 5
+      right: 5
+    tickFormats:
+      top: F.Formats.regular
+      bottom: F.Formats.regular
+      left: F.Formats.si
+      right: F.Formats.si
 
   constructor: (@options={}) ->
-    super(@options)
+    givenMargins = F.Util.copy(@options.margins) or {}
+    super(@options = F.Util.defaults(@options, defaults))
 
-    # Margins and axes
-    @options.axes ?= defaults.axes
-    @options.margins ?= {}
-    @margins = { top: 10, left: 0, bottom: 10, right: 0 }
+    console.log @options
 
+    # Margins are used in a special way and only for making room for axes.
+    # However, a user may explicitly set margins in the options, so we need
+    # to determine if they did so, and zero out the ones they didn't if no
+    # axis is present.
+    @margins = {}
     for pos in ['top', 'right', 'bottom', 'left']
-      if @options.margins[pos]?
-        @margins[pos] = @options.margins[pos]
-      else if @hasAxis(pos)
-        @margins[pos] = defaults.margins[pos]
-      
-    # Nab the reference ot the svg element
+      @margins[pos] = @options.margins[pos]
+      @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
+    
+    # Add a translation for the top and left margins
     @svg = @svg.append("g")
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
 
-  hasAxis: (name) ->
-    @options.axes.indexOf(name) > -1
+  # Basic accessors / mutators
+  setTickFormat: (position, fn) ->
+    @options.tickFormats[position] = fn
 
+  hasAxis: (name) ->
+    @options.axes.indexOf(name) > -1 
+
+  # Scales
   x: ->
     d3.scale.linear()
       .domain(d3.extent(@data, (d) -> d.x))
-      .range([0, @width-@margins.right - @margins.left])
+      .range([0, @width - @margins.right - @margins.left])
 
   y: ->
     d3.scale.linear()
       .domain(d3.extent(@data, (d) -> d.y))
       .range([@height - @margins.top - @margins.bottom, 0])
 
-  draw: ->
-    [x, y] = [@x(), @y()]
+  # Axes creation
+  bottomAxis: ->
+    d3.svg.axis().scale(@x()).orient('bottom')
+      .ticks(@options.ticks.bottom)
+      .tickFormat(@options.tickFormats.bottom)
 
+  topAxis: ->
+    d3.svg.axis().scale(@x()).orient('top')
+      .ticks(@options.ticks.top)
+      .tickFormat(@options.tickFormats.top)
+
+  leftAxis: ->
+    d3.svg.axis().scale(@y()).orient('left')
+      .ticks(@options.ticks.left)
+      .tickFormat(@options.tickFormats.left)
+
+  rightAxis: ->
+    d3.svg.axis().scale(@y()).orient('right')
+      .ticks(@options.ticks.right)
+      .tickFormat(@options.tickFormats.right)
+
+  # Draw / Redraw
+  draw: ->
     line = d3.svg.line()
-      .x((d) -> x(d.x))
-      .y((d) -> y(d.y))
-    
+      .x((d) => (@x() d.x))
+      .y((d) => (@y() d.y))
+
     @svg.append("path")
       .datum(@data)
       .attr("class", "line")
       .attr("d", line)
 
-    @drawTopAxis() if @hasAxis('top')
-    @drawRightAxis() if @hasAxis('right')
-    @drawBottomAxis() if @hasAxis('bottom')
-    @drawLeftAxis() if @hasAxis('left')
+    @drawAxes()
 
-  drawTopAxis: ->
-    @svg.append("g")
-      .attr('class', 'x axis top')
-      .call(d3.svg.axis().scale(@x()).orient('top'))
-
-  drawRightAxis: ->
-    yAxisRight = d3.svg.axis().scale(@y()).orient('right')
-      .tickFormat( (d) -> F.format_si(d) )
-    @svg.append('g')
-      .attr('class', 'y axis right')
-      .attr('transform', "translate(#{@width-@margins.left-@margins.right}, 0)")
-      .call(yAxisRight)
-
-  drawBottomAxis: ->
-    @svg.append("g")
+  drawAxes: ->
+    if @hasAxis('bottom')
+      @svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0, #{@height-@margins.top-@margins.bottom})")
-        .call(d3.svg.axis().scale(@x()).orient('bottom'))
+        .call(@bottomAxis())
 
-  drawLeftAxis: ->
-    yAxis = d3.svg.axis().scale(@y()).orient('left')
-      .tickFormat( (d) -> F.format_si(d) )
-    @svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
+    if @hasAxis('top')
+      @svg.append("g")
+        .attr('class', 'x axis top')
+        .call(@topAxis())
+    
+    if @hasAxis('left')
+      @svg.append("g")
+        .attr("class", "y axis")
+        .call(@leftAxis())
+
+    if @hasAxis('right')
+      @svg.append('g')
+        .attr('class', 'y axis right')
+        .attr('transform', "translate(#{@width-@margins.left-@margins.right}, 0)")
+        .call(@rightAxis())
+
+  
+
+  
 
       
 
