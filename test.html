@@ -29,7 +29,23 @@
     }
 
     .area {
-      fill: lightblue;
+      stroke: none;
+      fill: steelblue;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .arc.pie {
+      stroke: #fff;
+      stroke-width: 1.5px;
+    }
+
+    .arc.pie text {
+      stroke: none;
+      fill: white;
+      font-size: 9pt;
     }
 
     </style>
@@ -37,23 +53,32 @@
   <body>
     <h1>Fastly Charts Test Page</h1>
 
+    <h3>Scatter</h3>
+    <div id="scatter" class="chart" style="width: 360px; height: 300px"></div>
+
+    <h3>Pie</h3>
+    <div id="pie" class="chart" style="width: 350px; height: 350px"></div>
+    
+    <h3>Donut</h3>
+    <div id="donut" class="chart" style="width: 350px; height: 350px"></div>
+
+    <h3>Bar</h3>
+    <div id="bar" class="chart" style="width: 350px; height: 175px"></div>
+
     <h3>Area</h3>
     <div id="area" class="chart" style="width: 600px; height: 200px;"></div>
 
     <h3>Line</h3>
     <div id="line" class="chart" style="width: 600px; height: 200px;"></div>
 
-
     <script>
       $(function() {
-        // Test Line Charts
-        line = new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] });
-        line.draw();
-
-        // Test Area Charts
-        area = new F.Chart.Area({ el: '#area', axes: ['left', 'bottom'] });
-        area.draw();
-
+        new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']}).draw();
+        new F.Chart.Bar({el: '#bar', axes: ['left', 'bottom']}).draw();
+        new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] }).draw();
+        new F.Chart.Area({ el: '#area', axes: ['left', 'bottom'] }).draw();
+        new F.Chart.Pie({ el: '#pie' }).draw()
+        new F.Chart.Donut({ el: '#donut' }).draw()
       });
     </script>
   </body>

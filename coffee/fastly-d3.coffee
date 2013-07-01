@@ -13,6 +13,53 @@ TEST_DATA = [
   { x: 5, y: 2500 }
 ]
 
+
+PIE_DATA = [
+  { label: 'Alpha', value: 10 },
+  { label: 'Beta', value: 20 },
+  { label: 'Gamma', value: 40 },
+  { label: 'Tau', value: 30 }
+]
+
+
+LAYER_DATA = [
+  {
+    label: 'Series A'
+    data: [
+      { x: 0, y: 0 },
+      { x: 1, y: 100 },
+      { x: 2, y: 400 },
+      { x: 3, y: 900 },
+      { x: 4, y: 1100 },
+      { x: 5, y: 2500 }
+    ]
+  },
+  {
+    label: 'Series B'
+    data: [
+      { x: 0, y: 0 },
+      { x: 1, y: 150 },
+      { x: 2, y: 200 },
+      { x: 3, y: 700 },
+      { x: 4, y: 100 },
+      { x: 5, y: 3400 }
+    ]
+  },
+  {
+    label: 'Series B'
+    data: [
+      { x: 0, y: 90 },
+      { x: 1, y: 330 },
+      { x: 2, y: 20 },
+      { x: 3, y: 1230 },
+      { x: 4, y: 140 },
+      { x: 5, y: 900 }
+    ]
+  }
+]
+
+
+
 #
 # Global Namespace
 #
@@ -22,6 +69,18 @@ window.F.Chart ?= {}
 window.F.Util ?= {}
 window.F.Formats ?= {}
 
+#
+# Constants
+#
+CATEGORY_COLORS = [
+  "#d0743c",
+  "#98abc5",
+  "#6b486b",
+  "#8a89a6",
+  "#a05d56",
+  "#ff8c00",
+  "#7b6888"
+]
 
 #
 # Utility Functions
@@ -64,6 +123,12 @@ F.Util.formatSI = (v, fixed=1, fix_integers=false) ->
       q = v/base
       q = q.toFixed(fixed) unless (q|0) == q and !fix_integers
       return "#{q} #{label}" 
+
+
+# Creates "dasherized" class names from strings
+F.Util.dasherize = (str) ->
+  str.replace("\n", '').replace(/\s+/, '-').toLowerCase()
+
 
 #
 # Tick Formatters
@@ -238,7 +303,53 @@ class F.Chart.Plot extends F.Chart.Base
         .call(@rightAxis())
 
 
+
+#
+# TODO Better documentation
+# Represents two dimensional plots with multiple data series
+#
+# Options:
+#   colors - Categorical colors for the layer data
+#   layers - Layers to render using the multi-plot
+#
+class F.Chart.MultiPlot extends F.Chart.Plot
+  defaults =
+    colors: CATEGORY_COLORS
+
+  constructor: (@options={}) ->
+    @layers = @options.layers or LAYER_DATA
+    super(@options = F.Util.defaults(@options, defaults))
+    @flatten()
+
+  flatten: ->
+    @data = []
+    for layer in @layers
+      for entry in layer.data
+        @data.push { x: entry.x, y: entry.y, label: layer.label, className: F.Util.dasherize(layer.label) }
+    @data
+
+  update: (@data) ->
+    @flatten()
+    @draw()
+
+  # Scales
+  x: ->
+    d3.scale.linear()
+      .domain(d3.extent(@data, (d) -> d.x))
+      .range([0, @width - @margins.right - @margins.left])
+
+  y: ->
+    d3.scale.linear()
+      .domain(d3.extent(@data, (d) -> d.y))
+      .range([@height - @margins.top - @margins.bottom, 0])
+
+  # Colors
+  color: ->
+    d3.scale.ordinal().range(@options.colors)
+
+
 # Basic single line chart
+# Sub-types: Multi-series
 class F.Chart.Line extends F.Chart.Plot
   draw: ->
     line = d3.svg.line()
@@ -254,7 +365,8 @@ class F.Chart.Line extends F.Chart.Plot
 
 
 # Basic single area chart
-class F.Chart.Area extends F.Chart.Plot
+# Sub-types: stacked, bivariate
+class F.Chart.Area extends F.Chart.Line
   draw: ->
     area = d3.svg.area()
       .x((d) => (@x() d.x))
@@ -263,19 +375,122 @@ class F.Chart.Area extends F.Chart.Plot
 
     @svg.append("path")
       .datum(@data)
-      .attr("class", "area line")
+      .attr("class", "area")
       .attr("d", area)
 
     super()
     
 
-  
+# Basic bar chart
+# Sub-types: stacked, normalized stacked, grouped
+class F.Chart.Bar extends F.Chart.Plot
+  x: ->
+    d3.scale.ordinal()
+      .rangeRoundBands([0, @width-@margins.left-@margins.right], .1)
+      .domain(@data.map((d) -> d.x))
 
-  
+  draw: ->
+    [x, y] = [@x(), @y()]
 
-  
+    @svg.selectAll(".bar")
+      .data(@data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", (d) -> x(d.x))
+      .attr("width", x.rangeBand())
+      .attr("y", (d) => y(d.y))
+      .attr("height", (d) => @height - @margins.top - @margins.bottom - y(d.y))
 
-      
+    super()
+
+
+# Scatter Plot
+class F.Chart.Scatter extends F.Chart.MultiPlot
+  defaults =
+    radius: 3.5
+
+  constructor: (@options={}) ->
+    super(@options = F.Util.defaults(@options, defaults))
+
+  draw: ->
+    super()
+    [x, y, color] = [@x(), @y(), @color()]
+    @svg.selectAll(".dot")
+      .data(@data)
+    .enter().append("circle")
+      .attr("class", (d) -> "dot #{d.className}")
+      .attr("r", @options.radius)
+      .attr("cx", (d) -> x(d.x))
+      .attr("cy", (d) -> y(d.y))
+      .style("fill", (d) -> color(d.label))
+
+    
+
+
+
+
+#
+# Non-plot charts
+#
+
+
+
+# Basic Pie Chart  
+class F.Chart.Pie extends F.Chart.Base
+  defaults =
+    margin: 10
+    colors: CATEGORY_COLORS
+
+  constructor: (@options={}) ->
+    @options.data = PIE_DATA unless @options.data?
+    super(@options = F.Util.defaults(@options, defaults))
+    @svg = @svg.append('g')
+      .attr("transform", "translate(#{@width/2}, #{@height/2})")
+
+  arc: ->
+    radius = Math.max(@width, @height) / 2
+    d3.svg.arc().outerRadius(radius - @options.margin).innerRadius(0)
+
+  pie: ->
+    d3.layout.pie().sort(null).value (d) -> d.value
+
+  color: ->
+    d3.scale.ordinal().range(@options.colors)
+
+  draw: ->
+    [arc, pie, color] = [@arc(), @pie(), @color()]
+
+    arcs = @svg.selectAll(".arc")
+      .data(pie(@data))
+    .enter().append("g")
+      .attr("class", "arc pie");
+
+    arcs.append("path")
+      .attr("d", arc)
+      .style("fill", (d) => color(d.data.label))
+
+    arcs.append("text")
+      .attr("transform", (d) -> "translate(#{arc.centroid(d)})")
+      .attr("dy", ".35em")
+      .style("text-anchor", "middle")
+      .text((d) -> d.data.label);
+
+
+
+# Basic Donut Chart
+class F.Chart.Donut extends F.Chart.Pie
+  defaults =
+    margin: 10
+    inner: 60
+
+  constructor: (@options={}) ->
+    super(@options = F.Util.defaults(@options, defaults))
+
+  arc: ->
+    radius = Math.max(@width, @height) / 2
+    d3.svg.arc()
+      .outerRadius(radius - @options.margin)
+      .innerRadius(radius - @options.inner)
 
 
 
@@ -286,12 +501,11 @@ class F.Chart.Area extends F.Chart.Plot
 # Base Class for all charts and plots
 #class Fastly.d3.Chart
 
-
 # class Fastly.d3.Area extends Fastly.d3.Chart
-#   # Sub-types: stacked, bivariate
+#   
 
 # class Fastly.d3.Bar extends Fastly.d3.Chart
-#   # Sub-types: stacked, normalized stacked, grouped
+#   
 
 # class Fastly.d3.Scatter extends Fastly.d3.Chart
 
