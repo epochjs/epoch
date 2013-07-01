@@ -1,2 +1,2 @@
-# Fastly d3 Charting Library
+# Fastly Charting Library
 By Ryan Sandor Richards
