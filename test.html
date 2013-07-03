@@ -19,11 +19,8 @@
     <h3>Area</h3>
     <div id="area" class="chart" style="width: 600px; height: 200px;"></div>
     
-    <h3>Stacked Bar</h3>
-    <div id="bar-stacked" class="chart" style="width: 600px; height: 175px"></div>    
-
     <h3>Scatter</h3>
-    <div id="scatter" class="chart" style="width: 360px; height: 300px"></div>
+    <div id="scatter" class="chart" style="width: 550px; height: 500px"></div>
 
     <h3>Pie</h3>
     <div id="pie" class="chart" style="width: 350px; height: 350px"></div>
@@ -31,7 +28,9 @@
     <h3>Donut</h3>
     <div id="donut" class="chart" style="width: 350px; height: 350px"></div>
 
-    
+    <!-- <h3>Stacked Bar</h3>
+    <div id="bar-stacked" class="chart" style="width: 600px; height: 175px"></div>    
+ -->
     
     
     <script>
@@ -45,19 +44,22 @@
         area = new F.Chart.Area({ el: '#area', axes: ['left', 'bottom']});
         area.draw();
 
+        scatter = new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']})
+        scatter.draw()
+
         setTimeout(function() {
           line.setData(TEST_DATA_2)
           bar.setData(BAR_DATA_2)
           area.setData(TEST_DATA_2)
+          scatter.setData(SCATTER_DATA_2)
         }, 2000)
 
         //
 
-        //new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']}).draw();
+        //
         
         //new F.Chart.Pie({ el: '#pie' }).draw()
         //new F.Chart.Donut({ el: '#donut' }).draw()
-        //new F.Chart.MultiLine({ el: '#multi-line' }).draw();
       });
     </script>
   </body>

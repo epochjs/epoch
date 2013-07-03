@@ -192,12 +192,16 @@ PIE_DATA = [
 ]
 
 CATEGORIES = ['Series A', 'Series B', 'Series C']
-SCATTER_DATA = []
+window.SCATTER_DATA = []
+window.SCATTER_DATA_2 = []
 
 for name in CATEGORIES
-  SCATTER_DATA.push(layer = { label: name, data: [] })
+  SCATTER_DATA.push(layer = { label: name, values: [] })
+  SCATTER_DATA_2.push(layer2 = { label: name, values: [] })
   for i in [1..20]
-    layer.data.push { x: Math.random() * 1000, y: Math.random() * 1000 }
+    layer.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
+    layer2.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
+
 
 
 LAYER_DATA = []
@@ -632,8 +636,7 @@ class F.Chart.Bar extends F.Chart.Plot
     super()
 
 
-# Basic single area chart
-# Sub-types: stacked, bivariate
+# Area Chart
 class F.Chart.Area extends F.Chart.Plot
   y: ->
     a = []
@@ -670,10 +673,11 @@ class F.Chart.Area extends F.Chart.Plot
     layer.enter().append('g')
       .attr('class', (d) -> d.className)
 
-    # 4) Update new & existing
     layer.append('path')
       .attr('class', 'area')
       .attr('d', (d) -> area(d.values))
+
+    # 4) Update new & existing
 
     # 5) Exit / Remove
     layer.exit().transition()
@@ -681,15 +685,52 @@ class F.Chart.Area extends F.Chart.Plot
       .style('opacity', 0)
       .remove()
 
-
-    # @svg.append("path")
-    #   .datum(@data)
-    #   .attr("class", "area")
-    #   .attr("d", area)
-
     super()
     
 
+
+class F.Chart.Scatter extends F.Chart.Plot
+  defaults =
+    radius: 3.5
+    data: SCATTER_DATA
+
+  constructor: (@options={}) ->
+    console.log defaults.data
+    super(@options = F.Util.defaults(@options, defaults))
+
+  draw: ->
+    super()
+    
+    [x, y] = [@x(), @y()]
+
+    layer = @svg.selectAll('.layer')
+      .data(@data, (d) -> d.label)
+
+    layer.enter().append('g')
+      .attr('class', (d) -> d.className)
+
+    dots = layer.selectAll('.dot')
+      .data((l) -> l.values)
+
+    dots.transition().duration(500)
+      .attr("cx", (d) -> x(d.x))
+      .attr("cy", (d) -> y(d.y))
+
+    dots.enter().append('circle')
+      .attr('class', 'dot')
+      .attr("r", @options.radius)
+      .attr("cx", (d) -> x(d.x))
+      .attr("cy", (d) -> y(d.y))
+    
+    dots.exit().remove()
+
+    layer.exit().remove()
+    
+
+
+
+    
+      
 
 
 
@@ -706,14 +747,7 @@ class F.Chart.Area extends F.Chart.Plot
 #   draw: ->
 #     super()
 #     [x, y, color] = [@x(), @y(), @color()]
-#     @svg.selectAll(".dot")
-#       .data(@data)
-#     .enter().append("circle")
-#       .attr("class", (d) -> "dot #{d.className}")
-#       .attr("r", @options.radius)
-#       .attr("cx", (d) -> x(d.x))
-#       .attr("cy", (d) -> y(d.y))
-#       .style("fill", (d) -> color(d.label))
+    
 
 
 # Stacked Area Plot
