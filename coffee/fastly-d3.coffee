@@ -36,7 +36,7 @@ window.TEST_DATA = [
       { x: 2, y: 200 },
       { x: 3, y: 1976 },
       { x: 4, y: 1560 },
-      { x: 5, y: -800 }
+      { x: 5, y: 800 }
     ]
   }
 ]
@@ -47,7 +47,7 @@ window.TEST_DATA_2 = [
     values: [
       { x: 0, y: 1200 },
       { x: 1, y: 0 },
-      { x: 2, y: 3000 },
+      { x: 2, y: 300 },
       { x: 3, y: 170 },
       { x: 4, y: 1220 },
       { x: 5, y: 40 },
@@ -59,11 +59,36 @@ window.TEST_DATA_2 = [
     values: [
       { x: 0, y: 3400 },
       { x: 1, y: 523 },
-      { x: 2, y: 19 },
-      { x: 3, y: 83 },
+      { x: 2, y: 190 },
+      { x: 3, y: 803 },
       { x: 4, y: 1030 },
       { x: 5, y: 2042 },
       { x: 6, y: 820}
+    ]
+  }
+]
+
+window.TEST_DATA_3 = [
+  {
+    label: 'Layer 1'
+    values: [
+      { x: 0, y: 100 },
+      { x: 1, y: 200 },
+      { x: 2, y: 300 },
+      { x: 3, y: 400 },
+      { x: 4, y: 500 },
+      { x: 5, y: 600 }
+    ]
+  },
+  {
+    label: 'Layer 2'
+    values: [
+      { x: 0, y: 600 },
+      { x: 1, y: 500 },
+      { x: 2, y: 400 },
+      { x: 3, y: 300 },
+      { x: 4, y: 200 },
+      { x: 5, y: 100 }
     ]
   }
 ]
@@ -609,17 +634,58 @@ class F.Chart.Bar extends F.Chart.Plot
 
 # Basic single area chart
 # Sub-types: stacked, bivariate
-class F.Chart.Area extends F.Chart.Line
-  draw: ->
-    area = d3.svg.area()
-      .x((d) => (@x() d.x))
-      .y1((d) => (@y() d.y))
-      .y0(@height - @margins.bottom - @margins.top)
+class F.Chart.Area extends F.Chart.Plot
+  y: ->
+    a = []
+    for layer in @data
+      for k, v of layer.values
+        a[k] += v.y if a[k]?
+        a[k] = v.y unless a[k]?
+    d3.scale.linear()
+      .domain([0, d3.max(a)])
+      .range([@height - @margins.top - @margins.bottom, 0])
 
-    @svg.append("path")
-      .datum(@data)
-      .attr("class", "area")
-      .attr("d", area)
+  draw: ->
+    [x, y] = [@x(), @y()]
+
+    area = d3.svg.area()
+      .x((d) -> x(d.x))
+      .y0((d) -> y(d.y0))
+      .y1((d) -> y(d.y0 + d.y))
+
+    stack = d3.layout.stack()
+      .values((d) -> d.values)
+
+    data = stack(@data)
+
+    # 1) Join
+    layer = @svg.selectAll('.layer')
+      .data(@data, (d) -> d.label)
+
+    # 2) Update
+    layer.select('.area').transition().duration(500)
+      .attr('d', (d) -> area(d.values))
+
+    # 3) Enter / Create
+    layer.enter().append('g')
+      .attr('class', (d) -> d.className)
+
+    # 4) Update new & existing
+    layer.append('path')
+      .attr('class', 'area')
+      .attr('d', (d) -> area(d.values))
+
+    # 5) Exit / Remove
+    layer.exit().transition()
+      .duration(750)
+      .style('opacity', 0)
+      .remove()
+
+
+    # @svg.append("path")
+    #   .datum(@data)
+    #   .attr("class", "area")
+    #   .attr("d", area)
 
     super()
     
