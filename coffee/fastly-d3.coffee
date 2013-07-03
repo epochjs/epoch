@@ -184,11 +184,18 @@ window.BAR_DATA_SINGLE_2 = [
   }
 ]
 
-PIE_DATA = [
+window.PIE_DATA = [
   { label: 'Alpha', value: 10 },
   { label: 'Beta', value: 20 },
   { label: 'Gamma', value: 40 },
   { label: 'Tau', value: 30 }
+]
+
+window.PIE_DATA_2 = [
+  { label: 'Alpha', value: 15 },
+  { label: 'Beta', value: 35 },
+  { label: 'Gamma', value: 27 },
+  { label: 'Tau', value: 23 }
 ]
 
 CATEGORIES = ['Series A', 'Series B', 'Series C']
@@ -201,19 +208,6 @@ for name in CATEGORIES
   for i in [1..20]
     layer.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
     layer2.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
-
-
-
-LAYER_DATA = []
-functions =
-  'Series A': (x) -> 2*x+3
-  'Series B': (x) -> Math.pow(x, 1.3) - 2
-  'Series C': (x) -> Math.log(x) + x - 7
-
-for name in CATEGORIES
-  LAYER_DATA.push(layer = { label: name, data: []})
-  for x in [0, 15]
-    layer.data.push { x: x, y: functions[name](x) }
 
 
 
@@ -304,7 +298,7 @@ class F.Chart.Base
 
   constructor: (@options={}) ->
     # TODO Remove Test data for release
-    @setData(@options.data or TEST_DATA, false)
+    @update(@options.data or TEST_DATA, false)
 
     # Eventing
     @_events = {}
@@ -329,7 +323,7 @@ class F.Chart.Base
 
     @svg.attr('width', @width).attr('height', @height)
 
-  setData: (data, update=true) ->
+  update: (data, draw=true) ->
     category = 1
     for layer in data
       classes = ['layer']
@@ -338,7 +332,7 @@ class F.Chart.Base
       layer.className = classes.join(' ')
       category++
     @data = data
-    @draw() if update
+    @draw() if draw
 
   extent: (cmp) ->
     [
@@ -685,8 +679,7 @@ class F.Chart.Area extends F.Chart.Plot
       .style('opacity', 0)
       .remove()
 
-    super()
-    
+    super()   
 
 
 class F.Chart.Scatter extends F.Chart.Plot
@@ -700,7 +693,7 @@ class F.Chart.Scatter extends F.Chart.Plot
 
   draw: ->
     super()
-    
+
     [x, y] = [@x(), @y()]
 
     layer = @svg.selectAll('.layer')
@@ -722,112 +715,59 @@ class F.Chart.Scatter extends F.Chart.Plot
       .attr("cx", (d) -> x(d.x))
       .attr("cy", (d) -> y(d.y))
     
-    dots.exit().remove()
+    dots.exit().transition()
+      .duration(750)
+      .style('opacity', 0)
+      .remove()
 
-    layer.exit().remove()
-    
-
-
-
-    
-      
-
-
-
-# Scatter Plot
-# class F.Chart.Scatter extends F.Chart.MultiPlot
-#   defaults =
-#     radius: 3.5
-#     data: SCATTER_DATA
-
-#   constructor: (@options={}) ->
-#     console.log SCATTER_DATA
-#     super(@options = F.Util.defaults(@options, defaults))
-
-#   draw: ->
-#     super()
-#     [x, y, color] = [@x(), @y(), @color()]
-    
-
-
-# Stacked Area Plot
-
+    layer.exit().transition()
+      .duration(750)
+      .style('opacity', 0)
+      .remove()
 
 
 # Basic Pie Chart  
 class F.Chart.Pie extends F.Chart.Base
   defaults =
     margin: 10
+    inner: 0
+    data: PIE_DATA
 
   constructor: (@options={}) ->
-    @options.data = PIE_DATA unless @options.data?
     super(@options = F.Util.defaults(@options, defaults))
+    radius = Math.max(@width, @height) / 2
+    @pie = d3.layout.pie().sort(null)
+      .value (d) -> d.value
+    @arc = d3.svg.arc()
+      .outerRadius(radius - @options.margin)
+      .innerRadius(@options.inner)
     @svg = @svg.append('g')
       .attr("transform", "translate(#{@width/2}, #{@height/2})")
 
-  arc: ->
-    radius = Math.max(@width, @height) / 2
-    d3.svg.arc().outerRadius(radius - @options.margin).innerRadius(0)
-
-  pie: ->
-    d3.layout.pie().sort(null).value (d) -> d.value
-
-  color: ->
-    d3.scale.ordinal().range(@options.colors)
-
   draw: ->
-    [arc, pie, color] = [@arc(), @pie(), @color()]
-
     arcs = @svg.selectAll(".arc")
-      .data(pie(@data))
-    .enter().append("g")
-      .attr("class", "arc pie");
+      .data(@pie(@data), (d) -> d.data.label)
 
-    arcs.append("path")
-      .attr("d", arc)
-      .style("fill", (d) => color(d.data.label))
+    arcs.enter().append('g')
+      .attr('class', (d) -> "arc pie " + d.data.className)
 
-    arcs.append("text")
-      .attr("transform", (d) -> "translate(#{arc.centroid(d)})")
+    arcs.select('path')
+      .attr('d', @arc)
+
+    arcs.select('text')
+      .attr("transform", (d) => "translate(#{@arc.centroid(d)})")
+      .text((d) -> d.data.label)
+
+    path = arcs.append("path")
+      .attr("d", @arc)
+      .each((d) -> @._current = d)
+
+    text = arcs.append("text")
+      .attr("transform", (d) => "translate(#{@arc.centroid(d)})")
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
-      .text((d) -> d.data.label);
+      .text((d) -> d.data.label)
 
+    arcs.exit().remove()
 
-
-# Basic Donut Chart
-class F.Chart.Donut extends F.Chart.Pie
-  defaults =
-    margin: 10
-    inner: 60
-
-  constructor: (@options={}) ->
-    super(@options = F.Util.defaults(@options, defaults))
-
-  arc: ->
-    radius = Math.max(@width, @height) / 2
-    d3.svg.arc()
-      .outerRadius(radius - @options.margin)
-      .innerRadius(radius - @options.inner)
-
-
-
-
-
-
-
-# Base Class for all charts and plots
-#class Fastly.d3.Chart
-
-# class Fastly.d3.Area extends Fastly.d3.Chart
-#   
-
-# class Fastly.d3.Bar extends Fastly.d3.Chart
-#   
-
-# class Fastly.d3.Scatter extends Fastly.d3.Chart
-
-# class Fastly.d3.Pie extends Fastly.d3.Chart
-
-# class Fastly.d3.Donut
-
+# "I think, baby, I was born just a little late!" -- Middle Class Rut

@@ -51,7 +51,9 @@ $category20: #1f77b4, #aec7e8, #ff7f0e, #ffbb78, #2ca02c, #98df8a, #d62728, #ff9
   .category#{$i} {
     .line { stroke: nth($category20, $i); }
     .area, .dot { fill: nth($category20, $i); }
-
+  }
+  .arc.category#{$i} path {
+    fill: nth($category20, $i);
   }
   .bar.category#{$i} { 
     fill: nth($category20, $i);

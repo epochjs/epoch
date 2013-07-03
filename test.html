@@ -27,10 +27,6 @@
     
     <h3>Donut</h3>
     <div id="donut" class="chart" style="width: 350px; height: 350px"></div>
-
-    <!-- <h3>Stacked Bar</h3>
-    <div id="bar-stacked" class="chart" style="width: 600px; height: 175px"></div>    
- -->
     
     
     <script>
@@ -47,19 +43,20 @@
         scatter = new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']})
         scatter.draw()
 
+        pie = new F.Chart.Pie({ el: '#pie' })
+        pie.draw()
+
+        //donut = new F.Chart.Donut({ el: '#donut' })
+        //donut.draw()
+
+
         setTimeout(function() {
-          line.setData(TEST_DATA_2)
-          bar.setData(BAR_DATA_2)
-          area.setData(TEST_DATA_2)
-          scatter.setData(SCATTER_DATA_2)
+          line.update(TEST_DATA_2)
+          bar.update(BAR_DATA_2)
+          area.update(TEST_DATA_2)
+          scatter.update(SCATTER_DATA_2)
+          pie.update(PIE_DATA_2)
         }, 2000)
-
-        //
-
-        //
-        
-        //new F.Chart.Pie({ el: '#pie' }).draw()
-        //new F.Chart.Donut({ el: '#donut' }).draw()
       });
     </script>
   </body>
