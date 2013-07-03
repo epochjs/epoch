@@ -13,12 +13,12 @@
     <h3>Line</h3>
     <div id="line" class="chart" style="width: 600px; height: 200px;"></div>
 
-    <h3>Area</h3>
-    <div id="area" class="chart" style="width: 600px; height: 200px;"></div>
-
     <h3>Bar</h3>
     <div id="bar" class="chart" style="width: 600px; height: 175px"></div>
 
+    <h3>Area</h3>
+    <div id="area" class="chart" style="width: 600px; height: 200px;"></div>
+    
     <h3>Stacked Bar</h3>
     <div id="bar-stacked" class="chart" style="width: 600px; height: 175px"></div>    
 
@@ -39,12 +39,15 @@
         line = new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] });
         line.draw();
 
+        bar = new F.Chart.Bar({el: '#bar', axes: ['left', 'bottom']})
+        bar.draw();
+
         setTimeout(function() {
-          console.log("Updating Line Data!");
           line.setData(TEST_DATA_2)
+          bar.setData(BAR_DATA_2)
         }, 2000)
 
-        //new F.Chart.Bar({el: '#bar', axes: ['left', 'bottom']}).draw();
+        //
 
         //new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']}).draw();
         //new F.Chart.Area({ el: '#area', axes: ['left', 'bottom'] }).draw();

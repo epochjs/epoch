@@ -68,7 +68,7 @@ window.TEST_DATA_2 = [
   }
 ]
 
-BAR_DATA = [
+window.BAR_DATA = [
   {
     label: 'Alpha'
     values: [
@@ -104,7 +104,34 @@ BAR_DATA = [
   }
 ]
 
-BAR_DATA_2 = [
+window.BAR_DATA_2 = [
+  {
+    label: 'Alpha'
+    values: [
+      { x: 'A', y: 10 },
+      { x: 'B', y: 19 },
+      { x: 'C', y: 22 },
+      { x: 'D', y: 18 },
+      { x: 'E', y: 5 },
+      { x: 'F', y: 16 },
+      { x: 'G', y: 7 }
+    ]
+  },
+  {
+    label: 'Beta'
+    values: [
+      { x: 'A', y: 4 },
+      { x: 'B', y: 10 },
+      { x: 'C', y: 19 },
+      { x: 'D', y: 33 },
+      { x: 'E', y: 7 },
+      { x: 'F', y: 16 },
+      { x: 'G', y: 14 }
+    ]
+  }
+]
+
+window.BAR_DATA_SINGLE = [
   {
     label: 'Alpha'
     values: [
@@ -114,6 +141,20 @@ BAR_DATA_2 = [
       { x: 'D', y: 32 },
       { x: 'E', y: 11 },
       { x: 'F', y: 25 }
+    ]
+  }
+]
+
+window.BAR_DATA_SINGLE_2 = [
+  {
+    label: 'Alpha'
+    values: [
+      { x: 'A', y: 10 },
+      { x: 'B', y: 40 },
+      { x: 'C', y: 42 },
+      { x: 'D', y: 12 },
+      { x: 'E', y: 5 },
+      { x: 'F', y: 17 }
     ]
   }
 ]
@@ -440,12 +481,12 @@ class F.Chart.Plot extends F.Chart.Base
 
 # Line Chart
 class F.Chart.Line extends F.Chart.Plot
-  draw: ->
+  line: ->
     [x, y] = [@x(), @y()]
+    d3.svg.line().x((d) => (x d.x)).y((d) => (y d.y))
 
-    line = d3.svg.line()
-      .x((d) => (x d.x))
-      .y((d) => (y d.y))
+  draw: ->
+    [x, y, line] = [@x(), @y(), @line()]
 
     # 1) Join
     layer = @svg.selectAll('.layer')
@@ -505,32 +546,63 @@ class F.Chart.Bar extends F.Chart.Plot
       .domain(extent)
       .range([@height - @margins.top - @margins.bottom, 0])
 
-  draw: ->
-    [x0, y] = [@x(), @y()]
-    x1 = @x1(x0)
-    height = @height - @margins.top - @margins.bottom
-
+  _remapData: ->
     map = {}
     for layer in @data
       className = 'bar ' + layer.className.replace(/\s*layer\s*/, '')
       for entry in layer.values
         map[entry.x] ?= []
         map[entry.x].push { label: layer.label, y: entry.y, className: className }
-    data = ({group: k, values: v} for k, v of map)
+    ({group: k, values: v} for k, v of map)
 
-    layers = @svg.selectAll(".layer")
-      .data(data)
-    .enter().append("g")
-      .attr("transform", (d) -> "translate(#{x0(d.group)}, 0)") 
+  draw: ->
+    [x0, y] = [@x(), @y()]
+    x1 = @x1(x0)
+    height = @height - @margins.top - @margins.bottom
+    data = @_remapData()
 
-    layers.selectAll('rect')
+    # 1) Join
+    layer = @svg.selectAll(".layer")
+      .data(data, (d) -> d.group)
+
+    # 2) Update
+    layer.transition().duration(750)
+      .attr("transform", (d) -> "translate(#{x0(d.group)}, 0)")
+
+    # 3) Enter / Create
+    layer.enter().append("g")
+      .attr('class', 'layer')
+      .attr("transform", (d) -> "translate(#{x0(d.group)}, 0)")
+
+    rects = layer.selectAll('rect')
       .data((group) -> group.values)
-    .enter().append('rect')
-      .attr('class', (d) -> d.className)
-      .attr('width', x1.rangeBand())
+
+    rects.transition().duration(500)
       .attr('x', (d) -> x1(d.label))
       .attr('y', (d) -> y(d.y))
+      .attr('width', x1.rangeBand())
       .attr('height', (d) -> height - y(d.y))
+
+    rects.enter().append('rect')
+      .attr('class', (d) -> d.className)
+      .attr('x', (d) -> x1(d.label))
+      .attr('y', (d) -> y(d.y))
+      .attr('width', x1.rangeBand())
+      .attr('height', (d) -> height - y(d.y))
+
+    rects.exit().transition()
+      .duration(400)
+      .style('opacity', '0')
+      .remove()
+
+    # 4) Update new and existing
+    
+    # 5) Exit / Remove
+    layer.exit()
+      .transition()
+      .duration(750)
+      .style('opacity', '0')
+      .remove()
 
     super()
 
