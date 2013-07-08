@@ -4,7 +4,8 @@
     <title>fastly-d3 test page</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="js/d3.min.js"></script>
-    <script src="js/fastly-d3.js"></script>
+    <script src="js/test_data.js"></script>
+    <script src="js/fastly-charts.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
   </head>
   <body>
@@ -28,27 +29,44 @@
     <h3>Donut</h3>
     <div id="donut" class="chart" style="width: 350px; height: 350px"></div>
     
-    
     <script>
       $(function() {
-        line = new F.Chart.Line({ el: '#line', axes: ['left', 'bottom', 'right'] });
+        line = new F.Chart.Line({ el: '#line', data: TEST_DATA, axes: ['left', 'bottom', 'right'] });
         line.draw();
 
-        bar = new F.Chart.Bar({el: '#bar', axes: ['left', 'bottom']})
+        bar = new F.Chart.Bar({
+          el: '#bar', 
+          data: BAR_DATA, 
+          axes: ['left', 'bottom']
+        });
         bar.draw();
 
-        area = new F.Chart.Area({ el: '#area', axes: ['left', 'bottom']});
+        area = new F.Chart.Area({
+          el: '#area',
+          data: TEST_DATA,
+          axes: ['left', 'bottom']
+        });
         area.draw();
 
-        scatter = new F.Chart.Scatter({el: '#scatter', axes: ['bottom', 'right', 'top', 'left']})
-        scatter.draw()
+        scatter = new F.Chart.Scatter({
+          el: '#scatter',
+          data: SCATTER_DATA,
+          axes: ['bottom', 'right', 'top', 'left']
+        })
+        scatter.draw();
 
-        pie = new F.Chart.Pie({ el: '#pie' })
+        pie = new F.Chart.Pie({
+          el: '#pie',
+          data: PIE_DATA
+        });
         pie.draw()
 
-        //donut = new F.Chart.Donut({ el: '#donut' })
-        //donut.draw()
-
+        donut = new F.Chart.Pie({
+          el: '#donut',
+          data: PIE_DATA,
+          inner: 100
+        });
+        donut.draw()
 
         setTimeout(function() {
           line.update(TEST_DATA_2)
@@ -56,6 +74,7 @@
           area.update(TEST_DATA_2)
           scatter.update(SCATTER_DATA_2)
           pie.update(PIE_DATA_2)
+          donut.update(PIE_DATA_2)
         }, 2000)
       });
     </script>
