@@ -3,7 +3,8 @@ fs = require 'fs'
 
 package_order = [
 	'fastly-charts.js',
-	'charts/*.js'
+	'charts/*.js',
+	'time/*.js'
 ]
 
 stripSlash = (name) ->
@@ -23,12 +24,16 @@ watch = (dir, ext, fn) ->
 	exec "find #{stripSlash(dir)}", watchFiles
 
 task 'build', ->
+	console.log "Building..."
 	exec 'coffee --output js/fastly-charts --compile coffee/', (err, stdout, stderr) ->
+		return console.log(stdout + stderr) if err?
 		invoke 'package'
 
 task 'package', ->
+	console.log "Packaging..."
 	pre = 'js/fastly-charts/'
 	exec "cat #{(pre + order for order in package_order).join(' ')} > js/fastly-charts.js", (err, stdout, stderr) -> 
+		console.log "Complete!"
 
 task 'watch', ->
 	watch 'coffee/', '.coffee', (event, filename) ->

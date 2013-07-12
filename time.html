@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fastly-d3 test page</title>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/fastly-charts/test_data.js"></script>
+    <script src="js/fastly-charts.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
+    <style type="text/css">
+      svg {
+        /*background: pink;*/
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fastly Timeseries Test Page</h1>
+
+    <div id="bar" class="chart" style="width: 900px; height: 140px;"></div>
+    
+    <script>
+      $(function() {
+        var bar = new F.Time.Bar({
+          el: '#bar',
+          data: TIME_DATA,
+          axes: ['left', 'bottom', 'right'],
+        });
+
+        bar.draw();
+
+        setInterval(function() {
+          bar.push(nextTimeEntry())
+        }, 1000)
+      });
+    </script>
+  </body>
+</html>

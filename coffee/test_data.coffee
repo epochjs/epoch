@@ -202,3 +202,29 @@ for name in CATEGORIES
     layer.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
     layer2.values.push { x: Math.random() * 1000, y: Math.random() * 1000 }
 
+
+
+
+startDate = new Date("Mon Jul 04 2013 4:30:00 GMT-0700 (PDT)")
+elapsed = 0
+
+nextTime = ->
+  elapsed++
+  d = new Date(startDate.toString())
+  d.setSeconds d.getSeconds() + elapsed
+  (d.getTime()/1000)|0
+
+window.nextTimeEntry = ->
+  { time: nextTime(), y: (Math.random() * 10)|0 + 1 }
+
+window.TIME_DATA = [
+  { label: 'Alpha', values: [] },
+  { label: 'Beta', values: [] },
+  { label: 'Gamma', values: [] }
+]
+
+for i in [0...45]
+  time = nextTime()
+  for layer in TIME_DATA
+    layer.values.push { time: time, y: (Math.random() * 10)|0 + 1 }
+

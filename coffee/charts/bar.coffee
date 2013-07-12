@@ -15,7 +15,7 @@ class F.Chart.Bar extends F.Chart.Plot
   x: ->
     d3.scale.ordinal()
       .domain(F.Util.domain(@data))
-      .rangeRoundBands([0, @width-@margins.left-@margins.right], .1)
+      .rangeRoundBands([0, @innerWidth()], .1)
 
   x1: (x0) ->
     d3.scale.ordinal()
@@ -60,7 +60,7 @@ class F.Chart.Bar extends F.Chart.Plot
     rects = layer.selectAll('rect')
       .data((group) -> group.values)
 
-    rects.transition().duration(500)
+    rects.transition().duration(600)
       .attr('x', (d) -> x1(d.label))
       .attr('y', (d) -> y(d.y))
       .attr('width', x1.rangeBand())
@@ -74,7 +74,7 @@ class F.Chart.Bar extends F.Chart.Plot
       .attr('height', (d) -> height - y(d.y))
 
     rects.exit().transition()
-      .duration(400)
+      .duration(150)
       .style('opacity', '0')
       .remove()
 

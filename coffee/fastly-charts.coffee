@@ -4,6 +4,7 @@
 
 window.F ?= {}
 window.F.Chart ?= {}
+window.F.Time ?= {}
 window.F.Util ?= {}
 window.F.Formats ?= {}
 
@@ -70,33 +71,21 @@ F.Formats.regular = (d) -> d
 F.Formats.si = (d) -> F.Util.formatSI(d)
 
 
-
 #
-# Options:
+# Common methods, eventing, etc. for both SVG and Canvas charts.
 #
-#   el - Where the svg belongs
-#   data - Initial data for the chart
-#   width - explicit chart width
-#   height - explicit chart height
-#   
 class F.Chart.Base
   defaults =
-    dimensions: { width: 320, height: 240 }
+    dimensions:
+      width: 320
+      height: 240
 
-  constructor: (@options={}) ->
-    @update(@options.data or [], false)
-
-    # Eventing
+  constructor: (@options) ->
     @_events = {}
+    @setData(@options.data or [])
 
-    # Handle svg placement / creation
-    if @options.el?
-      @el = $(@options.el)
-      @svg = d3.select(@options.el).append('svg')
-    else
-      @svg = d3.select(document.createElement('svg'))
+    @el = $(@options.el) if @options.el?
 
-    # Width and height
     @width = @options.width
     @height = @options.height
 
@@ -107,9 +96,7 @@ class F.Chart.Base
       @width = defaults.dimensions.width unless @width?
       @height = defaults.dimensions.height unless @height?
 
-    @svg.attr('width', @width).attr('height', @height)
-
-  update: (data, draw=true) ->
+  setData: (data) ->
     category = 1
     for layer in data
       classes = ['layer']
@@ -118,7 +105,12 @@ class F.Chart.Base
       layer.className = classes.join(' ')
       category++
     @data = data
+
+  update: (data, draw=true) ->
+    @setData data
     @draw() if draw
+
+  draw: -> # Abstract, must override in child classes
 
   extent: (cmp) ->
     [
@@ -140,10 +132,39 @@ class F.Chart.Base
   trigger: (name) ->
     return unless F.isObject(@_events[name])
     args = (arguments[i] for i in [1...arguments.length])
-    for fn in @_events[name]
-      fn.apply @, args
+    fn.apply(@, args) for fn in @_events[name]
+      
 
-  draw: -> # Abstract, must override in child classes
+#
+# Base class for all SVG charts (via d3)
+#
+# Options:
+#
+#   el - Where the svg belongs
+#   data - Initial data for the chart
+#   width - explicit chart width
+#   height - explicit chart height
+#   
+class F.Chart.SVG extends F.Chart.Base
+  constructor: (@options={}) ->
+    super(@options)
+    if @el?
+      @svg = d3.select(@el.get(0)).append('svg')
+    else
+      @svg = d3.select(document.createElement('svg'))
+    @svg.attr('width', @width).attr('height', @height)
+
+
+#
+# Base Class for all Canvas Based Charts 
+#
+class F.Chart.Canvas extends F.Chart.Base
+  constructor: (@options={}) ->
+    super(@options)
+    @canvas = $("<canvas></canvas>")
+    @canvas.attr('width', @width).attr('height', @height)
+    @el.append(@canvas) if @el?
+    @ctx = @canvas.get(0).getContext('2d')
 
 
 #
@@ -160,7 +181,7 @@ class F.Chart.Base
 #   ticks - Ticks to send along for each axis (top, bottom, left, right)
 #   tickFormats - maps axes to tick formats (top, bottom, left, right)
 #
-class F.Chart.Plot extends F.Chart.Base
+class F.Chart.Plot extends F.Chart.SVG
   defaults =
     margins:
       top: 25
@@ -203,16 +224,22 @@ class F.Chart.Plot extends F.Chart.Base
   hasAxis: (name) ->
     @options.axes.indexOf(name) > -1
 
+  innerWidth: ->
+    @width - (@margins.left + @margins.right)
+
+  innerHeight: ->
+    @height - (@margins.top + @margins.bottom)
+
   # Scales
   x: ->
     d3.scale.linear()
       .domain(@extent((d) -> d.x))
-      .range([0, @width - @margins.right - @margins.left])
+      .range([0, @innerWidth()])
 
   y: ->
     d3.scale.linear()
       .domain(@extent((d) -> d.y))
-      .range([@height - @margins.top - @margins.bottom, 0])
+      .range([@innerHeight(), 0])
 
   # Axes creation
   bottomAxis: ->
@@ -269,7 +296,7 @@ class F.Chart.Plot extends F.Chart.Base
     if @hasAxis('bottom')
       @svg.append("g")
         .attr("class", "x axis bottom")
-        .attr("transform", "translate(0, #{@height-@margins.top-@margins.bottom})")
+        .attr("transform", "translate(0, #{@innerHeight()})")
         .call(@bottomAxis())
     if @hasAxis('top')
       @svg.append("g")
@@ -282,7 +309,7 @@ class F.Chart.Plot extends F.Chart.Base
     if @hasAxis('right')
       @svg.append('g')
         .attr('class', 'y axis right')
-        .attr('transform', "translate(#{@width-@margins.left-@margins.right}, 0)")
+        .attr('transform', "translate(#{@innerWidth()}, 0)")
         .call(@rightAxis())
     @_axesDrawn = true
 

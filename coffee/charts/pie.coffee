@@ -1,5 +1,5 @@
 # Basic Pie Chart  
-class F.Chart.Pie extends F.Chart.Base
+class F.Chart.Pie extends F.Chart.SVG
   defaults =
     margin: 10
     inner: 0
