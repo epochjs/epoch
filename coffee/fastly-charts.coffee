@@ -166,6 +166,33 @@ class F.Chart.Canvas extends F.Chart.Base
     @el.append(@canvas) if @el?
     @ctx = @canvas.get(0).getContext('2d')
 
+  getStyles: (tag, className=null, id=null) ->
+    selector = tag
+    selector += '#' + id if id?
+    selector += '.' + className.replace(/\s/g, '.') if className?
+    return styles if (styles = F.Chart.Canvas.styles[selector])?
+    
+    ref = $(selector, F.Chart.Canvas.styleRef)
+    unless ref.size() > 0
+      ref = $("<#{tag}></#{tag}>")
+      ref.attr('class', className) if className?
+      ref.attr('id', id) if id?
+      F.Chart.Canvas.styleRef.append(ref)
+
+    styles = {}
+    for name in ['fill', 'stroke', 'stroke-width']
+      styles[name] = ref.css(name)
+      
+    F.Chart.Canvas.styles[selector] = styles
+
+
+#
+# The Reference SVG for mapping css styles to canvas elements
+#
+F.Chart.Canvas.styleRef = $('<svg id="_canvas_reference"></svg>')
+F.Chart.Canvas.styles = {}
+$ -> $('body').append(F.Chart.Canvas.styleRef)
+
 
 #
 # TODO Better Documentation

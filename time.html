@@ -15,9 +15,8 @@
   </head>
   <body>
     <h1>Fastly Timeseries Test Page</h1>
-
     <div id="bar" class="chart" style="width: 900px; height: 140px;"></div>
-    
+
     <script>
       $(function() {
         var bar = new F.Time.Bar({
@@ -28,9 +27,7 @@
 
         bar.draw();
 
-        setInterval(function() {
-          bar.push(nextTimeEntry())
-        }, 1000)
+        //setInterval(function() { bar.push(nextTimeEntry()) }, 2000)
       });
     </script>
   </body>

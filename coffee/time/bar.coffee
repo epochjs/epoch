@@ -1,110 +1,93 @@
 #
 # Timeseries bar chart
 #
-class F.Time.Bar extends F.Chart.Base
-  # Time Formatting
-  timeFormat = d3.time.format('%I:%M:%S %p')
-  format = (d) ->
-    date = new Date(d*1000)
-    timeFormat(date)  
-
-  # Default Values
+class F.Time.Bar extends F.Chart.Canvas
   defaults =
-    dimensions:
-      width: 900
-      height: 150
+    fps: 30
     windowSize: 45
-    spacing: 0.03
-    ticks:
-      top: 5
-      bottom: 5
-    tickFormats:
-      top: format
-      bottom: format
-      left: F.Formats.si
-      right: F.Formats.si
 
-  constructor: (@options={}) ->
+  constructor: (@options) ->
     super(@options = F.Util.defaults(@options, defaults))
-    
-    @window = []
-    @labels = (d.label for d in @data)
+    @_transitions = []
+    @animation = setInterval (=> @animate()), 1000/@options.fps
 
-    offsets = []
-    for i in [0...@data.length]
-      for k in [0...@data[i].values.length]
-        entry = @data[i].values[k]
-        unless i
-          entry.y0 = 0
-          offsets.push entry.y
-        else
-          entry.y0 = offsets[k]
-          offsets[k] += entry.y
-
-    console.log @data
-
-
-  x: ->
-    d3.scale.linear()
-      .domain([0, 1])
-      .range([0, @barWidth()])
+  setData: (data) ->
+    super(data)
+    for i in [0...@data[0].values.length]
+      y0 = 0
+      for layer in @data
+        layer.values[i].y0 = y0
+        y0 += layer.values[i].y
 
   y: ->
     max = 0
     for i in [0...@data[0].values.length]
       sum = 0
-      for layer in @data
-        sum += layer.values[i].y
+      for j in [0...@data.length]
+        sum += @data[j].values[i].y
       max = sum if sum > max
+
     d3.scale.linear()
       .domain([0, max])
       .range([@height, 0])
 
-  barWidth: ->
-    (@width / (@options.windowSize))|0
+  w: ->
+    @width / @options.windowSize
 
-  push: (entry, draw=true) ->
-    @data[0].values.push entry
-    len = @data[0].values.length
-    if (len > @options.windowSize)
-      @data[0].values = @data[0].values.slice(len - @options.windowSize)
-    @draw() if draw
+  push: (entry) ->
+    y0 = 0
+    for i, d of entry
+      d.y0 = y0
+      y0 += d.y
+      @data[i].values.push(d)
 
-  draw: ->
-    [x, y] = [@x(), @y()]
-    w = @barWidth()
-    h = @height
+    console.log "PUSH"
 
-    data = @data[0].values
+    @_transitions.push {
+      delta: -(@w() / @options.fps),
+      frame: 0,
+      duration: @options.fps,
+      complete: => layer.values.shift() for layer in @data
+    }
 
-    # 1) Join
-    bars = @svg.selectAll('.bar.with-line')
-      .data(data, (d) -> d.time)
+  animate: ->
+    return unless @_transitions.length
+    t = @_transitions[0]
+    if (++t.frame) == t.duration
+      @_transitions.shift()
+      t.complete()
+    else
+      @draw(t.frame * t.delta)
 
-    # 2) Enter / Create
-    bars.enter().append('rect')
-      .attr('x', (d, i) -> x(i+1) - .5)
-      .attr('width', w)
-      .attr('y', (d) -> h - y(d.y))
-      .attr('height', (d) -> y(d.y))
-      .attr('class', 'category1 bar with-line')
-      .transition()
-        .duration(1000)
-        .attr('x', (d, i) -> x(i) - .5)
+  setStyles: (className) ->
+    styles = @getStyles('rect', 'bar ' + className)
+    @ctx.fillStyle = styles.fill
+    @ctx.strokeStyle = styles.stroke
+    @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-    # 3) Update
-    bars.transition()
-      .duration(1000)
-      .attr("x", (d, i) -> x(i) - .5)
-      .attr('y', (d) -> h - y(d.y))
-      .attr('height', (d) -> y(d.y))
+  drawLayers: (delta) ->
+    [y, w] = [@y(), @w()]
+    @ctx.clearRect(0, 0, @width, @height)
+    for layer in @data
+      @setStyles(layer.className)
+      for i, entry of layer.values
+        [ex, ey, ey0] = [i*w+delta, entry.y, entry.y0]
+        args = [ex, y(ey+ey0), w-1.5, @height-y(ey)+0.5]
+        @ctx.fillRect.apply(@ctx, args)
+        @ctx.strokeRect.apply(@ctx, args)
 
-    # 4) Exit / Remove
-    bars.exit()
-      .transition()
-      .style('opacity', 0)
-      .duration(400)
-      .remove()
+  drawAxes: (delta) ->
+    # TODO Implement me
 
-    
-	
+  drawLabels: (delta) ->
+    # TODO Implement me
+
+  draw: (delta=0) ->
+    @drawLayers(delta)
+    @drawAxes(delta)
+    @drawLabels(delta)
+
+
+
+
+

@@ -215,7 +215,12 @@ nextTime = ->
   (d.getTime()/1000)|0
 
 window.nextTimeEntry = ->
-  { time: nextTime(), y: (Math.random() * 10)|0 + 1 }
+  t = nextTime()
+  [
+    { time: t, y: (Math.random() * 10)|0 + 1 },
+    { time: t, y: (Math.random() * 10)|0 + 1 },
+    { time: t, y: (Math.random() * 10)|0 + 1 }
+  ]
 
 window.TIME_DATA = [
   { label: 'Alpha', values: [] },
