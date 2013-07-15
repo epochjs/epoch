@@ -8,9 +8,10 @@
     <script src="js/fastly-charts.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
     <style type="text/css">
-      svg {
+      svg, canvas {
         /*background: pink;*/
       }
+
     </style>
   </head>
   <body>
@@ -21,13 +22,26 @@
       $(function() {
         var bar = new F.Time.Bar({
           el: '#bar',
-          data: TIME_DATA,
-          axes: ['left', 'bottom', 'right'],
+          data: TIME_DATA
+          //axes: ['left', 'bottom', 'right'],
         });
 
         bar.draw();
 
-        //setInterval(function() { bar.push(nextTimeEntry()) }, 2000)
+        if (false) {
+          var t = 0;
+          setInterval(function() { 
+            if (++t < 10)
+              return;
+            t = 0;
+            bar.push(nextTimeEntry()) 
+          }, 1);
+        }
+        else {
+          // setInterval(function() { bar.push(nextTimeEntry()); }, 1000);
+        }
+
+        
       });
     </script>
   </body>

@@ -67,8 +67,15 @@ F.Util.domain = (layers, key='x') ->
 # Tick Formatters
 #
 
+
+
 F.Formats.regular = (d) -> d
 F.Formats.si = (d) -> F.Util.formatSI(d)
+
+
+d3Seconds = d3.time.format('%I:%M:%S %p')
+F.Formats.seconds = (t) -> d3Seconds(new Date(t*1000))
+
 
 
 #
@@ -155,6 +162,7 @@ class F.Chart.SVG extends F.Chart.Base
     @svg.attr('width', @width).attr('height', @height)
 
 
+
 #
 # Base Class for all Canvas Based Charts 
 #
@@ -170,28 +178,29 @@ class F.Chart.Canvas extends F.Chart.Base
     selector = tag
     selector += '#' + id if id?
     selector += '.' + className.replace(/\s/g, '.') if className?
-    return styles if (styles = F.Chart.Canvas.styles[selector])?
+    return styles if (styles = canvasCSS.styles[selector])?
     
-    ref = $(selector, F.Chart.Canvas.styleRef)
+    ref = $(selector, canvasCSS.ref)
     unless ref.size() > 0
       ref = $("<#{tag}></#{tag}>")
       ref.attr('class', className) if className?
       ref.attr('id', id) if id?
-      F.Chart.Canvas.styleRef.append(ref)
+      canvasCSS.ref.append(ref)
 
     styles = {}
     for name in ['fill', 'stroke', 'stroke-width']
       styles[name] = ref.css(name)
-      
-    F.Chart.Canvas.styles[selector] = styles
 
+    canvasCSS.styles[selector] = styles
 
-#
 # The Reference SVG for mapping css styles to canvas elements
-#
-F.Chart.Canvas.styleRef = $('<svg id="_canvas_reference"></svg>')
-F.Chart.Canvas.styles = {}
-$ -> $('body').append(F.Chart.Canvas.styleRef)
+canvasCSS =
+  ref: $('<svg id="_canvas_reference"></svg>')
+  styles: {}
+  load: -> $('body').append(canvasCSS.ref)
+$ canvasCSS.load
+
+
 
 
 #
