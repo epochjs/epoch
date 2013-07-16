@@ -8,9 +8,12 @@
     <script src="js/fastly-charts.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
     <style type="text/css">
-      svg, canvas {
-        /*background: pink;*/
+      /*svg, canvas {
+        background: pink;
       }
+      #bar {
+        background: lightblue;
+      }*/
 
     </style>
   </head>
@@ -22,8 +25,8 @@
       $(function() {
         var bar = new F.Time.Bar({
           el: '#bar',
-          data: TIME_DATA
-          //axes: ['left', 'bottom', 'right'],
+          data: TIME_DATA,
+          axes: ['left', 'bottom', 'right', 'top']
         });
 
         bar.draw();
@@ -38,7 +41,7 @@
           }, 1);
         }
         else {
-          // setInterval(function() { bar.push(nextTimeEntry()); }, 1000);
+          setInterval(function() { bar.push(nextTimeEntry()); }, 2000);
         }
 
         

@@ -11,11 +11,11 @@ class F.Time.Bar extends F.Chart.Canvas
       bottom: 25
       left: 50
     axes: ['bottom']
-    # ticks:
-    #   top: 14
-    #   bottom: 14
-    #   left: 5
-    #   right: 5
+    ticks:
+      top: 5
+      bottom: 5
+      left: 5
+      right: 5
     tickFormats:
       top: F.Formats.seconds
       bottom: F.Formats.seconds
@@ -38,10 +38,22 @@ class F.Time.Bar extends F.Chart.Canvas
       @margins[pos] = @options.margins[pos]
       @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
 
-    console.log @options
-    console.log @margins
+    @canvas.attr('width', @innerWidth())
+    unless @hasAxis('left')
+      @canvas.attr('margin-left', @margins.left)
 
-    # Animation Parameters
+    # Left and right axes
+    el = d3.select(@el.get(0))
+    if @hasAxis('left')
+      @svgLeft = el.insert('svg', ':first-child')
+        .attr('width', @margins.left)
+        .attr('height', @height)
+    if @hasAxis('right')
+      @svgRight = el.insert('svg')
+        .attr('width', @margins.right)
+        .attr('height', @height)
+    
+    # Animation / Transitions
     @animation =
       interval: null
       active: false
@@ -49,7 +61,7 @@ class F.Time.Bar extends F.Chart.Canvas
       frame: 0,
       duration: @options.fps
 
-    # Ticks (yucks)
+    # Top and Bottom axis ticks (yucks)
     @_ticks = []
     @_tickOffset = 0
 
@@ -57,6 +69,8 @@ class F.Time.Bar extends F.Chart.Canvas
       continue unless i % 5 == 4
       @_ticks.push { time: entry.time }
 
+    console.log @options
+    console.log @margins
     console.log @_ticks
 
 
@@ -71,6 +85,16 @@ class F.Time.Bar extends F.Chart.Canvas
   innerHeight: ->
     @height - (@margins.top + @margins.bottom)
 
+  leftAxis: ->
+    d3.svg.axis().scale(@y()).orient('left')
+      .ticks(@options.ticks.left)
+      .tickFormat(@options.tickFormats.left)
+
+  rightAxis: ->
+    d3.svg.axis().scale(@y()).orient('right')
+      .ticks(@options.ticks.right)
+      .tickFormat(@options.tickFormats.right)
+
   # END "wish we had mixins"
 
   _prepareEntry: (entry) ->
@@ -84,7 +108,7 @@ class F.Time.Bar extends F.Chart.Canvas
     return if @animation.active == true or @_queue.length == 0
     @_shift()
     @animation.active = true
-    @animation.interval = setInterval((=> @animate()), @options.fps)
+    @animation.interval = setInterval((=> @animate()), 1000/@options.fps)
 
   stopTransition: ->
     return unless @inTransition()
@@ -94,7 +118,6 @@ class F.Time.Bar extends F.Chart.Canvas
     layer.values.shift() for layer in @data
     if @_ticks[0].time == time
       tick = @_ticks.shift()
-      console.log tick
       tick.time = @data[0].values[@data[0].values.length-1].time
       @_ticks.push tick
 
@@ -128,6 +151,18 @@ class F.Time.Bar extends F.Chart.Canvas
   _shift: ->
     entry = @_queue.shift()
     layer.values.push(entry[i]) for i, layer of @data
+
+    if @hasAxis('left')
+      @svgLeft.selectAll('.y.axis.left').transition()
+        .duration(500)
+        #.ease('linear')
+        .call(@leftAxis())
+    if @hasAxis('right')
+      @svgRight.selectAll('.y.axis.right').transition()
+        .duration(500)
+        #.ease('linear')
+        .call(@rightAxis())
+
 
   animate: ->
     @stopTransition() if ++@animation.frame == @animation.duration
@@ -166,22 +201,37 @@ class F.Time.Bar extends F.Chart.Canvas
     [y, w] = [@y(), @w()]
 
     @ctx.save()
-    @ctx.translate(@margins.left, @margins.top)
+    @ctx.translate(0, @margins.top)
 
     for layer in @data
       @setStyles(layer.className)
       for i, entry of layer.values
         [ex, ey, ey0] = [i*w+delta, entry.y, entry.y0]
-        args = [ex, y(ey+ey0), w-1.5, @height-y(ey)+0.5-@margins.bottom]
+        args = [ex, y(ey+ey0), w-1.5, @innerHeight()-y(ey)+0.5]
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
 
     @ctx.restore()
 
   drawAxes: (delta) ->
+    # Left and right axes
+    unless @_axesDrawn
+      if @hasAxis('left')
+        @svgLeft.append("g")
+          .attr("class", "y axis left")
+          .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
+          .call(@leftAxis())
+      if @hasAxis('right')
+        @svgRight.append('g')
+          .attr('class', 'y axis right')
+          .attr('transform', "translate(0, #{@margins.top})")
+          .call(@rightAxis())
+      @_axesDrawn = true
+
+    # Top and bottom axes
     @ctx.save()
 
-    @ctx.translate(0, @height - @margins.bottom + @margins.top)
+    @ctx.translate(0, @height - @margins.bottom)# + @margins.top)
 
     # RAEL STYLES YO!!!
     @ctx.strokeStyle = '#000'
@@ -201,7 +251,7 @@ class F.Time.Bar extends F.Chart.Canvas
 
     @ctx.beginPath()
     for i, tick of @_ticks
-      x = w * (i*5 + 0.5 + 4 - @_tickOffset) + @margins.left
+      x = w * (i*5 + 0.5 + 4 - @_tickOffset) #+ @margins.left
       @ctx.moveTo x, 0
       @ctx.lineTo x, 6
     @ctx.stroke()
