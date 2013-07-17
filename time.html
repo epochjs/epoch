@@ -8,13 +8,10 @@
     <script src="js/fastly-charts.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
     <style type="text/css">
-      /*svg, canvas {
+      /*canvas {
         background: pink;
       }
-      #bar {
-        background: lightblue;
-      }*/
-
+*/
     </style>
   </head>
   <body>
@@ -26,7 +23,7 @@
         var bar = new F.Time.Bar({
           el: '#bar',
           data: TIME_DATA,
-          axes: ['left', 'bottom', 'right', 'top']
+          axes: ['left', 'bottom', 'right']
         });
 
         bar.draw();

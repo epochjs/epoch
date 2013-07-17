@@ -38,21 +38,23 @@ class F.Time.Bar extends F.Chart.Canvas
       @margins[pos] = @options.margins[pos]
       @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
 
-    @canvas.attr('width', @innerWidth())
-    unless @hasAxis('left')
-      @canvas.attr('margin-left', @margins.left)
+    # SVG Overlay
+    @svg = d3.select(@el.get(0)).insert('svg', ':first-child')
+      .attr('width', @width)
+      .attr('height', @height)
 
-    # Left and right axes
-    el = d3.select(@el.get(0))
-    if @hasAxis('left')
-      @svgLeft = el.insert('svg', ':first-child')
-        .attr('width', @margins.left)
-        .attr('height', @height)
-    if @hasAxis('right')
-      @svgRight = el.insert('svg')
-        .attr('width', @margins.right)
-        .attr('height', @height)
-    
+    # Position the canvas "under" the SVG element
+    if @el.css('position') != 'absolute' and @el.css('position') != 'relative'
+      @el.css('position', 'relative')
+
+    @canvas.attr('width', @innerWidth())
+    @canvas.attr('height', @innerHeight() + @margins.bottom)
+    @canvas.css
+      position: 'absolute'
+      top: "#{@margins.top}px"
+      left: "#{@margins.left}px"
+      'z-index': '-1'
+      
     # Animation / Transitions
     @animation =
       interval: null
@@ -153,14 +155,14 @@ class F.Time.Bar extends F.Chart.Canvas
     layer.values.push(entry[i]) for i, layer of @data
 
     if @hasAxis('left')
-      @svgLeft.selectAll('.y.axis.left').transition()
+      @svg.selectAll('.y.axis.left').transition()
         .duration(500)
-        #.ease('linear')
+        .ease('linear')
         .call(@leftAxis())
     if @hasAxis('right')
-      @svgRight.selectAll('.y.axis.right').transition()
+      @svg.selectAll('.y.axis.right').transition()
         .duration(500)
-        #.ease('linear')
+        .ease('linear')
         .call(@rightAxis())
 
 
@@ -199,10 +201,6 @@ class F.Time.Bar extends F.Chart.Canvas
 
   drawLayers: (delta) ->
     [y, w] = [@y(), @w()]
-
-    @ctx.save()
-    @ctx.translate(0, @margins.top)
-
     for layer in @data
       @setStyles(layer.className)
       for i, entry of layer.values
@@ -211,37 +209,41 @@ class F.Time.Bar extends F.Chart.Canvas
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
 
-    @ctx.restore()
-
   drawAxes: (delta) ->
-    # Left and right axes
+
     unless @_axesDrawn
       if @hasAxis('left')
-        @svgLeft.append("g")
+        @svg.append("g")
           .attr("class", "y axis left")
           .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
           .call(@leftAxis())
+
       if @hasAxis('right')
-        @svgRight.append('g')
+        console.log @svg
+        @svg.append('g')
           .attr('class', 'y axis right')
-          .attr('transform', "translate(0, #{@margins.top})")
+          .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
           .call(@rightAxis())
+
+
+      if @hasAxis('bottom')
+        @svg.append('g')
+          .attr('class', 'x axis left')
+          .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()})")
+          .append('path')
+            .attr('class', 'domain')
+            .attr('d', "M0,6H#{@innerWidth()+1}")
+            
       @_axesDrawn = true
 
     # Top and bottom axes
     @ctx.save()
 
-    @ctx.translate(0, @height - @margins.bottom)# + @margins.top)
+    @ctx.translate(0, @innerHeight())
 
     # RAEL STYLES YO!!!
     @ctx.strokeStyle = '#000'
     @ctx.lineWidth = 1
-
-    # Axis Line
-    @ctx.beginPath()
-    @ctx.moveTo(0, 0)
-    @ctx.lineTo(@width, 0)
-    @ctx.stroke()
 
     # Ticks
     @ctx.save()
@@ -251,7 +253,7 @@ class F.Time.Bar extends F.Chart.Canvas
 
     @ctx.beginPath()
     for i, tick of @_ticks
-      x = w * (i*5 + 0.5 + 4 - @_tickOffset) #+ @margins.left
+      x = w * (i*5 + 0.5 + 4 - @_tickOffset) 
       @ctx.moveTo x, 0
       @ctx.lineTo x, 6
     @ctx.stroke()
@@ -260,7 +262,7 @@ class F.Time.Bar extends F.Chart.Canvas
     @ctx.textAlign = 'center'
     @ctx.fillStyle = '#000'
     for i, tick of @_ticks
-      x = w * (i*5 + 0.5 + 4 - @_tickOffset) + @margins.left
+      x = w * (i*5 + 0.5 + 4 - @_tickOffset) 
       @ctx.fillText(@options.tickFormats.bottom(tick.time), x, 16)
 
     @ctx.restore()
