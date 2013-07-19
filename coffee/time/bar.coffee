@@ -12,8 +12,8 @@
 # general and as expressive as possible (kudos Bostock, et. al.) but
 # at the expense of time cost optimization.
 #
-# In my testing if we move/exit/enter the using a traditional model
-# core usage will jump by around 8% to 12%, which is unacceptable for
+# In my testing if we move/exit/enter using the traditional model
+# core usage will jump considerably, which is unacceptable for
 # an all day, erry day, kind of dashboard with many concurrent 
 # visualizations.
 #
@@ -25,38 +25,6 @@
 # and readible rendering code that also performs well (hopes... dreams)
 #
 
-
-#
-# Problem:
-#   Processing is "leaking" (from 2%-50% of a core) over the course of an hour
-#   and I have no idea what is causing this.
-#
-# Hypotheses:
-#   - SVG + d3 weirdness 
-#     a) I am not using the library 'as expected' causing something to go wrong
-#     b) Data is never being unbound somehow
-#   - setInterval handling functions are not being properly destroyed
-#     a) this causes massive idles on the tab which are flooding the core
-#   - A bug in Chrome (seems highly unlikely)
-#     a) Highly unlikely
-#     b) Might be caused by SVG canvas interplay
-#
-# Experiement:
-#   *0) Take an initial heap snapshot and start the data feed
-#   *1) Let the process run for 1 hour taking readings at 15 minute intervals
-#   *2) Take a secondary heap snapshot
-#   *3) Create a 5 minute cpu profile
-#   *4) Analyze results for hints as the root cause
-#
-# Result:
-#  10:15 PM - Base 6.4% core usage
-#  10:31 PM - Base 24-30% core usage
-#  10:46 PM - 33-46%
-#  11:02 PM - 55-67%
-#  11:19 PM - 60-68%
-#
-# Most of it seems to be d3
-#
 
 class F.Time.Bar extends F.Chart.Canvas
   defaults =
@@ -70,7 +38,7 @@ class F.Time.Bar extends F.Chart.Canvas
     axes: ['bottom']
     ticks:
       top: 5
-      bottom: 5
+      bottom: 10
       left: 5
       right: 5
     tickFormats:
@@ -119,17 +87,9 @@ class F.Time.Bar extends F.Chart.Canvas
       duration: @options.fps
 
     # Top and Bottom axis ticks
-    [@_ticks, numTicks] = [[], @options.ticks.bottom]
-    for i, entry of @data[0].values
-      continue unless i % numTicks == numTicks-1
-      @_ticks.push @_makeTick(i, entry.time)
-
-    @drawRangeAxes()
-    @drawTimeAxes()
-
-    #console.log @options
-    #console.log @margins
-    #console.log @_ticks
+    @_prepareTimeAxes()
+    @_prepareRangeAxes()
+    
 
   hasAxis: (name) ->
     @options.axes.indexOf(name) > -1
@@ -181,8 +141,7 @@ class F.Time.Bar extends F.Chart.Canvas
       lastTick.opacity = 1
 
     if firstTick.exit
-      @_ticks.shift() 
-      @redrawTimeAxes()
+      @_shiftTick()
 
     # Reset the animation frame modulus
     @animation.frame = 0
@@ -241,16 +200,6 @@ class F.Time.Bar extends F.Chart.Canvas
         .ease('linear')
         .call(@rightAxis())
 
-  # This is called every time we introduce new data (as a result of _shift)
-  # it checks to see if we also need to update the working tick set and
-  # makes the approriate changes for handling tick animation (enter, exit, 
-  # and update in the d3 model).
-  _updateTicks: (newTime) ->
-    return unless @_ticks[0].x - @w() <= 0
-    @_ticks[0].exit = true
-    @_ticks.push @_makeTick(@options.windowSize, newTime, true)
-    @redrawTimeAxes()
-
   animate: ->
     return unless @inTransition()
     @stopTransition() if ++@animation.frame == @animation.duration
@@ -295,8 +244,38 @@ class F.Time.Bar extends F.Chart.Canvas
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
 
-  # Makes a new data representation of a tick
-  _makeTick: (bucket, time, enter) ->
+
+  # This is called every time we introduce new data (as a result of _shift)
+  # it checks to see if we also need to update the working tick set and
+  # makes the approriate changes for handling tick animation (enter, exit, 
+  # and update in the d3 model).
+  _updateTicks: (newTime) ->
+    # Incoming ticks
+    unless (++@_tickTimer) % @options.ticks.bottom
+      @_pushTick(@options.windowSize, newTime, true)
+
+    # Outgoing ticks
+    unless @_ticks[0].x - @w() >= 0
+      @_ticks[0].exit = true
+
+  # Prepares bottom and top time axes for rendering
+  _prepareTimeAxes: ->
+    if @hasAxis('bottom')
+      axis = @bottomAxis = @svg.append('g')
+        .attr('class', 'x axis bottom canvas')
+        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()+@margins.top})")
+      axis.append('path')
+        .attr('class', 'domain')
+        .attr('d', "M0,0H#{@innerWidth()+1}")
+      
+    [@_ticks, tickInterval] = [[], @options.ticks.bottom]
+    @_tickTimer = @options.windowSize % tickInterval
+    for i, entry of @data[0].values
+      continue unless i % tickInterval == tickInterval - 1
+      @_pushTick(i, entry.time)
+
+  # Makes and pushes a new tick into the visualization
+  _pushTick: (bucket, time, enter=false) ->
     tick =
       time: time
       label: @options.tickFormats.bottom(time)
@@ -304,11 +283,8 @@ class F.Time.Bar extends F.Chart.Canvas
       opacity: if enter then 0 else 1
       enter: if enter then true else false
       exit: false
-    return tick
 
-  # Appends an svg graphic representing a time series tick to a given axis
-  _appendTick: (tick, axis) ->
-    g = axis.append('g')
+    g = @bottomAxis.append('g')
       .attr('class', 'tick major')
       .attr('transform', "translate(#{tick.x+1},0)")
       .style('opacity', tick.opacity)
@@ -323,23 +299,15 @@ class F.Time.Bar extends F.Chart.Canvas
 
     tick.el = $(g[0])
 
-  drawTimeAxes: ->
-    if @hasAxis('bottom')
-      axis = @bottomAxis = @svg.append('g')
-        .attr('class', 'x axis bottom canvas')
-        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()+@margins.top})")
-      axis.append('path')
-        .attr('class', 'domain')
-        .attr('d', "M0,0H#{@innerWidth()+1}")
-      @redrawTimeAxes()
+    @_ticks.push tick
+    return tick
 
-  redrawTimeAxes: ->
-    axis = @bottomAxis
-    $('.tick', axis[0]).remove()
-    for tick in @_ticks
-      @_appendTick(tick, axis)
-
-  updateTimeAxes: ->
+  _shiftTick: ->
+    tick = @_ticks.shift()
+    tick.el.remove()
+    tick.el = null
+      
+  _updateTimeAxes: ->
     [dx, dop] = [@animation.delta, 1 / @options.fps]
     for tick in @_ticks
       tick.x += dx
@@ -351,7 +319,7 @@ class F.Time.Bar extends F.Chart.Canvas
         tick.opacity -= dop
         tick.el.css('opacity', tick.opacity)
 
-  drawRangeAxes: ->
+  _prepareRangeAxes: ->
     if @hasAxis('left')
       @svg.append("g")
         .attr("class", "y axis left")
@@ -367,7 +335,7 @@ class F.Time.Bar extends F.Chart.Canvas
   draw: (delta=0) ->
     @ctx.clearRect(0, 0, @width, @height)
     @drawLayers(delta)
-    @updateTimeAxes()
+    @_updateTimeAxes()
 
 
 
