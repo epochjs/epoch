@@ -16,7 +16,7 @@
   </head>
   <body>
     <h1>Fastly Timeseries Test Page</h1>
-    <div id="bar" class="chart" style="width: 900px; height: 140px;"></div>
+    <div id="bar" class="chart" style="width: 900px; height: 300px;"></div>
 
     Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>
 
@@ -25,7 +25,7 @@
         var bar = new F.Time.Bar({
           el: '#bar',
           data: TIME_DATA,
-          axes: ['left', 'bottom', 'right']
+          axes: ['left', 'bottom', 'right', 'top']
         });
 
         bar.draw();

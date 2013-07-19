@@ -1,5 +1,5 @@
 #
-# Timeseries bar chart
+# Timeseries Plot Base Class (used for bar, line, etc.)
 #
 # Some notes about all this crazy:
 #
@@ -22,14 +22,12 @@
 # reducing the load on yonder CPU.
 #
 # I swear to god that one of these days I will learn how to write elegant
-# and readible rendering code that also performs well (hopes... dreams)
+# and readible rendering code that also performs well (hopes... dreams...)
 #
-
-
-class F.Time.Bar extends F.Chart.Canvas
+class F.Time.Plot extends F.Chart.Canvas
   defaults =
     fps: 24
-    windowSize: 45
+    windowSize: 20
     margins:
       top: 25
       right: 50
@@ -37,8 +35,7 @@ class F.Time.Bar extends F.Chart.Canvas
       left: 50
     axes: ['bottom']
     ticks:
-      top: 5
-      bottom: 10
+      time: 15
       left: 5
       right: 5
     tickFormats:
@@ -89,45 +86,95 @@ class F.Time.Bar extends F.Chart.Canvas
     # Top and Bottom axis ticks
     @_prepareTimeAxes()
     @_prepareRangeAxes()
-    
 
-  hasAxis: (name) ->
-    @options.axes.indexOf(name) > -1
+    # Callback used for animation
+    @animationCallback = => @_animate()
 
-  innerWidth: ->
-    @width - (@margins.left + @margins.right)
+  # Provides a way to offset ticks
+  _offsetX: -> 0
 
-  innerHeight: ->
-    @height - (@margins.top + @margins.bottom)
+  # Prepares bottom and top time axes for rendering
+  _prepareTimeAxes: ->
+    if @hasAxis('bottom')
+      axis = @bottomAxis = @svg.append('g')
+        .attr('class', "x axis bottom canvas")
+        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()+@margins.top})")
+      axis.append('path')
+        .attr('class', 'domain')
+        .attr('d', "M0,0H#{@innerWidth()+1}")
 
-  leftAxis: ->
+    if @hasAxis('top')
+      axis = @topAxis = @svg.append('g')
+        .attr('class', "x axis top canvas")
+        .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
+      axis.append('path')
+        .attr('class', 'domain')
+        .attr('d', "M0,0H#{@innerWidth()+1}")
+
+    tickInterval = @options.ticks.time
+    @_ticks = []
+    @_tickTimer = @options.windowSize % tickInterval
+
+    i = tickInterval
+    while i < @options.windowSize
+      @_pushTick(i, @data[0].values[i].time)
+      i += tickInterval  
+
+  # Builds and prepares the range axes (left and right)
+  _prepareRangeAxes: ->
+    if @hasAxis('left')
+      @svg.append("g")
+        .attr("class", "y axis left")
+        .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
+        .call(@_leftAxis())
+
+    if @hasAxis('right')
+      @svg.append('g')
+        .attr('class', 'y axis right')
+        .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
+        .call(@_rightAxis())
+
+  # @return The d3 left axis
+  _leftAxis: ->
     d3.svg.axis().scale(@y()).orient('left')
       .ticks(@options.ticks.left)
       .tickFormat(@options.tickFormats.left)
 
-  rightAxis: ->
+  # @return The d3 right axis
+  _rightAxis: ->
     d3.svg.axis().scale(@y()).orient('right')
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
 
-  _prepareEntry: (entry) ->
-    y0 = 0
-    for i, d of entry
-      d.y0 = y0
-      y0 += d.y
-    return entry
+  # @param name Name of the axis
+  # @return true if the axis was set in the options, false otherwise.
+  hasAxis: (name) ->
+    @options.axes.indexOf(name) > -1
 
+  # @return The width of the canvas minus the axes margins
+  innerWidth: ->
+    @width - (@margins.left + @margins.right)
+
+  # @return The height of the canvas minus the axes margins
+  innerHeight: ->
+    @height - (@margins.top + @margins.bottom)
+
+  
+  # Abstract method for performing any preprocessing before queuing new entries
+  # @paran entry The entry to prepare
+  _prepareEntry: (entry) ->
+    
   # If there are entries in the incoming data queue this will shift them
   # into the graph's working set and begin animating the scroll transition.
-  startTransition: ->
+  _startTransition: ->
     return if @animation.active == true or @_queue.length == 0
     @_shift()
     @animation.active = true
-    @animation.interval = setInterval((=> @animate()), 1000/@options.fps)
+    @animation.interval = setInterval(@animationCallback, 1000/@options.fps)
 
   # Stops animating and clears the animation interval given there is no more
   # incoming data to process. Also finalizes tick entering and exiting.
-  stopTransition: ->
+  _stopTransition: ->
     return unless @inTransition()
     
     # Shift data off the end
@@ -146,6 +193,7 @@ class F.Time.Bar extends F.Chart.Canvas
     # Reset the animation frame modulus
     @animation.frame = 0
 
+    # Clear the transition interval unless another entry is already queued
     if @_queue.length > 0
       @_shift()
     else
@@ -161,7 +209,7 @@ class F.Time.Bar extends F.Chart.Canvas
   # added to the graph but instead added to a fixed size queue so we can
   # get around some browser weirdness (and memory bloat). Finally if we're
   # good to go it will will begin the process of scrolling (or transitioning)
-  # the graph.
+  # the graph (see _shift below).
   push: (entry) ->
     # Handle entry queue maximum size
     if @_queue.length > @_queueSize
@@ -172,7 +220,7 @@ class F.Time.Bar extends F.Chart.Canvas
     @_queue.push @_prepareEntry(entry)
 
     # Begin the transition unless we are already doing so
-    @startTransition() unless @inTransition()
+    @_startTransition() unless @inTransition()
 
 
   # Shift elements off the incoming data queue (see the implementation of 
@@ -192,27 +240,22 @@ class F.Time.Bar extends F.Chart.Canvas
       @svg.selectAll('.y.axis.left').transition()
         .duration(500)
         .ease('linear')
-        .call(@leftAxis())
+        .call(@_leftAxis())
 
     if @hasAxis('right')
       @svg.selectAll('.y.axis.right').transition()
         .duration(500)
         .ease('linear')
-        .call(@rightAxis())
+        .call(@_rightAxis())
 
-  animate: ->
+  # Performs the animation for transitioning elements into the visualization
+  _animate: ->
     return unless @inTransition()
-    @stopTransition() if ++@animation.frame == @animation.duration
+    @_stopTransition() if ++@animation.frame == @animation.duration
     @draw(@animation.frame * @animation.delta)
+    @_updateTimeAxes()
 
-  setData: (data) ->
-    super(data)
-    for i in [0...@data[0].values.length]
-      y0 = 0
-      for layer in @data
-        layer.values[i].y0 = y0
-        y0 += layer.values[i].y
-
+  # @return The y scale for the graph
   y: ->
     max = 0
     for i in [0...@data[0].values.length]
@@ -225,16 +268,145 @@ class F.Time.Bar extends F.Chart.Canvas
       .domain([0, max])
       .range([@innerHeight(), 0])
 
+  # @return The width of a single section of the graph pretaining to a data point
   w: ->
     @innerWidth() / @options.windowSize
 
+  # This is called every time we introduce new data (as a result of _shift)
+  # it checks to see if we also need to update the working tick set and
+  # makes the approriate changes for handling tick animation (enter, exit, 
+  # and update in the d3 model).
+  # 
+  # @param newTime Current newest timestamp in the data
+  _updateTicks: (newTime) ->
+    # Incoming ticks
+    unless (++@_tickTimer) % @options.ticks.time
+      @_pushTick(@options.windowSize, newTime, true)
+
+    # Outgoing ticks
+    unless @_ticks[0].x - @w() >= 0
+      @_ticks[0].exit = true
+
+  # Makes and pushes a new tick into the visualization
+  # @param bucket Index in the data window where the tick should initially be position
+  # @param time The unix timestamp associated with the tick
+  # @param enter Whether or not the tick should be considered as "newly entering"
+  #        Used primarily for performing the tick opacity tween.
+  _pushTick: (bucket, time, enter=false) ->
+    return unless @hasAxis('top') or @hasAxis('bottom')
+    tick =
+      time: time
+      label: @options.tickFormats.bottom(time)
+      x: bucket*@w() + @_offsetX()
+      opacity: if enter then 0 else 1
+      enter: if enter then true else false
+      exit: false
+
+    if @hasAxis('bottom')
+      g = @bottomAxis.append('g')
+        .attr('class', 'tick major')
+        .attr('transform', "translate(#{tick.x+1},0)")
+        .style('opacity', tick.opacity)
+
+      g.append('line')
+        .attr('y2', 6)
+
+      g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', 19)
+        .text(tick.label)
+
+      tick.bottomEl = $(g[0])
+
+    if @hasAxis('top')
+      g = @topAxis.append('g')
+        .attr('class', 'tick major')
+        .attr('transform', "translate(#{tick.x+1},0)")
+        .style('opacity', tick.opacity)
+
+      g.append('line')
+        .attr('y2', -6)
+
+      g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', -10)
+        .text(tick.label)
+
+      tick.topEl = $(g[0])      
+
+    @_ticks.push tick
+    return tick
+
+  # Shifts a tick that is no longer needed out of the visualization.
+  _shiftTick: ->
+    tick = @_ticks.shift()
+    for k in ['topEl', 'bottomEl']
+      tick[k].remove()
+      delete tick[k]
+  
+  # This performs animations for the time axes (top and bottom)
+  _updateTimeAxes: ->
+    return unless @hasAxis('top') or @hasAxis('bottom')
+    [dx, dop] = [@animation.delta, 1 / @options.fps]
+
+    for tick in @_ticks
+      tick.x += dx
+      if @hasAxis('bottom')
+        tick.bottomEl.attr('transform', "translate(#{tick.x+1},0)")
+      if @hasAxis('top')
+        tick.topEl.attr('transform', "translate(#{tick.x+1},0)")
+
+      if tick.enter
+        tick.opacity += dop
+      else if tick.exit
+        tick.opacity -= dop
+      
+      if tick.enter or tick.exit
+        tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
+        tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
+  
+  # Abstract method to be overriden in subclasses for performing specific graph drawing
+  # @param frame Animation frame (zero unless the graph is scrolling)
+  draw: (frame=0)->
+
+
+
+#
+# Real-time Bar Chart
+#
+class F.Time.Bar extends F.Time.Plot
+  # Defines an offset for ticks and markers
+  _offsetX: ->
+   0.5*@w()
+
+  # Stacks incoming entries into the visualization
+  _prepareEntry: (entry) ->
+    y0 = 0
+    for i, d of entry
+      d.y0 = y0
+      y0 += d.y
+    return entry
+
+  # Stacks the entries after directly setting the data
+  setData: (data) ->
+    super(data)
+    for i in [0...@data[0].values.length]
+      y0 = 0
+      for layer in @data
+        layer.values[i].y0 = y0
+        y0 += layer.values[i].y
+
+  # Handles the setting of styles on the graphics context for
+  # our particular type of graph (the stacked bar char ;)
   setStyles: (className) ->
     styles = @getStyles('rect', 'bar ' + className)
     @ctx.fillStyle = styles.fill
     @ctx.strokeStyle = styles.stroke
     @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-  drawLayers: (delta) ->
+  # Draws the stacked bars in the visualization canvas
+  draw: (delta=0) ->
+    @ctx.clearRect(0, 0, @innerWidth(), @innerHeight())
     [y, w] = [@y(), @w()]
     for layer in @data
       @setStyles(layer.className)
@@ -245,97 +417,10 @@ class F.Time.Bar extends F.Chart.Canvas
         @ctx.strokeRect.apply(@ctx, args)
 
 
-  # This is called every time we introduce new data (as a result of _shift)
-  # it checks to see if we also need to update the working tick set and
-  # makes the approriate changes for handling tick animation (enter, exit, 
-  # and update in the d3 model).
-  _updateTicks: (newTime) ->
-    # Incoming ticks
-    unless (++@_tickTimer) % @options.ticks.bottom
-      @_pushTick(@options.windowSize, newTime, true)
 
-    # Outgoing ticks
-    unless @_ticks[0].x - @w() >= 0
-      @_ticks[0].exit = true
 
-  # Prepares bottom and top time axes for rendering
-  _prepareTimeAxes: ->
-    if @hasAxis('bottom')
-      axis = @bottomAxis = @svg.append('g')
-        .attr('class', 'x axis bottom canvas')
-        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()+@margins.top})")
-      axis.append('path')
-        .attr('class', 'domain')
-        .attr('d', "M0,0H#{@innerWidth()+1}")
-      
-    [@_ticks, tickInterval] = [[], @options.ticks.bottom]
-    @_tickTimer = @options.windowSize % tickInterval
-    for i, entry of @data[0].values
-      continue unless i % tickInterval == tickInterval - 1
-      @_pushTick(i, entry.time)
 
-  # Makes and pushes a new tick into the visualization
-  _pushTick: (bucket, time, enter=false) ->
-    tick =
-      time: time
-      label: @options.tickFormats.bottom(time)
-      x: bucket*@w() + 0.5*@w()
-      opacity: if enter then 0 else 1
-      enter: if enter then true else false
-      exit: false
-
-    g = @bottomAxis.append('g')
-      .attr('class', 'tick major')
-      .attr('transform', "translate(#{tick.x+1},0)")
-      .style('opacity', tick.opacity)
-
-    g.append('line')
-      .attr('y2', 6)
-
-    g.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', 19)
-      .text(tick.label)
-
-    tick.el = $(g[0])
-
-    @_ticks.push tick
-    return tick
-
-  _shiftTick: ->
-    tick = @_ticks.shift()
-    tick.el.remove()
-    tick.el = null
-      
-  _updateTimeAxes: ->
-    [dx, dop] = [@animation.delta, 1 / @options.fps]
-    for tick in @_ticks
-      tick.x += dx
-      tick.el.attr('transform', "translate(#{tick.x+1},0)")
-      if tick.enter
-        tick.opacity += dop
-        tick.el.css('opacity', tick.opacity)
-      else if tick.exit
-        tick.opacity -= dop
-        tick.el.css('opacity', tick.opacity)
-
-  _prepareRangeAxes: ->
-    if @hasAxis('left')
-      @svg.append("g")
-        .attr("class", "y axis left")
-        .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
-        .call(@leftAxis())
-
-    if @hasAxis('right')
-      @svg.append('g')
-        .attr('class', 'y axis right')
-        .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
-        .call(@rightAxis())
-     
-  draw: (delta=0) ->
-    @ctx.clearRect(0, 0, @width, @height)
-    @drawLayers(delta)
-    @_updateTimeAxes()
+  
 
 
 
