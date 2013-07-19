@@ -18,6 +18,8 @@
     <h1>Fastly Timeseries Test Page</h1>
     <div id="bar" class="chart" style="width: 900px; height: 140px;"></div>
 
+    Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>
+
     <script>
       $(function() {
         var bar = new F.Time.Bar({
@@ -28,18 +30,20 @@
 
         bar.draw();
 
-        if (false) {
-          var t = 0;
-          setInterval(function() { 
-            if (++t < 10)
-              return;
-            t = 0;
-            bar.push(nextTimeEntry()) 
-          }, 1);
-        }
-        else {
-          setInterval(function() { bar.push(nextTimeEntry()); }, 2000);
-        }
+        var dataInterval = null;
+        $('#begin').click(function(e) {
+          target = $(e.target)
+
+          if (target.html().toLowerCase() == 'play') {
+            dataInterval = setInterval(function() { bar.push(nextTimeEntry()); }, parseInt($('[name=interval]').val()));
+            target.html('Pause')
+          }
+          else {
+            clearInterval(dataInterval)
+            target.html('Play')
+          }
+        });
+          
 
         
       });

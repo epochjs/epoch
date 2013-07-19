@@ -16,6 +16,10 @@
   shape-rendering: crispEdges;
 }
 
+.axis.canvas .tick line {
+  shape-rendering: geometricPrecision;
+}
+
 .axis .tick text {
   font-size: 9pt;
 }
@@ -52,6 +56,9 @@ svg#_canvas_reference {
   top: -1000px;
   left: -1000px;
 }
+
+
+
 
 
 // Categorical Colors
