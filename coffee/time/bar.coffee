@@ -162,7 +162,7 @@ class F.Time.Plot extends F.Chart.Canvas
   
   # Abstract method for performing any preprocessing before queuing new entries
   # @paran entry The entry to prepare
-  _prepareEntry: (entry) ->
+  _prepareEntry: (entry) -> entry
     
   # If there are entries in the incoming data queue this will shift them
   # into the graph's working set and begin animating the scroll transition.
@@ -257,15 +257,8 @@ class F.Time.Plot extends F.Chart.Canvas
 
   # @return The y scale for the graph
   y: ->
-    max = 0
-    for i in [0...@data[0].values.length]
-      sum = 0
-      for j in [0...@data.length]
-        sum += @data[j].values[i].y
-      max = sum if sum > max
-
     d3.scale.linear()
-      .domain([0, max])
+      .domain(@extent((d) -> d.y))
       .range([@innerHeight(), 0])
 
   # @return The width of a single section of the graph pretaining to a data point
@@ -379,6 +372,19 @@ class F.Time.Bar extends F.Time.Plot
   _offsetX: ->
    0.5*@w()
 
+  # Make sure to use sum over the timestamp for the max
+  y: ->
+    max = 0
+    for i in [0...@data[0].values.length]
+      sum = 0
+      for j in [0...@data.length]
+        sum += @data[j].values[i].y
+      max = sum if sum > max
+
+    d3.scale.linear()
+      .domain([0, max])
+      .range([@innerHeight(), 0])
+
   # Stacks incoming entries into the visualization
   _prepareEntry: (entry) ->
     y0 = 0
@@ -416,9 +422,31 @@ class F.Time.Bar extends F.Time.Plot
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
 
+#
+# Real-time Line Chart
+#
+class F.Time.Line extends F.Time.Plot
+  # setStyles: (className) ->
+  #   styles = @getStyles('g', className + ' path')
+  #   console.log styles
+  #   @ctx.fillStyle = styles.fill
+  #   @ctx.strokeStyle = styles.stroke
+  #   @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-
-
+  # Draws the lines, yo
+  draw: (delta=0) ->
+    @ctx.clearRect(0, 0, @innerWidth(), @innerHeight())
+    [y, w] = [@y(), @w()]
+    for layer in @data
+      #@setStyles(layer.className)
+      @ctx.beginPath()
+      for i, entry of layer.values
+        args = [i*w+delta, y(entry.y)]
+        if i == 0
+          @ctx.moveTo.apply @ctx, args
+        else
+          @ctx.lineTo.apply @ctx, args
+      @ctx.stroke()
 
   
 

@@ -228,8 +228,15 @@ window.TIME_DATA = [
   { label: 'Gamma', values: [] }
 ]
 
+window.TIME_DATA_2 = [
+  { label: 'Alpha', values: [] },
+  { label: 'Beta', values: [] }
+]
+
 for i in [0...45]
   time = nextTime()
   for layer in TIME_DATA
+    layer.values.push { time: time, y: (Math.random() * 10)|0 + 1 }
+  for layer in TIME_DATA_2
     layer.values.push { time: time, y: (Math.random() * 10)|0 + 1 }
 

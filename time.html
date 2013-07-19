@@ -18,6 +18,8 @@
     <h1>Fastly Timeseries Test Page</h1>
     <div id="bar" class="chart" style="width: 900px; height: 300px;"></div>
 
+    <div id="line" class="chart" style="width: 900px; height: 150px;"></div>
+
     Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>
 
     <script>
@@ -27,15 +29,28 @@
           data: TIME_DATA,
           axes: ['left', 'bottom', 'right', 'top']
         });
-
         bar.draw();
 
+        var line = new F.Time.Line({
+          el: '#line',
+          data: TIME_DATA_2,
+          axes: ['left', 'right', 'bottom']
+        });
+        line.draw()
+
+
+        function pushData() {
+          var entry = nextTimeEntry();
+          bar.push(entry);
+          line.push(entry);
+        }
+
         var dataInterval = null;
+
         $('#begin').click(function(e) {
           target = $(e.target)
-
           if (target.html().toLowerCase() == 'play') {
-            dataInterval = setInterval(function() { bar.push(nextTimeEntry()); }, parseInt($('[name=interval]').val()));
+            dataInterval = setInterval(pushData, parseInt($('[name=interval]').val()));
             target.html('Pause')
           }
           else {
