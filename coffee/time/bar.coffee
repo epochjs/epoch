@@ -27,7 +27,7 @@
 class F.Time.Plot extends F.Chart.Canvas
   defaults =
     fps: 24
-    windowSize: 20
+    windowSize: 40
     margins:
       top: 25
       right: 50
@@ -183,11 +183,11 @@ class F.Time.Plot extends F.Chart.Canvas
     # Finalize tick transitions
     [firstTick, lastTick] = [@_ticks[0], @_ticks[@_ticks.length-1]]
 
-    if lastTick.enter
+    if lastTick? and lastTick.enter
       lastTick.enter = false
       lastTick.opacity = 1
 
-    if firstTick.exit
+    if firstTick? and firstTick.exit
       @_shiftTick()
 
     # Reset the animation frame modulus
@@ -272,6 +272,7 @@ class F.Time.Plot extends F.Chart.Canvas
   # 
   # @param newTime Current newest timestamp in the data
   _updateTicks: (newTime) ->
+    return unless @hasAxis('top') or @hasAxis('bottom')
     # Incoming ticks
     unless (++@_tickTimer) % @options.ticks.time
       @_pushTick(@options.windowSize, newTime, true)
@@ -332,10 +333,10 @@ class F.Time.Plot extends F.Chart.Canvas
 
   # Shifts a tick that is no longer needed out of the visualization.
   _shiftTick: ->
+    return unless @_ticks.length > 0
     tick = @_ticks.shift()
-    for k in ['topEl', 'bottomEl']
-      tick[k].remove()
-      delete tick[k]
+    tick.topEl.remove() if tick.topEl?
+    tick.bottomEl.remove() if tick.bottomEl?
   
   # This performs animations for the time axes (top and bottom)
   _updateTimeAxes: ->
@@ -405,14 +406,15 @@ class F.Time.Bar extends F.Time.Plot
   # Handles the setting of styles on the graphics context for
   # our particular type of graph (the stacked bar char ;)
   setStyles: (className) ->
-    styles = @getStyles('rect', 'bar ' + className)
+    styles = @getStyles "rect.bar.#{className.replace(/\s/g,'.')}"
     @ctx.fillStyle = styles.fill
     @ctx.strokeStyle = styles.stroke
-    @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+    if styles['stroke-width']?
+      @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
   # Draws the stacked bars in the visualization canvas
   draw: (delta=0) ->
-    @ctx.clearRect(0, 0, @innerWidth(), @innerHeight())
+    @ctx.clearRect(0, 0, @width, @height)
     [y, w] = [@y(), @w()]
     for layer in @data
       @setStyles(layer.className)
@@ -426,19 +428,18 @@ class F.Time.Bar extends F.Time.Plot
 # Real-time Line Chart
 #
 class F.Time.Line extends F.Time.Plot
-  # setStyles: (className) ->
-  #   styles = @getStyles('g', className + ' path')
-  #   console.log styles
-  #   @ctx.fillStyle = styles.fill
-  #   @ctx.strokeStyle = styles.stroke
-  #   @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+  setStyles: (className) ->
+    styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.line"
+    @ctx.fillStyle = styles.fill
+    @ctx.strokeStyle = styles.stroke
+    @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
   # Draws the lines, yo
   draw: (delta=0) ->
-    @ctx.clearRect(0, 0, @innerWidth(), @innerHeight())
+    @ctx.clearRect(0, 0, @width, @height)
     [y, w] = [@y(), @w()]
     for layer in @data
-      #@setStyles(layer.className)
+      @setStyles(layer.className)
       @ctx.beginPath()
       for i, entry of layer.values
         args = [i*w+delta, y(entry.y)]

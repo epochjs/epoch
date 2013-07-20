@@ -217,9 +217,9 @@ nextTime = ->
 window.nextTimeEntry = ->
   t = nextTime()
   [
-    { time: t, y: (Math.random() * 10)|0 + 1 },
-    { time: t, y: (Math.random() * 10)|0 + 1 },
-    { time: t, y: (Math.random() * 10)|0 + 1 }
+    { time: t, y: (Math.random() * 1000) + 1 },
+    { time: t, y: (Math.random() * 1000) + 1 },
+    { time: t, y: (Math.random() * 1000) + 1 }
   ]
 
 window.TIME_DATA = [
@@ -236,7 +236,7 @@ window.TIME_DATA_2 = [
 for i in [0...45]
   time = nextTime()
   for layer in TIME_DATA
-    layer.values.push { time: time, y: (Math.random() * 10)|0 + 1 }
+    layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
   for layer in TIME_DATA_2
-    layer.values.push { time: time, y: (Math.random() * 10)|0 + 1 }
+    layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
 

@@ -174,24 +174,27 @@ class F.Chart.Canvas extends F.Chart.Base
     @el.append(@canvas) if @el?
     @ctx = @canvas.get(0).getContext('2d')
 
-  getStyles: (tag, className=null, id=null) ->
-    selector = tag
-    selector += '#' + id if id?
-    selector += '.' + className.replace(/\s/g, '.') if className?
+  getStyles: (selector) ->
     return styles if (styles = canvasCSS.styles[selector])?
-    
     ref = $(selector, canvasCSS.ref)
-    unless ref.size() > 0
-      ref = $("<#{tag}></#{tag}>")
-      ref.attr('class', className) if className?
-      ref.attr('id', id) if id?
-      canvasCSS.ref.append(ref)
 
+    # Construct & insert a reference element if none exists
+    unless ref.size() > 0
+      levels = selector.split(/\s+/)
+      parent = root = put(levels.shift())
+      while levels.length
+        el = put(levels.shift())
+        parent.appendChild el
+        parent = el
+      canvasCSS.ref.append(root)
+      ref = $(selector, canvasCSS.ref)
+
+    # Fetch and stash yonder styles from the reference
     styles = {}
     for name in ['fill', 'stroke', 'stroke-width']
       styles[name] = ref.css(name)
-
     canvasCSS.styles[selector] = styles
+
 
 # The Reference SVG for mapping css styles to canvas elements
 canvasCSS =

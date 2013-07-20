@@ -4,6 +4,7 @@
     <title>fastly-d3 test page</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="js/d3.min.js"></script>
+    <script src="js/put.js"></script>
     <script src="js/fastly-charts/test_data.js"></script>
     <script src="js/fastly-charts.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
@@ -12,13 +13,19 @@
         background: pink;
       }
 */
+
+      #line canvas {
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+      }
     </style>
   </head>
   <body>
     <h1>Fastly Timeseries Test Page</h1>
-    <div id="bar" class="chart" style="width: 900px; height: 300px;"></div>
+    <div id="bar" class="chart" style="width: 900px; height: 200px;"></div>
 
-    <div id="line" class="chart" style="width: 900px; height: 150px;"></div>
+    <div id="line" class="chart" style="width: 812px; height: 40px;margin-left: 44px;"></div>
 
     Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>
 
@@ -34,7 +41,10 @@
         var line = new F.Time.Line({
           el: '#line',
           data: TIME_DATA_2,
-          axes: ['left', 'right', 'bottom']
+          axes: [],
+          ticks: {
+            time: 5
+          }
         });
         line.draw()
 
