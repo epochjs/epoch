@@ -2,8 +2,9 @@ fs = require 'fs'
 {exec} = require 'child_process'
 
 package_order = [
-	'fastly-charts.js',
+	'epoch.js',
 	'charts/*.js',
+	'time.js',
 	'time/*.js'
 ]
 
