@@ -476,8 +476,11 @@ class F.Time.Bar extends F.Time.Stack
 # Real-time area chart
 #
 class F.Time.Area extends F.Time.Stack
-  setStyles: (className) ->
-    styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.area"
+  setStyles: (layer) ->
+    if layer.className?
+      styles = @getStyles "g.#{layer.className.replace(/\s/g,'.')} path.area"
+    else
+      styles = @getStyles "g path.area"
     @ctx.fillStyle = styles.fill
     if styles.stroke?
       @ctx.strokeStyle = styles.stroke
@@ -488,9 +491,10 @@ class F.Time.Area extends F.Time.Stack
     @clear()
     [y, w] = [@y(), @w()]
 
+    # Draw the areas
     for i in [@data.length-1..0]
       layer = @data[i]
-      @setStyles(layer.className)
+      @setStyles layer
       @ctx.beginPath()
       for i, entry of layer.values
         args = [i*w+delta, y(entry.y + entry.y0)]
@@ -503,5 +507,10 @@ class F.Time.Area extends F.Time.Stack
       @ctx.closePath()
       @ctx.fill()
 
+    # TODO Add strokes
+
+# Add the following visualizations:
+# [ ] Gauge
+# [ ] Heatmap
 
 
