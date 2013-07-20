@@ -27,7 +27,9 @@
 class F.Time.Plot extends F.Chart.Canvas
   defaults =
     fps: 24
+    historySize: 120
     windowSize: 40
+    queueSize: 10
     margins:
       top: 25
       right: 50
@@ -49,7 +51,7 @@ class F.Time.Plot extends F.Chart.Canvas
     super(@options = F.Util.defaults(@options, defaults))
 
     # Queue entering data to get around memory bloat and "non-active" tab issues
-    @_queueSize = 10
+    @_queueSize = @options.queueSize
     @_queue = []
 
     # Margins
@@ -90,7 +92,20 @@ class F.Time.Plot extends F.Chart.Canvas
     # Callback used for animation
     @animationCallback = => @_animate()
 
-  # Provides a way to offset ticks
+  # Creates a copy of the given data fixed to the window size
+  setData: (data) ->
+    @data = []
+    for i, layer of data
+      copy = F.Util.copy(layer)
+      start = Math.max(0, layer.values.length - @options.historySize)
+      copy.values = layer.values.slice(start)
+      classes = ['layer']
+      classes.push "category#{(i|0)+1}"
+      classes.push(F.Util.dasherize layer.label) if layer.label?
+      copy.className = classes.join(' ')
+      @data.push copy
+
+  # Provides a way for subclasses to easily offset ticks (bar charts are centered, etc.)
   _offsetX: -> 0
 
   # Prepares bottom and top time axes for rendering
@@ -273,6 +288,7 @@ class F.Time.Plot extends F.Chart.Canvas
   # @param newTime Current newest timestamp in the data
   _updateTicks: (newTime) ->
     return unless @hasAxis('top') or @hasAxis('bottom')
+
     # Incoming ticks
     unless (++@_tickTimer) % @options.ticks.time
       @_pushTick(@options.windowSize, newTime, true)
@@ -381,20 +397,11 @@ class F.Time.Bar extends F.Time.Plot
       for j in [0...@data.length]
         sum += @data[j].values[i].y
       max = sum if sum > max
-
     d3.scale.linear()
       .domain([0, max])
       .range([@innerHeight(), 0])
 
-  # Stacks incoming entries into the visualization
-  _prepareEntry: (entry) ->
-    y0 = 0
-    for i, d of entry
-      d.y0 = y0
-      y0 += d.y
-    return entry
-
-  # Stacks the entries after directly setting the data
+  # Stacks all data on set
   setData: (data) ->
     super(data)
     for i in [0...@data[0].values.length]
@@ -402,6 +409,14 @@ class F.Time.Bar extends F.Time.Plot
       for layer in @data
         layer.values[i].y0 = y0
         y0 += layer.values[i].y
+
+  # Stacks incoming entries into the visualization
+  _prepareEntry: (entry) ->
+    y0 = 0
+    for d in entry
+      d.y0 = y0
+      y0 += d.y
+    return entry
 
   # Handles the setting of styles on the graphics context for
   # our particular type of graph (the stacked bar char ;)
@@ -450,7 +465,6 @@ class F.Time.Line extends F.Time.Plot
       @ctx.stroke()
 
   
-
 
 
 

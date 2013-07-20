@@ -76,19 +76,41 @@ F.Formats.si = (d) -> F.Util.formatSI(d)
 d3Seconds = d3.time.format('%I:%M:%S %p')
 F.Formats.seconds = (t) -> d3Seconds(new Date(t*1000))
 
+#
+# Eventing
+# 
+class F.Events
+  constructor: ->
+    @_events = {}
+
+  on: (name, callback) ->
+    return unless callback?
+    @_events[name] ?= []
+    @_events[name].push callback
+
+  off: (name, callback) ->
+    return unless F.isObject(@_events[name])
+    return delete(@_events[name]) unless callback?
+    while (i = @_events[name].indexOf(callback)) >= 0
+      @_events[name].splice(i, 1)
+
+  trigger: (name) ->
+    return unless F.isObject(@_events[name])
+    args = (arguments[i] for i in [1...arguments.length])
+    fn.apply(@, args) for fn in @_events[name]
+
 
 
 #
-# Common methods, eventing, etc. for both SVG and Canvas charts.
+# Common functionality for both SVG and Canvas charts.
 #
-class F.Chart.Base
+class F.Chart.Base extends F.Events
   defaults =
     dimensions:
       width: 320
       height: 240
 
   constructor: (@options) ->
-    @_events = {}
     @setData(@options.data or [])
 
     @el = $(@options.el) if @options.el?
@@ -124,22 +146,6 @@ class F.Chart.Base
       d3.min(@data, (layer) -> d3.min(layer.values, cmp)),
       d3.max(@data, (layer) -> d3.max(layer.values, cmp))
     ]
-
-  on: (name, callback) ->
-    return unless callback?
-    @_events[name] ?= []
-    @_events[name].push callback
-
-  off: (name, callback) ->
-    return unless F.isObject(@_events[name])
-    return delete(@_events[name]) unless callback?
-    while (i = @_events[name].indexOf(callback)) >= 0
-      @_events[name].splice(i, 1)
-
-  trigger: (name) ->
-    return unless F.isObject(@_events[name])
-    args = (arguments[i] for i in [1...arguments.length])
-    fn.apply(@, args) for fn in @_events[name]
       
 
 #
