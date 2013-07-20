@@ -14,18 +14,20 @@
       }
 */
 
-      #line canvas {
-        border-left: 1px solid black;
-        border-right: 1px solid black;
-        border-bottom: 1px solid black;
-      }
+      /*.sparklines .line {
+        fill: none;
+        stroke-width: 1px;
+      }*/
+
+
     </style>
   </head>
   <body>
     <h1>Fastly Timeseries Test Page</h1>
+    <div id="line" class="chart sparklines" style="width: 812px; height: 40px;margin-left: 44px;"></div>
     <div id="bar" class="chart" style="width: 900px; height: 200px;"></div>
-
-    <div id="line" class="chart" style="width: 812px; height: 40px;margin-left: 44px;"></div>
+    <div id="area" class="chart" style="width: 900px; height: 200px;"></div>
+    
 
     Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>
 
@@ -39,20 +41,21 @@
         bar.draw();
 
         var line = new F.Time.Line({
-          el: '#line',
-          data: TIME_DATA,
-          axes: [],
-          ticks: {
-            time: 5
-          }
+          el: '#line', data: TIME_DATA, axes: []
         });
-        line.draw()
+        line.draw();
+
+        var area = new F.Time.Area({
+          el: '#area', data: TIME_DATA, axes: ['left', 'bottom', 'right']
+        });
+        area.draw();
 
 
         function pushData() {
           var entry = nextTimeEntry();
           bar.push(entry);
           line.push(entry);
+          area.push(entry);
         }
 
         var dataInterval = null;

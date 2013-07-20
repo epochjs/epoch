@@ -375,41 +375,19 @@ class F.Time.Plot extends F.Chart.Canvas
         tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
   
+  # Clears the render canvas
+  clear: ->
+    @ctx.clearRect(0, 0, @width, @height)
+
   # Abstract method to be overriden in subclasses for performing specific graph drawing
   # @param frame Animation frame (zero unless the graph is scrolling)
   draw: (frame=0)->
 
 
-
 #
-# Real-time Bar Chart
+# Abstract class that is useful for making "stacked" plots
 #
-class F.Time.Bar extends F.Time.Plot
-  # Defines an offset for ticks and markers
-  _offsetX: ->
-   0.5*@w()
-
-  # Make sure to use sum over the timestamp for the max
-  y: ->
-    max = 0
-    for i in [0...@data[0].values.length]
-      sum = 0
-      for j in [0...@data.length]
-        sum += @data[j].values[i].y
-      max = sum if sum > max
-    d3.scale.linear()
-      .domain([0, max])
-      .range([@innerHeight(), 0])
-
-  # Stacks all data on set
-  setData: (data) ->
-    super(data)
-    for i in [0...@data[0].values.length]
-      y0 = 0
-      for layer in @data
-        layer.values[i].y0 = y0
-        y0 += layer.values[i].y
-
+class F.Time.Stack extends F.Time.Plot
   # Stacks incoming entries into the visualization
   _prepareEntry: (entry) ->
     y0 = 0
@@ -418,26 +396,27 @@ class F.Time.Bar extends F.Time.Plot
       y0 += d.y
     return entry
 
-  # Handles the setting of styles on the graphics context for
-  # our particular type of graph (the stacked bar char ;)
-  setStyles: (className) ->
-    styles = @getStyles "rect.bar.#{className.replace(/\s/g,'.')}"
-    @ctx.fillStyle = styles.fill
-    @ctx.strokeStyle = styles.stroke
-    if styles['stroke-width']?
-      @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+  # Stacks all data on full reset
+  setData: (data) ->
+    super(data)
+    for i in [0...@data[0].values.length]
+      y0 = 0
+      for layer in @data
+        layer.values[i].y0 = y0
+        y0 += layer.values[i].y
 
-  # Draws the stacked bars in the visualization canvas
-  draw: (delta=0) ->
-    @ctx.clearRect(0, 0, @width, @height)
-    [y, w] = [@y(), @w()]
-    for layer in @data
-      @setStyles(layer.className)
-      for i, entry of layer.values
-        [ex, ey, ey0] = [i*w+delta, entry.y, entry.y0]
-        args = [ex+1, y(ey+ey0), w-2, @innerHeight()-y(ey)+0.5]
-        @ctx.fillRect.apply(@ctx, args)
-        @ctx.strokeRect.apply(@ctx, args)
+  # Since the time axes are discretely associated with data
+  # entries we can assume that extent will only ever be used
+  # for y scale
+  extent: ->
+    max = 0
+    for i in [0...@data[0].values.length]
+      sum = 0
+      for j in [0...@data.length]
+        sum += @data[j].values[i].y
+      max = sum if sum > max
+    [0, max]
+
 
 #
 # Real-time Line Chart
@@ -451,7 +430,7 @@ class F.Time.Line extends F.Time.Plot
 
   # Draws the lines, yo
   draw: (delta=0) ->
-    @ctx.clearRect(0, 0, @width, @height)
+    @clear()
     [y, w] = [@y(), @w()]
     for layer in @data
       @setStyles(layer.className)
@@ -464,7 +443,65 @@ class F.Time.Line extends F.Time.Plot
           @ctx.lineTo.apply @ctx, args
       @ctx.stroke()
 
+
+#
+# Real-time Bar Chart
+#
+class F.Time.Bar extends F.Time.Stack
+  # Defines an offset for ticks and markers
+  _offsetX: ->
+   0.5*@w()
+
+  setStyles: (className) ->
+    styles = @getStyles "rect.bar.#{className.replace(/\s/g,'.')}"
+    @ctx.fillStyle = styles.fill
+    @ctx.strokeStyle = styles.stroke
+    if styles['stroke-width']?
+      @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+
+  # Draws the stacked bars in the visualization canvas
+  draw: (delta=0) ->
+    @clear()
+    [y, w] = [@y(), @w()]
+    for layer in @data
+      @setStyles(layer.className)
+      for i, entry of layer.values
+        [ex, ey, ey0] = [i*w+delta, entry.y, entry.y0]
+        args = [ex+1, y(ey+ey0), w-2, @innerHeight()-y(ey)+0.5]
+        @ctx.fillRect.apply(@ctx, args)
+        @ctx.strokeRect.apply(@ctx, args)
+
   
+#
+# Real-time area chart
+#
+class F.Time.Area extends F.Time.Stack
+  setStyles: (className) ->
+    styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.area"
+    @ctx.fillStyle = styles.fill
+    if styles.stroke?
+      @ctx.strokeStyle = styles.stroke
+    if styles['stroke-width']?
+      @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+
+  draw: (delta=0) ->
+    @clear()
+    [y, w] = [@y(), @w()]
+
+    for i in [@data.length-1..0]
+      layer = @data[i]
+      @setStyles(layer.className)
+      @ctx.beginPath()
+      for i, entry of layer.values
+        args = [i*w+delta, y(entry.y + entry.y0)]
+        if i == 0
+          @ctx.moveTo.apply @ctx, args
+        else
+          @ctx.lineTo.apply @ctx, args
+      @ctx.lineTo(@width+@w(), @innerHeight())
+      @ctx.lineTo(-@w(), @innerHeight())
+      @ctx.closePath()
+      @ctx.fill()
 
 
 
