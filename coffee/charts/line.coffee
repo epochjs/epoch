@@ -1,7 +1,7 @@
 #
 # Line Chart
 #
-class F.Chart.Line extends F.Chart.Plot
+class Epoch.Chart.Line extends Epoch.Chart.Plot
   line: ->
     [x, y] = [@x(), @y()]
     d3.svg.line().x((d) => (x d.x)).y((d) => (y d.y))

@@ -2,35 +2,35 @@
 # Global Namespace
 # 
 
-window.F ?= {}
-window.F.Chart ?= {}
-window.F.Time ?= {}
-window.F.Util ?= {}
-window.F.Formats ?= {}
+window.Epoch ?= {}
+window.Epoch.Chart ?= {}
+window.Epoch.Time ?= {}
+window.Epoch.Util ?= {}
+window.Epoch.Formats ?= {}
 
 #
 # Utility Functions
 #
 
 # Lil' helpers
-F.isArray = (v) -> $.type(v) == 'array'
-F.isObject = (v) -> $.type(v) == 'object'
-F.warn = (msg) -> (console.warn or console.log)("Warning: #{msg}")
+Epoch.isArray = (v) -> $.type(v) == 'array'
+Epoch.isObject = (v) -> $.type(v) == 'object'
+Epoch.warn = (msg) -> (console.warn or console.log)("Warning: #{msg}")
 
 # Shallow copy from an original source
-F.Util.copy = (original) ->
+Epoch.Util.copy = (original) ->
   return null unless original?
   copy = {}
   copy[k] = v for k, v of original
   return copy
 
 # Deep defaults copy
-F.Util.defaults = (options, defaults) ->
-  result = F.Util.copy(options)
+Epoch.Util.defaults = (options, defaults) ->
+  result = Epoch.Util.copy(options)
   for k, v of defaults
     if options[k]? and defaults[k]?
-      if !F.isArray(options[k]) and F.isObject(options[k]) and F.isObject(defaults[k])
-        result[k] = F.Util.defaults(options[k], defaults[k])
+      if !Epoch.isArray(options[k]) and Epoch.isObject(options[k]) and Epoch.isObject(defaults[k])
+        result[k] = Epoch.Util.defaults(options[k], defaults[k])
       else
         result[k] = options[k]
     else if options[k]?
@@ -40,7 +40,7 @@ F.Util.defaults = (options, defaults) ->
   return result
 
 # Formats numbers with standard postfixes (e.g. K, M, G)
-F.Util.formatSI = (v, fixed=1, fix_integers=false) ->
+Epoch.Util.formatSI = (v, fixed=1, fix_integers=false) ->
   return v if v < 1000
   for i, label of ['K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     base = Math.pow(10, ((i|0)+1)*3)
@@ -51,11 +51,11 @@ F.Util.formatSI = (v, fixed=1, fix_integers=false) ->
 
 
 # Creates "dasherized" class names from strings
-F.Util.dasherize = (str) ->
+Epoch.Util.dasherize = (str) ->
   str.replace("\n", '').replace(/\s+/, '-').toLowerCase()
 
 # Finds the full domain of a given variable from an array of layers
-F.Util.domain = (layers, key='x') ->
+Epoch.Util.domain = (layers, key='x') ->
   set = {}
   for layer in layers
     set[entry[key]] = true for entry in layer.values
@@ -68,17 +68,17 @@ F.Util.domain = (layers, key='x') ->
 
 
 
-F.Formats.regular = (d) -> d
-F.Formats.si = (d) -> F.Util.formatSI(d)
+Epoch.Formats.regular = (d) -> d
+Epoch.Formats.si = (d) -> Epoch.Util.formatSI(d)
 
 
 d3Seconds = d3.time.format('%I:%M:%S %p')
-F.Formats.seconds = (t) -> d3Seconds(new Date(t*1000))
+Epoch.Formats.seconds = (t) -> d3Seconds(new Date(t*1000))
 
 #
 # Eventing
 # 
-class F.Events
+class Epoch.Events
   constructor: ->
     @_events = {}
 
@@ -88,13 +88,13 @@ class F.Events
     @_events[name].push callback
 
   off: (name, callback) ->
-    return unless F.isObject(@_events[name])
+    return unless Epoch.isObject(@_events[name])
     return delete(@_events[name]) unless callback?
     while (i = @_events[name].indexOf(callback)) >= 0
       @_events[name].splice(i, 1)
 
   trigger: (name) ->
-    return unless F.isObject(@_events[name])
+    return unless Epoch.isObject(@_events[name])
     args = (arguments[i] for i in [1...arguments.length])
     fn.apply(@, args) for fn in @_events[name]
 
@@ -103,7 +103,7 @@ class F.Events
 #
 # Common functionality for both SVG and Canvas charts.
 #
-class F.Chart.Base extends F.Events
+class Epoch.Chart.Base extends Epoch.Events
   defaults =
     dimensions:
       width: 320
@@ -129,7 +129,7 @@ class F.Chart.Base extends F.Events
     for layer in data
       classes = ['layer']
       classes.push "category#{category}"
-      classes.push(F.Util.dasherize layer.label) if layer.label?
+      classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       layer.className = classes.join(' ')
       category++
     @data = data
@@ -157,7 +157,7 @@ class F.Chart.Base extends F.Events
 #   width - explicit chart width
 #   height - explicit chart height
 #   
-class F.Chart.SVG extends F.Chart.Base
+class Epoch.Chart.SVG extends Epoch.Chart.Base
   constructor: (@options={}) ->
     super(@options)
     if @el?
@@ -167,11 +167,10 @@ class F.Chart.SVG extends F.Chart.Base
     @svg.attr('width', @width).attr('height', @height)
 
 
-
 #
 # Base Class for all Canvas Based Charts 
 #
-class F.Chart.Canvas extends F.Chart.Base
+class Epoch.Chart.Canvas extends Epoch.Chart.Base
   constructor: (@options={}) ->
     super(@options)
     @canvas = $("<canvas></canvas>")
@@ -180,35 +179,64 @@ class F.Chart.Canvas extends F.Chart.Base
     @ctx = @canvas.get(0).getContext('2d')
 
   getStyles: (selector) ->
-    return styles if (styles = canvasCSS.styles[selector])?
-    ref = $(selector, canvasCSS.ref)
-
-    # Construct & insert a reference element if none exists
-    unless ref.size() > 0
-      levels = selector.split(/\s+/)
-      parent = root = put(levels.shift())
-      while levels.length
-        el = put(levels.shift())
-        parent.appendChild el
-        parent = el
-      canvasCSS.ref.append(root)
-      ref = $(selector, canvasCSS.ref)
-
-    # Fetch and stash yonder styles from the reference
-    styles = {}
-    for name in ['fill', 'stroke', 'stroke-width']
-      styles[name] = ref.css(name)
-    canvasCSS.styles[selector] = styles
+    CanvasCSS.getStyles(selector, @el)
 
 
 # The Reference SVG for mapping css styles to canvas elements
-canvasCSS =
-  ref: $('<svg id="_canvas_reference"></svg>')
-  styles: {}
-  load: -> $('body').append(canvasCSS.ref)
-$ canvasCSS.load
+class CanvasCSS
+  @cache = {}
+  @styleList = ['fill', 'stroke', 'stroke-width']
+  @container = null
 
+  @load: ->
+    $('body').append('<div id="_canvas_css_reference"></div>')
+    CanvasCSS.container = $('#_canvas_css_reference', 'body')
 
+  @containerId: (container) ->
+    "#{container.attr('id')}.#{container.attr('class')}"
+
+  @getSVG: (container) ->
+    id = CanvasCSS.containerId(container)
+    el = CanvasCSS.svgElements[id]
+    unless el?
+      clone = $(container).clone().html('<svg></svg>')
+      CanvasCSS.svgContainer.append(clone)
+      el = CanvasCSS.svgElements[id] = $('svg', clone)
+    return el
+
+  @getStyles: (selector, container) ->
+    # 0) Check for cached styles
+    cacheKey = "#{CanvasCSS.containerId(container)}__#{selector}"
+    cache = CanvasCSS.cache[cacheKey]
+    return cache if cache?
+
+    # 1) Create Reference SVG
+    clone = $(container).clone().html('<svg></svg>')
+    clone.removeAttr('style')
+    CanvasCSS.container.append(clone)
+    svg = $('svg', clone)
+    
+    # 2) Create Reference Element
+    levels = selector.split(/\s+/)
+    parent = root = put(levels.shift())
+    while levels.length
+      el = put(levels.shift())
+      parent.appendChild el
+      parent = el
+    svg.html(root)
+    ref = $(selector, svg)
+
+    # 3) Collect & Cache Styles
+    styles = {}
+    for name in CanvasCSS.styleList
+      styles[name] = ref.css(name)
+    CanvasCSS.cache[cacheKey] = styles
+
+    # 4) Cleanup and return the styles
+    $(clone, CanvasCSS.container).remove()
+    return styles
+
+$ CanvasCSS.load
 
 
 #
@@ -225,7 +253,7 @@ $ canvasCSS.load
 #   ticks - Ticks to send along for each axis (top, bottom, left, right)
 #   tickFormats - maps axes to tick formats (top, bottom, left, right)
 #
-class F.Chart.Plot extends F.Chart.SVG
+class Epoch.Chart.Plot extends Epoch.Chart.SVG
   defaults =
     margins:
       top: 25
@@ -239,14 +267,14 @@ class F.Chart.Plot extends F.Chart.SVG
       left: 5
       right: 5
     tickFormats:
-      top: F.Formats.regular
-      bottom: F.Formats.regular
-      left: F.Formats.si
-      right: F.Formats.si
+      top: Epoch.Formats.regular
+      bottom: Epoch.Formats.regular
+      left: Epoch.Formats.si
+      right: Epoch.Formats.si
 
   constructor: (@options={}) ->
-    givenMargins = F.Util.copy(@options.margins) or {}
-    super(@options = F.Util.defaults(@options, defaults))
+    givenMargins = Epoch.Util.copy(@options.margins) or {}
+    super(@options = Epoch.Util.defaults(@options, defaults))
 
     # Margins are used in a special way and only for making room for axes.
     # However, a user may explicitly set margins in the options, so we need
@@ -305,8 +333,7 @@ class F.Chart.Plot extends F.Chart.SVG
     d3.svg.axis().scale(@y()).orient('right')
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
-
-  # Drawing
+      
   draw: ->
     super()
     if @_axesDrawn

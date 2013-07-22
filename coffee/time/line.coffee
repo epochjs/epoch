@@ -1,7 +1,7 @@
 #
 # Real-time Line Chart
 #
-class F.Time.Line extends F.Time.Plot
+class Epoch.Time.Line extends Epoch.Time.Plot
   setStyles: (className) ->
     styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.line"
     @ctx.fillStyle = styles.fill

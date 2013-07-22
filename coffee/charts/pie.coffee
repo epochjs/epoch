@@ -1,12 +1,12 @@
 # Basic Pie Chart  
-class F.Chart.Pie extends F.Chart.SVG
+class Epoch.Chart.Pie extends Epoch.Chart.SVG
   defaults =
     margin: 10
     inner: 0
     data: PIE_DATA
 
   constructor: (@options={}) ->
-    super(@options = F.Util.defaults(@options, defaults))
+    super(@options = Epoch.Util.defaults(@options, defaults))
     radius = Math.max(@width, @height) / 2
     @pie = d3.layout.pie().sort(null)
       .value (d) -> d.value

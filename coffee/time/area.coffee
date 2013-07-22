@@ -1,7 +1,7 @@
 #
 # Real-time area chart
 #
-class F.Time.Area extends F.Time.Stack
+class Epoch.Time.Area extends Epoch.Time.Stack
   setStyles: (layer) ->
     if layer.className?
       styles = @getStyles "g.#{layer.className.replace(/\s/g,'.')} path.area"

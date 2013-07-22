@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Epoch Real-time Test Page</title>
+    <title>Epoch Real-time Tests</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="../js/d3.min.js"></script>
-    <script src="../js/fastly-charts/test_data.js"></script>
+    <script src="../js/epoch/test_data.js"></script>
     <script src="../js/epoch.js"></script>
-    <link rel="stylesheet" type="text/css" href="../css/fastly-charts.css">
+    <link rel="stylesheet" type="text/css" href="../css/epoch.css">
     <style type="text/css">
     </style>
   </head>
   <body>
     <h1>Fastly Timeseries Test Page</h1>
-    <div id="line" class="chart sparklines" style="width: 812px; height: 40px;margin-left: 44px;"></div>
-    <div id="bar" class="chart" style="width: 900px; height: 200px;"></div>
-    <div id="area" class="chart" style="width: 900px; height: 200px;"></div>
+
+    <div id="line" class="epoch sparklines" style="width: 812px; height: 40px;margin-left: 44px;"></div>
+    <div id="bar" class="epoch category20b" style="width: 900px; height: 200px;"></div>
+    <div id="area" class="epoch category20c" style="width: 900px; height: 200px;"></div>
     
 
     Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button>

@@ -1,5 +1,5 @@
 # Area Chart
-class F.Chart.Area extends F.Chart.Plot
+class Epoch.Chart.Area extends Epoch.Chart.Plot
   y: ->
     a = []
     for layer in @data

@@ -24,7 +24,7 @@
 # I swear to god that one of these days I will learn how to write elegant
 # and readible rendering code that also performs well (hopes... dreams...)
 #
-class F.Time.Plot extends F.Chart.Canvas
+class Epoch.Time.Plot extends Epoch.Chart.Canvas
   defaults =
     fps: 24
     historySize: 120
@@ -41,14 +41,14 @@ class F.Time.Plot extends F.Chart.Canvas
       left: 5
       right: 5
     tickFormats:
-      top: F.Formats.seconds
-      bottom: F.Formats.seconds
-      left: F.Formats.si
-      right: F.Formats.si
+      top: Epoch.Formats.seconds
+      bottom: Epoch.Formats.seconds
+      left: Epoch.Formats.si
+      right: Epoch.Formats.si
 
   constructor: (@options) ->
-    givenMargins = F.Util.copy(@options.margins) or {}
-    super(@options = F.Util.defaults(@options, defaults))
+    givenMargins = Epoch.Util.copy(@options.margins) or {}
+    super(@options = Epoch.Util.defaults(@options, defaults))
 
     # Queue entering data to get around memory bloat and "non-active" tab issues
     @_queueSize = @options.queueSize
@@ -96,12 +96,12 @@ class F.Time.Plot extends F.Chart.Canvas
   setData: (data) ->
     @data = []
     for i, layer of data
-      copy = F.Util.copy(layer)
+      copy = Epoch.Util.copy(layer)
       start = Math.max(0, layer.values.length - @options.historySize)
       copy.values = layer.values.slice(start)
       classes = ['layer']
       classes.push "category#{(i|0)+1}"
-      classes.push(F.Util.dasherize layer.label) if layer.label?
+      classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       copy.className = classes.join(' ')
       @data.push copy
 
@@ -387,7 +387,7 @@ class F.Time.Plot extends F.Chart.Canvas
 #
 # Abstract class that is useful for making "stacked" plots
 #
-class F.Time.Stack extends F.Time.Plot
+class Epoch.Time.Stack extends Epoch.Time.Plot
   # Stacks incoming entries into the visualization
   _prepareEntry: (entry) ->
     y0 = 0

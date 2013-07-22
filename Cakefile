@@ -32,14 +32,14 @@ watch = (dir, ext, fn) ->
 
 task 'build', ->
 	console.log "Building..."
-	exec 'coffee --output js/fastly-charts --compile coffee/', (err, stdout, stderr) ->
+	exec 'coffee --output js/epoch --compile coffee/', (err, stdout, stderr) ->
 		return console.log(stdout + stderr) if err?
 		invoke 'package'
 
 task 'package', ->
 	console.log "Packaging..."
 	libraries = ("lib/#{library}" for library in library_order).join(' ')
-	sources = ("js/fastly-charts/#{source}" for source in package_order).join(' ')
+	sources = ("js/epoch/#{source}" for source in package_order).join(' ')
 	exec "cat #{libraries} #{sources} > js/epoch.js", (err, stdout, stderr) -> 
 		console.log "Complete!"
 

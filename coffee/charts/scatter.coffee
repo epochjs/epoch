@@ -1,10 +1,10 @@
-class F.Chart.Scatter extends F.Chart.Plot
+class Epoch.Chart.Scatter extends Epoch.Chart.Plot
   defaults =
     radius: 3.5
     axes: ['top', 'bottom', 'left', 'right']
 
   constructor: (@options={}) ->
-    super(@options = F.Util.defaults(@options, defaults))
+    super(@options = Epoch.Util.defaults(@options, defaults))
 
   draw: ->
     super()

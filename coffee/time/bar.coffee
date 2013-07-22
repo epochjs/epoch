@@ -1,7 +1,7 @@
 #
 # Real-time Bar Chart
 #
-class F.Time.Bar extends F.Time.Stack
+class Epoch.Time.Bar extends Epoch.Time.Stack
   # Defines an offset for ticks and markers
   _offsetX: ->
    0.5*@w()

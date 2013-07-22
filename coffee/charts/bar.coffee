@@ -5,16 +5,16 @@
 # Options:
 #   style: 'grouped' (default), 'stacked', or 'normal-stacked'
 #
-class F.Chart.Bar extends F.Chart.Plot
+class Epoch.Chart.Bar extends Epoch.Chart.Plot
   defaults = 
     style: 'grouped'
 
   constructor: (@options={}) ->
-    super(@options = F.Util.defaults(@options, defaults))
+    super(@options = Epoch.Util.defaults(@options, defaults))
 
   x: ->
     d3.scale.ordinal()
-      .domain(F.Util.domain(@data))
+      .domain(Epoch.Util.domain(@data))
       .rangeRoundBands([0, @innerWidth()], .1)
 
   x1: (x0) ->
