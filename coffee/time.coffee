@@ -306,7 +306,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     return unless @hasAxis('top') or @hasAxis('bottom')
     tick =
       time: time
-      label: @options.tickFormats.bottom(time)
       x: bucket*@w() + @_offsetX()
       opacity: if enter then 0 else 1
       enter: if enter then true else false
@@ -324,7 +323,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       g.append('text')
         .attr('text-anchor', 'middle')
         .attr('dy', 19)
-        .text(tick.label)
+        .text(@options.tickFormats.bottom(tick.time))
 
       tick.bottomEl = $(g[0])
 
@@ -340,7 +339,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       g.append('text')
         .attr('text-anchor', 'middle')
         .attr('dy', -10)
-        .text(tick.label)
+        .text(@options.tickFormats.top(tick.time))
 
       tick.topEl = $(g[0])      
 

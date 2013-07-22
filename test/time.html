@@ -25,7 +25,10 @@
         var bar = $('#bar').epoch({
           type: 'time.bar',
           data: TIME_DATA,
-          axes: ['left', 'bottom', 'right', 'top']
+          axes: ['left', 'bottom', 'right', 'top'],
+          tickFormats: {
+            top: Epoch.Formats.regular
+          }
         });
 
         var line = $('#line').epoch({ 
