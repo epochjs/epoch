@@ -1,11 +1,17 @@
 fs = require 'fs'
 {exec} = require 'child_process'
 
+library_order = [
+	'*.js'
+]
+
 package_order = [
 	'epoch.js',
 	'charts/*.js',
 	'time.js',
-	'time/*.js'
+	'time/*.js',
+	'adapters.js',
+	'adapters/*.js'
 ]
 
 stripSlash = (name) ->
@@ -32,8 +38,9 @@ task 'build', ->
 
 task 'package', ->
 	console.log "Packaging..."
-	pre = 'js/fastly-charts/'
-	exec "cat #{(pre + order for order in package_order).join(' ')} > js/fastly-charts.js", (err, stdout, stderr) -> 
+	libraries = ("lib/#{library}" for library in library_order).join(' ')
+	sources = ("js/fastly-charts/#{source}" for source in package_order).join(' ')
+	exec "cat #{libraries} #{sources} > js/epoch.js", (err, stdout, stderr) -> 
 		console.log "Complete!"
 
 task 'watch', ->

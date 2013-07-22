@@ -13,7 +13,6 @@ window.F.Formats ?= {}
 #
 
 # Lil' helpers
-
 F.isArray = (v) -> $.type(v) == 'array'
 F.isObject = (v) -> $.type(v) == 'object'
 F.warn = (msg) -> (console.warn or console.log)("Warning: #{msg}")

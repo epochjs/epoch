@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>fastly-d3 test page</title>
+    <title>Epoch Real-time Test Page</title>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="js/d3.min.js"></script>
-    <script src="js/put.js"></script>
-    <script src="js/fastly-charts/test_data.js"></script>
-    <script src="js/fastly-charts.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/fastly-charts.css">
+    <script src="../js/d3.min.js"></script>
+    <script src="../js/fastly-charts/test_data.js"></script>
+    <script src="../js/epoch.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/fastly-charts.css">
     <style type="text/css">
-      /*canvas {
-        background: pink;
-      }
-*/
-
-      /*.sparklines .line {
-        fill: none;
-        stroke-width: 1px;
-      }*/
-
-
     </style>
   </head>
   <body>
@@ -33,23 +21,23 @@
 
     <script>
       $(function() {
-        var bar = new F.Time.Bar({
-          el: '#bar',
+        var bar = $('#bar').epoch({
+          type: 'time.bar',
           data: TIME_DATA,
           axes: ['left', 'bottom', 'right', 'top']
         });
-        bar.draw();
 
-        var line = new F.Time.Line({
-          el: '#line', data: TIME_DATA, axes: []
+        var line = $('#line').epoch({ 
+          type: 'time.line',
+          data: TIME_DATA,
+          axes: [] 
         });
-        line.draw();
 
-        var area = new F.Time.Area({
-          el: '#area', data: TIME_DATA, axes: ['left', 'bottom', 'right']
+        var area = $('#area').epoch({ 
+          type: 'time.area',
+          data: TIME_DATA,
+          axes: ['left', 'bottom', 'right']
         });
-        area.draw();
-
 
         function pushData() {
           var entry = nextTimeEntry();
@@ -71,9 +59,6 @@
             target.html('Play')
           }
         });
-          
-
-        
       });
     </script>
   </body>
