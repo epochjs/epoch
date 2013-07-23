@@ -1,0 +1,9 @@
+{
+  "name": "your app name",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "coffee-script": ">=1.6.3",
+    "node-minify": ">=0.7.5"
+  }
+}

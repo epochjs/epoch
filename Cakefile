@@ -1,49 +1,124 @@
 fs = require 'fs'
 {exec} = require 'child_process'
+compressor = require 'node-minify'
+util = require 'util'
+
+#
+# Build / Package Rules & Targets
+#
+
+version = '0.1.0'
 
 library_order = [
-	'*.js'
+  '*.js'
 ]
 
 package_order = [
-	'epoch.js',
-	'charts/*.js',
-	'time.js',
-	'time/*.js',
-	'adapters.js',
-	'adapters/*.js'
+  'epoch.js',
+  'charts/*.js',
+  'time.js',
+  'time/*.js',
+  'adapters.js',
+  'adapters/*.js'
 ]
 
+dirs =
+  lib: 'lib/'
+  src: 'coffee/'
+  build: 'js/epoch/'
+
+
+target =
+  package: 'js/epoch.js'
+  compile: "./epoch.#{version}.min.js"
+
+
+compiler_url = 'http://closure-compiler.appspot.com/compile'
+
+
+#
+# Utilities & Eventing
+#
+
+events = {}
+
+after = (name, fn) ->
+  events[name] ?= []
+  events[name].push fn
+
+chain = (list, callback) ->
+  return unless list? and list.length
+  for i in [0..list.length-2]
+    [cause, effect] = [list[i], list[i+1]]
+    after cause, ((task) -> -> invoke task)(effect)
+  after list[list.length-1], -> callback() if callback?
+  invoke list[0]
+
+all = (list, callback) ->
+  return unless list? and list.length
+  count = list.length
+  for task in list
+    after task, -> callback() unless (--count) or !callback?
+    invoke task 
+    
+done = (name) ->
+  return unless events[name]?
+  fn() for fn in events[name]
+
 stripSlash = (name) ->
-	name.replace /\/\s*$/, ''
+  name.replace /\/\s*$/, ''
+
+error = (task, msg) ->
+  util.log "[ERROR] Task '#{task}':\n  #{msg}"
 
 watch = (dir, ext, fn) ->
-	stampName = ".stamp_#{stripSlash(dir)+ext}"
+  stampName = ".stamp_#{stripSlash(dir)+ext}"
 
-	watchFiles = (err, stdout, stderr) ->
-		return error("watch(#{dir})", stderr) if err?
-		for file in stdout.split /\s+/
-			continue unless file.match ext
-			fs.watch file, ((file) -> (event) -> fn(event, file))(file)
-		exec "touch #{stampName}"
-	
-	fs.watch dir, -> exec "find #{stripSlash(dir)} -newer #{stampName}", watchFiles
-	exec "find #{stripSlash(dir)}", watchFiles
+  watchFiles = (err, stdout, stderr) ->
+    return error("watch(#{dir})", stderr) if err?
+    for file in stdout.split /\s+/
+      continue unless file.match ext
+      fs.watch file, ((file) -> (event) -> fn(event, file))(file)
+    exec "touch #{stampName}"
+  
+  fs.watch dir, -> exec "find #{stripSlash(dir)} -newer #{stampName}", watchFiles
+  exec "find #{stripSlash(dir)}", watchFiles
 
-task 'build', ->
-	console.log "Building..."
-	exec 'coffee --output js/epoch --compile coffee/', (err, stdout, stderr) ->
-		return console.log(stdout + stderr) if err?
-		invoke 'package'
+#
+# Tasks
+#
 
-task 'package', ->
-	console.log "Packaging..."
-	libraries = ("lib/#{library}" for library in library_order).join(' ')
-	sources = ("js/epoch/#{source}" for source in package_order).join(' ')
-	exec "cat #{libraries} #{sources} > js/epoch.js", (err, stdout, stderr) -> 
-		console.log "Complete!"
+task 'build', 'Builds javascript from the coffeescript source (also packages).', ->
+  console.log "Building..."
+  exec "coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
+    error('build', stdout + stderr) if err?
+    invoke 'package'
+
+task 'package', 'Packages the js and libraries into a single file.', ->
+  console.log "Packaging..."
+  libraries = ("#{dirs.lib}#{library}" for library in library_order).join(' ')
+  sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
+  exec "cat #{libraries} #{sources} > #{target.package}", (err, stdout, stderr) -> 
+    error('package', stdout + stderr) if err?
+    console.log "Complete!"
+    done 'package'
+
+task 'compile', 'Compiles the packaged source via the Google Closure Compiler', ->
+  after 'package', ->
+    console.log "Google Closure Compiling..."
+    new compressor.minify
+      type: 'gcc'
+      language: 'ECMASCRIPT5'
+      fileIn: target.package
+      fileOut: target.compile
+      callback: (err) ->
+        if err?
+          error 'compile', err if err?
+        else
+          console.log "Compilation complete."
+  invoke 'build'
 
 task 'watch', ->
-	watch 'coffee/', '.coffee', (event, filename) ->
-		invoke 'build'
+  watch 'coffee/', '.coffee', (event, filename) ->
+    invoke 'build'
 
