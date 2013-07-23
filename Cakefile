@@ -116,7 +116,11 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
           error 'compile', err if err?
         else
           console.log "Compilation complete."
+        done 'compile'
   invoke 'build'
+
+#task 'deploy' 
+#git tag | grep -E "^[0-9]"  | sort -b -t . -k1,1 -k2,2n -k3,3n | tail -1 | awk 'BEGIN{FS=OFS="."}{++$3; print $0}'
 
 task 'watch', ->
   watch 'coffee/', '.coffee', (event, filename) ->
