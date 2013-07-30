@@ -3,7 +3,6 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
   defaults =
     margin: 10
     inner: 0
-    data: PIE_DATA
 
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
