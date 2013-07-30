@@ -1,7 +1,17 @@
 # Epoch - The Fastly Charting Library
 By Ryan Sandor Richards
 
-To get started, do the following:
+## Using Epoch
+
+To use epoch to perform charting in your project, do the following:
+
+1. Place the versioned `epoch.X.Y.Z.min.js` file in your project and load it in your page.
+2. Place the `css/epoch.css` in your project and include it in a link reference.
+
+
+## Developing Epoch
+
+To work on the epoch charting library itself do the following:
 
 1. Clone the repository
 2. Run `cake build` from the project directory
