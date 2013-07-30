@@ -63,6 +63,23 @@
   }
 }
 
+// Gauge Charts
+.epoch .gauge {
+  .arc.outer {
+    stroke-width: 4px;
+    stroke: #555;
+  }
+  .arc.inner {
+    stroke-width: 1px;
+    stroke: #555;
+  }
+  .tick {
+    stroke-width: 1px;
+    stroke: #555;
+  }
+}
+
+
 // Categorical Colors
 @mixin category-colors($list, $entries) {
   @for $i from 1 through $entries {
