@@ -18,6 +18,5 @@ To work on the epoch charting library itself do the following:
 3. Run `cake build` from the project directory
 4. View `docs/static.html` and `docs/time.html` for a quick overview of the available features
 5. Scour the source for more detailed information (formal documentation coming soon)
-6. Copy the `epoch.x.y.z.min.js` file into your project's static assets folder
-7. Let cool and enjoy (serves millions).
+6. Let cool and enjoy (serves millions).
 
