@@ -72,6 +72,18 @@
   }
 }
 
+.epoch.gauge-small {
+  width: 180px; height: 135px;
+}
+
+.epoch.gauge-medium {
+  width: 240px; height: 180px;
+}
+
+.epoch.gauge-large {
+  width: 320px; height: 240px;
+}
+
 .epoch .gauge {
   .arc.outer {
     stroke-width: 4px;
