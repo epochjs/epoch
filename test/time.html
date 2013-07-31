@@ -27,7 +27,7 @@
 
     <script>
       $(function() {
-        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.5 })
+        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 })
 
         var bar = $('#bar').epoch({
           type: 'time.bar',
@@ -55,6 +55,7 @@
           bar.push(entry);
           line.push(entry);
           area.push(entry);
+          gauge.update(Math.random())
         }
 
         var dataInterval = null;

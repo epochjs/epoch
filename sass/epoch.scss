@@ -77,8 +77,15 @@
     stroke-width: 1px;
     stroke: #555;
   }
-}
 
+  .needle {
+    fill: orange;
+  }
+
+  .needle-base {
+    fill: #666;
+  }
+}
 
 // Categorical Colors
 @mixin category-colors($list, $entries) {
