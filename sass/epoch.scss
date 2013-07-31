@@ -64,6 +64,14 @@
 }
 
 // Gauge Charts
+.epoch .gauge-labels {
+  .value {
+    text-anchor: middle;
+    font-size: 140%;
+    fill: #666;
+  }
+}
+
 .epoch .gauge {
   .arc.outer {
     stroke-width: 4px;

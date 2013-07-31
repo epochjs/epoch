@@ -70,6 +70,7 @@ Epoch.Util.domain = (layers, key='x') ->
 
 Epoch.Formats.regular = (d) -> d
 Epoch.Formats.si = (d) -> Epoch.Util.formatSI(d)
+Epoch.Formats.percent = (d) -> (d*100).toFixed(1) + "%"
 
 
 d3Seconds = d3.time.format('%I:%M:%S %p')

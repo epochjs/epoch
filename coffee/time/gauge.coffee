@@ -9,11 +9,32 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     tickSize: 5
     tickOffset: 5
     fps: 34
+    format: Epoch.Formats.percent
 
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @value = @options.value or 0
 
+    # SVG Labels Overlay
+    if @el.css('position') != 'absolute' and @el.css('position') != 'relative'
+      @el.css('position', 'relative')
+
+    @svg = d3.select(@el.get(0)).insert('svg', ':first-child')
+      .attr('width', @width)
+      .attr('height', @height)
+      .attr('class', 'gauge-labels')
+
+    $(@svg[0]).css
+      'position': 'absolute'
+      'z-index': '1'
+
+    @svg.append('g')
+      .attr('transform', "translate(#{@centerX()}, #{@textY()})")
+      .append('text')
+        .attr('class', 'value')
+        .text(@options.format(@value))
+
+    # Animations
     @animation =
       interval: null
       active: false
@@ -27,6 +48,8 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
         @animation.active = false
       else
         @value += @animation.delta
+
+      @svg.select('text.value').text(@options.format(@value))
       @draw()
 
   # TODO "update" or "push"? Also needs to be correctly implemented with tweening
@@ -39,6 +62,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   radius: -> @height / 1.58
   centerX: -> @width / 2
   centerY: -> 0.68 * @height
+  textY: -> 0.48 * @height
 
   # TODO Fix me, doesn't work with the first part of the domain
   getAngle: (value) ->
@@ -114,3 +138,4 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
 
     @ctx.restore()
 
+# "The mother of a million sons... CIVILIZATION!" -- Justice
