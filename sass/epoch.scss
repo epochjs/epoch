@@ -37,16 +37,9 @@
 }
 
 
-/*
- * Area Charts
- */
+// Area Charts
 .epoch .area {
   stroke: none;
-}
-
-// Bar Charts
-.epoch .bar {
-  &.with-line { stroke: #fff; }
 }
 
 // Pie Charts

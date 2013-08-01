@@ -19,8 +19,8 @@ class Epoch.Time.Line extends Epoch.Time.Plot
       @ctx.beginPath()
 
       [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
-      iBoundry = if trans then -2 else 0
-      while (--i >= iBoundry) and (--k >= 0)
+      
+      while (--i >= -2) and (--k >= 0)
         entry = layer.values[k]
         args = [(i+1)*w+delta, y(entry.y)]
         args[0] += w if trans
