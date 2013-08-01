@@ -22,14 +22,26 @@ class Epoch.Time.Area extends Epoch.Time.Stack
       layer = @data[i]
       @setStyles layer
       @ctx.beginPath()
-      for i, entry of layer.values
-        args = [i*w+delta, y(entry.y + entry.y0)]
-        if i == 0
+
+      [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
+      firstX = null
+
+      while (--i >= -2) and (--k >= 0)
+        entry = layer.values[k]
+        args = [(i+1)*w+delta, y(entry.y + entry.y0)]
+        args[0] += w if trans
+        if i == @options.windowSize - 1
           @ctx.moveTo.apply @ctx, args
         else
           @ctx.lineTo.apply @ctx, args
-      @ctx.lineTo(@width+@w(), @innerHeight())
-      @ctx.lineTo(-@w(), @innerHeight())
+
+      if trans
+        borderX = (i+3)*w+delta
+      else
+        borderX = (i+2)*w+delta
+
+      @ctx.lineTo(borderX, @innerHeight())
+      @ctx.lineTo(@width+w+delta, @innerHeight())
       @ctx.closePath()
       @ctx.fill()
 

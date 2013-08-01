@@ -12,13 +12,21 @@ class Epoch.Time.Line extends Epoch.Time.Plot
   draw: (delta=0) ->
     @clear()
     [y, w] = [@y(), @w()]
+
     for layer in @data
+      continue unless layer.values.length > 0
       @setStyles(layer.className)
       @ctx.beginPath()
-      for i, entry of layer.values
-        args = [i*w+delta, y(entry.y)]
-        if i == 0
+
+      [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
+      iBoundry = if trans then -2 else 0
+      while (--i >= iBoundry) and (--k >= 0)
+        entry = layer.values[k]
+        args = [(i+1)*w+delta, y(entry.y)]
+        args[0] += w if trans
+        if i == @options.windowSize - 1
           @ctx.moveTo.apply @ctx, args
         else
           @ctx.lineTo.apply @ctx, args
+
       @ctx.stroke()

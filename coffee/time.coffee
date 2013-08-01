@@ -198,7 +198,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     
     # Shift data off the end
     for layer in @data
-      continue unless layer.values.length > @options.windowSize
+      continue unless layer.values.length > @options.windowSize + 1
       layer.values.shift()
 
     # Finalize tick transitions
