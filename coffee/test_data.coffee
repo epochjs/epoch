@@ -233,10 +233,32 @@ window.TIME_DATA_2 = [
   { label: 'Beta', values: [] }
 ]
 
+window.TIME_DATA_SHORT = [
+  { label: 'Alpha', values: [] },
+  { label: 'Beta', values: [] },
+  { label: 'Gamma', values: [] }
+]
+
+window.TIME_DATA_SHORT_2 = [
+  { label: 'Alpha', values: [] },
+  { label: 'Beta', values: [] },
+  { label: 'Gamma', values: [] }
+]
+
 for i in [0...45]
   time = nextTime()
   for layer in TIME_DATA
     layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
   for layer in TIME_DATA_2
+    layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
+
+for i in [0...10]
+  time = nextTime()
+  for layer in TIME_DATA_SHORT
+    layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
+
+for i in [0...35]
+  time = nextTime()
+  for layer in TIME_DATA_SHORT_2
     layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
 

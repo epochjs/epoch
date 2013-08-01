@@ -128,14 +128,15 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
     tickInterval = @options.ticks.time
     @_ticks = []
-    @_tickTimer = @options.windowSize % tickInterval
+    @_tickTimer = tickInterval
 
     for layer in @data
       continue unless layer.values? and layer.values.length > 0
-      i = tickInterval
-      while i < @options.windowSize and i < layer.values.length
-        @_pushTick(i, layer.values[i].time)
-        i += tickInterval
+      [i, k] = [@options.windowSize-1, layer.values.length-1]
+      while i >= 0 and k >= 0
+        @_pushTick i, layer.values[k].time, false, true
+        i -= tickInterval
+        k -= tickInterval
       break
 
   # Builds and prepares the range axes (left and right)
@@ -196,7 +197,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     return unless @inTransition()
     
     # Shift data off the end
-    layer.values.shift() for layer in @data
+    for layer in @data
+      continue unless layer.values.length > @options.windowSize
+      layer.values.shift()
 
     # Finalize tick transitions
     [firstTick, lastTick] = [@_ticks[0], @_ticks[@_ticks.length-1]]
@@ -305,7 +308,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @param time The unix timestamp associated with the tick
   # @param enter Whether or not the tick should be considered as "newly entering"
   #        Used primarily for performing the tick opacity tween.
-  _pushTick: (bucket, time, enter=false) ->
+  _pushTick: (bucket, time, enter=false, reverse=false) ->
     return unless @hasAxis('top') or @hasAxis('bottom')
     tick =
       time: time
@@ -346,7 +349,10 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
       tick.topEl = $(g[0])      
 
-    @_ticks.push tick
+    if reverse
+      @_ticks.unshift tick
+    else
+      @_ticks.push tick
     return tick
 
   # Shifts a tick that is no longer needed out of the visualization.
