@@ -7,7 +7,7 @@ util = require 'util'
 # Build / Package Rules & Targets
 #
 
-version = '0.2.3'
+version = '0.2.4'
 
 library_order = [
   '*.js'
