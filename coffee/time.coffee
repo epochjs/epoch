@@ -130,10 +130,13 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @_ticks = []
     @_tickTimer = @options.windowSize % tickInterval
 
-    i = tickInterval
-    while i < @options.windowSize
-      @_pushTick(i, @data[0].values[i].time)
-      i += tickInterval  
+    for layer in @data
+      continue unless layer.values? and layer.values.length > 0
+      i = tickInterval
+      while i < @options.windowSize and i < layer.values.length
+        @_pushTick(i, layer.values[i].time)
+        i += tickInterval
+      break
 
   # Builds and prepares the range axes (left and right)
   _prepareRangeAxes: ->
