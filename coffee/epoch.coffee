@@ -15,7 +15,13 @@ window.Epoch.Formats ?= {}
 # Lil' helpers
 Epoch.isArray = (v) -> $.type(v) == 'array'
 Epoch.isObject = (v) -> $.type(v) == 'object'
+Epoch.isString = (v) -> $.type(v) == 'string'
+Epoch.isFunction = (v) -> $.type(v) == 'function'
 Epoch.warn = (msg) -> (console.warn or console.log)("Warning: #{msg}")
+
+# Exception handling
+Epoch.exception = (msg) ->
+  throw "Epoch Error: #{msg}"
 
 # Shallow copy from an original source
 Epoch.Util.copy = (original) ->

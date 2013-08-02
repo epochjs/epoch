@@ -262,3 +262,22 @@ for i in [0...35]
   for layer in TIME_DATA_SHORT_2
     layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
 
+
+window.HIST_DATA = [
+  { label: 'Alpha', values: [] }
+]
+
+window.nextHistEntry = (hist_range=[0,100]) ->
+  time = nextTime()
+  entry = { time: time, histogram: {} }
+  for k in [0...1500]
+    r = (Math.random() * hist_range[1])|0 + hist_range[0]
+    entry.histogram[r] ?= 0
+    entry.histogram[r]++
+  return entry
+
+for i in [0...45]
+  HIST_DATA[0].values.push nextHistEntry()
+
+
+

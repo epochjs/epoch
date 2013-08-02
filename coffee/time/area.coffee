@@ -25,7 +25,6 @@ class Epoch.Time.Area extends Epoch.Time.Stack
 
       [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
       firstX = null
-
       while (--i >= -2) and (--k >= 0)
         entry = layer.values[k]
         args = [(i+1)*w+delta, y(entry.y + entry.y0)]
@@ -45,4 +44,4 @@ class Epoch.Time.Area extends Epoch.Time.Stack
       @ctx.closePath()
       @ctx.fill()
 
-    # TODO Add strokes
+    # TODO Should we also have strokes? Probably...

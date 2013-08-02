@@ -12,3 +12,4 @@ Epoch._typeMap =
   'time.bar': Epoch.Time.Bar
   'time.line': Epoch.Time.Line
   'time.gauge': Epoch.Time.Gauge
+  'time.heatmap': Epoch.Time.Heatmap

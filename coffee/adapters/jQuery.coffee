@@ -8,7 +8,7 @@ jQuery.fn.epoch = (options) ->
   unless (chart = @.data(DATA_NAME))?
     klass = Epoch._typeMap[options.type]
     unless klass?
-      throw "Epoch Error: Unknown chart type '#{options.type}'"  
+    	Epoch.exception "Unknown chart type '#{options.type}'"
     @.data DATA_NAME, (chart = new klass options)
     chart.draw()
   return chart
