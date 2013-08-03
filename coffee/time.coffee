@@ -178,10 +178,13 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   innerHeight: ->
     @height - (@margins.top + @margins.bottom)
 
-  
   # Abstract method for performing any preprocessing before queuing new entries
-  # @paran entry The entry to prepare
+  # @param entry The entry to prepare
   _prepareEntry: (entry) -> entry
+
+  # Abstract method for preparing a group of layered entries entering the visualization
+  # @param layers The layered entries to prepare
+  _prepareLayers: (layers) -> layers
     
   # If there are entries in the incoming data queue this will shift them
   # into the graph's working set and begin animating the scroll transition.
@@ -231,14 +234,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # get around some browser weirdness (and memory bloat). Finally if we're
   # good to go it will will begin the process of scrolling (or transitioning)
   # the graph (see _shift below).
-  push: (entry) ->
+  push: (layers) ->
+    layers = @_prepareLayers(layers)
+
     # Handle entry queue maximum size
     if @_queue.length > @_queueSize
       @_queue.splice @_queueSize, (@_queue.length - @_queueSize)
     return false if @_queue.length == @_queueSize
 
     # Push the entry into the queue
-    @_queue.push @_prepareEntry(entry)
+    @_queue.push layers.map((entry) => @_prepareEntry(entry))
 
     # Begin the transition unless we are already doing so
     @_startTransition() unless @inTransition()
@@ -397,12 +402,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 #
 class Epoch.Time.Stack extends Epoch.Time.Plot
   # Stacks incoming entries into the visualization
-  _prepareEntry: (entry) ->
+  _prepareLayers: (layers) ->
     y0 = 0
-    for d in entry
-      d.y0 = y0
+    for d in layers
+      d.y0 = 0
       y0 += d.y
-    return entry
+    return layers
 
   # Stacks all data on full reset
   setData: (data) ->

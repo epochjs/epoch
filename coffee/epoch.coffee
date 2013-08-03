@@ -103,7 +103,15 @@ class Epoch.Events
   trigger: (name) ->
     return unless Epoch.isObject(@_events[name])
     args = (arguments[i] for i in [1...arguments.length])
-    fn.apply(@, args) for fn in @_events[name]
+    for callback in @_events[name]
+      fn = null
+      if Epoch.isString(callback)
+        fn = @[callback]
+      else if Epoch.isFunction(callback)
+        fn = callback
+      unless fn?
+        Epoch.exception "Callback for event '#{name}' is not a function or reference to a method."
+      fn.apply @, args
 
 
 
@@ -117,6 +125,8 @@ class Epoch.Chart.Base extends Epoch.Events
       height: 240
 
   constructor: (@options) ->
+    super()
+
     @setData(@options.data or [])
 
     @el = $(@options.el) if @options.el?

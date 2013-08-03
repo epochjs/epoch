@@ -20,10 +20,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   constructor: (@options) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
-
     if Epoch.isString(@options.color)
       @_colorFn = colorFunctions[@options.color]
-      console.log colorFunctions[@options.color]
       Epoch.exception "Unknown coloring function provided '#{@options.color}'" unless @_colorFn?
     else if Epoch.isFunction(@options.color)
       @_colorFn = @options.color
@@ -56,13 +54,14 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   _offsetX: ->
     0.5*@w()
 
-  # Prepares initially set data for rendering (see _prepareEntry() above)
+  # Prepares initially set data for rendering (see _makeBuckets() above)
   setData: (data) ->
     super(data)
     for layer in @data
       layer.values = layer.values.map((entry) => @_prepareEntry(entry))
 
   draw: (delta=0) ->
+    @clear()
     # TODO Real stylez yo
     color = "rgba(190, 25, 25, %)"
 

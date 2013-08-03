@@ -262,19 +262,37 @@ for i in [0...35]
   for layer in TIME_DATA_SHORT_2
     layer.values.push { time: time, y: (Math.random() * 1000) + 1 }
 
+#
+# Heatmap entries
+#
+
+hist_elapsed = 0
+
+hist_nextTime = ->
+  hist_elapsed++
+  d = new Date(startDate.toString())
+  d.setSeconds d.getSeconds() + elapsed
+  (d.getTime()/1000)|0
 
 window.HIST_DATA = [
   { label: 'Alpha', values: [] }
 ]
 
-window.nextHistEntry = (hist_range=[0,100]) ->
-  time = nextTime()
+window.nextHistEntry = (hist_range=[0,100], time) ->
+  time = hist_nextTime() unless time?
   entry = { time: time, histogram: {} }
   for k in [0...1500]
     r = (Math.random() * hist_range[1])|0 + hist_range[0]
     entry.histogram[r] ?= 0
     entry.histogram[r]++
   return entry
+
+window.nextHeatmapEntry = ->
+  time = hist_nextTime()
+  rv = []
+  for layer in HIST_DATA
+    rv.push nextHistEntry([0,100], time)
+  return rv
 
 for i in [0...45]
   HIST_DATA[0].values.push nextHistEntry()

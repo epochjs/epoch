@@ -32,10 +32,9 @@
           data: HIST_DATA,
           buckets: 10,
           bucketRange: [0, 100],
-          color: 'cubic'
+          color: 'cubic',
+          axes: ['left', 'right', 'bottom']
         });
-
-        console.log(heatmap.data);
 
         var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 })
 
@@ -47,8 +46,6 @@
             top: Epoch.Formats.regular
           }
         });
-
-
 
         var line = $('#line').epoch({ 
           type: 'time.line',
@@ -63,11 +60,20 @@
         });
 
         function pushData() {
+          gauge.update(Math.random());
+
           var entry = nextTimeEntry();
+          // console.log(entry);
+
           bar.push(entry);
           line.push(entry);
           area.push(entry);
-          gauge.update(Math.random())
+
+          var heatmapEntry = nextHeatmapEntry()
+          // console.log(heatmapEntry);
+          // console.log(heatmap._queue)
+          
+          heatmap.push(heatmapEntry);
         }
 
         var dataInterval = null;
