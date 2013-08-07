@@ -103,9 +103,12 @@
 // Categorical Colors
 @mixin category-colors($list, $entries) {
   @for $i from 1 through $entries {
+    div.ref.category#{$i} {
+      background-color: nth($list, $i);
+    }
     .category#{$i} {
       .line { stroke: nth($list, $i); }
-      .bucket, .area, .dot { fill: nth($list, $i); }
+      .area, .dot { fill: nth($list, $i); }
     }
     .arc.category#{$i} path {
       fill: nth($list, $i);
@@ -154,7 +157,43 @@ $category20c:
   @include category-colors($category20c, 20);
 }
 
+
+//
+// Heatmap Colors
+//
+// The heatmap real-time graph uses color blending to choose the color for which to render each bucket.
+// Basic d3 categorical colors do not work well in this instance because the colors in the sequence
+// vary wildly in precieved luminosity.
+//
+// Below we define small subsets that should work well together because they are of similar luminosities.
+// Note: darker colors work better since we use opacity to denote "height" or "intensity" for each bucket
+//       after picking a mix color.
+//
+@mixin heatmap-colors($list, $entries) {
+  @for $i from 1 through $entries {
+    .category#{$i} {
+      .bucket { fill: nth($list, $i); }
+    }
+  }
+}
+
+$heatmap5:
+  #1f77b4, #2ca02c, #d62728, #8c564b, #7f7f7f;
+
+.epoch, .epoch.heatmap5 {
+  @include heatmap-colors($heatmap5, 5);
+}
+
+
+//
 // Canvas Styles Reference Container
+//
+// The reference container is an SVG that is automatically created when Epoch is loaded. It is used
+// by the canvas based plots to obtain color information from the page styles by creating reference
+// elements and then reading their computed styles.
+//
+// Note: don't mess with this ;)
+//
 div#_canvas_css_reference {
   width: 0;
   height: 0;
@@ -169,3 +208,5 @@ div#_canvas_css_reference {
     left: -1000px;
   }
 }
+
+
