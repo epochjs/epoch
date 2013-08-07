@@ -6,8 +6,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     buckets: 10
     bucketRange: [0, 100]
     color: 'linear'
-    margins:
-      right: 25
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -28,12 +26,22 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     else
       Epoch.exception "Unknown type for provided coloring function."
 
+    # Create the paint canvas
+    @paint = $("<canvas width='#{(@options.windowSize + 2)*@w()}' height='#{@height}'>").get(0)
+    @p = @paint.getContext('2d')
+    @_paintCol = 0
+
+  _paintEntry: (entry) ->
+    # TODO IMplement me (uses @_paintCol)
+
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
   _prepareEntry: (entry) ->
     prepared = { time: entry.time, max: 0, buckets: {} }
     [min, max] = @options.bucketRange
     size = (max - min) / @options.buckets
+
+    #console.log entry.histogram
 
     for value, count of entry.histogram
       for i in [0...@options.buckets]
@@ -42,6 +50,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
           prepared.buckets[bucketMax] ?= 0
           prepared.buckets[bucketMax] += count
           break
+
+    #console.log prepared.buckets
 
     for max, count of prepared.buckets
       prepared.max = Math.max(prepared.max, count)
@@ -62,18 +72,27 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   draw: (delta=0) ->
     @clear()
-    # TODO Real stylez yo
-    color = "rgba(190, 25, 25, %)"
+
+    # TODO Real stylez y
+
+    #color = "rgba(190, 25, 25, %)"
 
     # TODO Draw backwards, yo
     [w, h] = [@w(), @h()]
     for layer in @data
-      for i, entry of layer.values
-        k = @options.buckets
+      styles = @getStyles ".#{layer.className.split(' ').join('.')} rect.bucket"
+      color = styles.fill
+      [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
+      while (--i >= -2) && (--k >= 0)
+        entry = layer.values[k]
+        xPos = i * w + delta + (if trans then w else 0)
+        j = @options.buckets
         for bucket, count of entry.buckets
-          @ctx.fillStyle = color.replace('%', @_colorFn(count, entry.max).toFixed(2))
-          @ctx.fillRect i * w + delta, (k-1) * h, w-2, h-2
-          k--
+          @ctx.fillStyle = Epoch.toRGBA(color, @_colorFn(count, entry.max).toFixed(2))
+          @ctx.fillRect xPos, (j-1) * h, w-2, h-2
+          j--
+
+        
 
 
 # "Audio... Audio... Audio... Video Disco..." - Justice

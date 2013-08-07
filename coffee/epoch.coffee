@@ -68,12 +68,20 @@ Epoch.Util.domain = (layers, key='x') ->
   (k for k, v of set)
 
 
+# Takes a CSS color string and converts it to an RGBA with the given opacity
+Epoch.toRGBA = (color, opacity) ->
+  if (parts = color.match /^rgba\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)/)
+    result = "rgba(#{r},#{g},#{b},#{opacity})"
+  else if (v = d3.rgb color)
+    result = "rgba(#{v.r},#{v.g},#{v.b},#{opacity})"
+  return result
+
+
+
+
 #
 # Tick Formatters
 #
-
-
-
 Epoch.Formats.regular = (d) -> d
 Epoch.Formats.si = (d) -> Epoch.Util.formatSI(d)
 Epoch.Formats.percent = (d) -> (d*100).toFixed(1) + "%"

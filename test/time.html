@@ -12,6 +12,24 @@
         height: 125px;
         width: 900px;
       }
+      #heatmap2 {
+        height: 250px;
+        width: 900px;
+      }
+
+      #original, #bucketed {
+        width: 900px;
+        height: 200px;
+      }
+
+      .color {
+        width: 80px;
+        height: 80px;
+        display: inline-block;
+      }
+      .colors {
+        clear: both;
+      }
     </style>
   </head>
   <body>
@@ -20,10 +38,18 @@
     <p>Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button></p>
 
     <div id="heatmap" class="epoch"></div>
+    <div id="heatmap2" class="epoch"></div>
+
+    <!--
+    <div id="original" class="epoch"></div>
+    <div id="bucketed" class="epoch"></div>
+    -->
+
     <div id="gauge" class="epoch gauge-small"></div>
     <div id="line" class="epoch sparklines" style="width: 812px; height: 30px;margin-left: 44px;"></div>
     <div id="bar" class="epoch category20b" style="width: 900px; height: 200px;"></div>
     <div id="area" class="epoch category20c" style="width: 900px; height: 200px;"></div>
+
 
     <script>
       $(function() {
@@ -35,6 +61,16 @@
           color: 'cubic',
           axes: ['left', 'right', 'bottom']
         });
+
+        // var heatmap2 = $('#heatmap2').epoch({
+        //   type: 'time.heatmap',
+        //   data: HIST_DATA,
+        //   buckets: 50,
+        //   bucketRange: [0, 100],
+        //   color: 'quintic',
+        //   axes: ['left', 'right', 'bottom'],
+        //   windowSize: 100
+        // });
 
         var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 })
 
@@ -70,11 +106,21 @@
           area.push(entry);
 
           var heatmapEntry = nextHeatmapEntry()
-          // console.log(heatmapEntry);
-          // console.log(heatmap._queue)
-          
           heatmap.push(heatmapEntry);
+          //heatmap2.push(heatmapEntry);
         }
+
+        // var original = $('#original').epoch({
+        //   type: 'bar',
+        //   data: ORIGINAL,
+        //   axes: ['left', 'right']
+        // });
+
+        // var bucketed = $('#bucketed').epoch({
+        //   type: 'bar',
+        //   data: BUCKETED,
+        //   axes: ['left', 'right']
+        // });
 
         var dataInterval = null;
 

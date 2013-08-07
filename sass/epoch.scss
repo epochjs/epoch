@@ -105,7 +105,7 @@
   @for $i from 1 through $entries {
     .category#{$i} {
       .line { stroke: nth($list, $i); }
-      .area, .dot { fill: nth($list, $i); }
+      .bucket, .area, .dot { fill: nth($list, $i); }
     }
     .arc.category#{$i} path {
       fill: nth($list, $i);
