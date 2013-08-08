@@ -27,15 +27,14 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     else
       Epoch.exception "Unknown type for provided coloring function."
 
-    #console.log @data
-
     # Create the paint canvas
-    @paint = $("<canvas width='#{(@options.windowSize + 2)*@w()}' height='#{@height}'>").get(0)
-    @p = @paint.getContext('2d')
-    @_paintCol = 0
+    @_setupPaintCanvas()
 
-  _paintEntry: (entry) ->
-    # TODO IMplement me (uses @_paintCol)
+  # Prepares initially set data for rendering (see _makeBuckets() above)
+  setData: (data) ->
+    super(data)
+    for layer in @data
+      layer.values = layer.values.map((entry) => @_prepareEntry(entry))
 
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
@@ -43,8 +42,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     prepared = { time: entry.time, max: 0, buckets: {} }
     [min, max] = @options.bucketRange
     size = (max - min) / @options.buckets
-
-    #console.log entry.histogram
 
     for i in [0...@options.buckets]
       prepared.buckets[min + size * (i+1)] = 0
@@ -67,30 +64,70 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   _offsetX: ->
     0.5*@w()
 
-  # Prepares initially set data for rendering (see _makeBuckets() above)
-  setData: (data) ->
-    super(data)
+  #
+  # Painting
+  #
+  _setupPaintCanvas: ->
+    # Size the paint canvas to have a couple extra columns so we can perform smooth transitions
+    @paintWidth = (@options.windowSize + 1) * @w()
+    @paintHeight = @height
+
+    # Create the "memory only" canvas and nab the drawing context
+    @paint = $("<canvas width='#{@paintWidth}' height='#{@paintHeight}'>").get(0)
+    @p = @paint.getContext('2d')
+
+    # Paint the initial data (rendering backwards from just before the fixed paint position)
+    entryIndex = @data[0].values.length
+    drawColumn = @options.windowSize
+    while (--entryIndex >= 0) and (--drawColumn >= 0)
+      @_paintEntry(entryIndex, drawColumn)
+
+    # Hook into the events to paint the next row after it's been shifted into the data
+    @on 'after:shift', '_paintEntry'
+
+    # At the end of a transition we must reset the paint canvas by shifting the viewable
+    # buckets to the left (this allows for a fixed cut point and single renders below in @draw)
+    @on 'transition:end', '_shiftPaintCanvas'
+
+  _paintEntry: (entryIndex=null, drawColumn=null) ->
+    [w, h] = [@w(), @h()]
+
+    entryIndex ?= @data[0].values.length - 1
+    drawColumn ?= @options.windowSize
+
+    entries = []
+    bucketTotals = {}
+    maxTotal = 0
+
     for layer in @data
-      layer.values = layer.values.map((entry) => @_prepareEntry(entry))
+      entry = layer.values[entryIndex]
+      for bucket, count of entry.buckets
+        bucketTotals[bucket] ?= 0
+        bucketTotals[bucket] += count
+      maxTotal += entry.max
+      styles = @getStyles ".#{layer.className.split(' ').join('.')} rect.bucket"
+      entry.color = styles.fill
+      entries.push entry
 
-  _avgRgb: (entries, bucket) ->
-    [r, g, b, total] = [0, 0, 0, 0]
-    for entry in entries
-      continue unless entry.buckets[bucket]?
-      total += entry.buckets[bucket]
+    xPos = drawColumn * w
 
-    for i, entry of entries
-      if entry.buckets[bucket]?
-        value = entry.buckets[bucket]|0
-      else
-        value = 0
-      ratio = value / total
-      color = d3.rgb(entry.color)
+    @p.clearRect xPos, 0, w, @paintHeight
 
-      r += ratio * color.r
-      g += ratio * color.g
-      b += ratio * color.b
-    d3.rgb(r, g, b).toString()
+    j = @options.buckets
+    for bucket, sum of bucketTotals
+      color = @_avgLab(entries, bucket)
+      max = 0
+      for entry in entries
+        max += (entry.buckets[bucket] / sum) * maxTotal
+      @p.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
+      @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
+      j--
+
+  _shiftPaintCanvas: ->
+    data = @p.getImageData @w(), 0, @paintWidth-@w(), @paintHeight
+    @p.putImageData data, 0, 0
+
+    # TODO Implement the "end of transition shift"
 
   _avgLab: (entries, bucket) ->
     [l, a, b, total] = [0, 0, 0, 0]
@@ -111,41 +148,11 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     d3.lab(l, a, b).toString()
 
-
+  #
+  # Rendering
+  #
   draw: (delta=0) ->
     @clear()
-    
-    [w, h, trans] = [@w(), @h(), @inTransition()]
-
-    [i, k] = [@options.windowSize, @data[0].values.length]
-    while (--i >= -2) && (--k >= 0)
-      entries = []
-      bucketTotals = {}
-      maxTotal = 0
-
-      for layer in @data
-        entry = layer.values[k]
-        for bucket, count of entry.buckets
-          bucketTotals[bucket] ?= 0
-          bucketTotals[bucket] += count
-        maxTotal += entry.max
-        styles = @getStyles ".#{layer.className.split(' ').join('.')} rect.bucket"
-        entry.color = styles.fill
-        entries.push entry
-
-      xPos = i * w + delta + (if trans then w else 0)
-      j = @options.buckets
-      for bucket, sum of bucketTotals
-        color = @_avgLab(entries, bucket)
-        max = 0
-        for entry in entries
-          max += (entry.buckets[bucket] / sum) * maxTotal
-        @ctx.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
-        @ctx.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
-        j--
-
-
-        
-
+    @ctx.drawImage @paint, delta, 0
 
 # "Audio... Audio... Audio... Video Disco..." - Justice

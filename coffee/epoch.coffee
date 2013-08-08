@@ -109,7 +109,7 @@ class Epoch.Events
       @_events[name].splice(i, 1)
 
   trigger: (name) ->
-    return unless Epoch.isObject(@_events[name])
+    return unless @_events[name]?
     args = (arguments[i] for i in [1...arguments.length])
     for callback in @_events[name]
       fn = null

@@ -190,6 +190,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # into the graph's working set and begin animating the scroll transition.
   _startTransition: ->
     return if @animation.active == true or @_queue.length == 0
+    @trigger 'transition:start'
     @_shift()
     @animation.active = true
     @animation.interval = setInterval(@animationCallback, 1000/@options.fps)
@@ -216,6 +217,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
     # Reset the animation frame modulus
     @animation.frame = 0
+
+    # Trigger that we are done transitioning
+    @trigger 'transition:end'
 
     # Clear the transition interval unless another entry is already queued
     if @_queue.length > 0
@@ -257,6 +261,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # to @_updateTicks to handle horizontal (or "time") axes tick transitions
   # since we're implementing independent of d3 as well.
   _shift: ->
+    @trigger 'before:shift'
+
     entry = @_queue.shift()
     layer.values.push(entry[i]) for i, layer of @data
 
@@ -273,6 +279,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .duration(500)
         .ease('linear')
         .call(@_rightAxis())
+
+    @trigger 'after:shift'
 
   # Performs the animation for transitioning elements into the visualization
   _animate: ->

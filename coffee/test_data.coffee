@@ -322,7 +322,8 @@ window.nextMultiLayerHeatmapEntry = ->
     rv.push nextHistEntry(hist_dist[i], time)
   return rv
 
-for i in [0..120]
+#for i in [0..120]
+for i in [0..60]
   entry = nextMultiLayerHeatmapEntry()
   for k in [0...entry.length]
     HIST_DATA_2[k].values.push entry[k]
