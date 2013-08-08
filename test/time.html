@@ -65,14 +65,18 @@
           $('#reference').append('<div class="ref category' + i + '"></div>');
         }
 
-        // var heatmap = $('#heatmap').epoch({
-        //   type: 'time.heatmap',
-        //   data: HIST_DATA,
-        //   buckets: 10,
-        //   bucketRange: [0, 100],
-        //   color: 'quartic',
-        //   axes: ['left', 'right', 'bottom']
-        // });
+        var heatmap = $('#heatmap').epoch({
+          type: 'time.heatmap',
+          data: HIST_DATA,
+          buckets: 10,
+          bucketRange: [0, 100],
+          color: 'quartic',
+          axes: ['left', 'right', 'bottom'],
+          ticks: {
+            left: 3,
+            right: 3
+          }
+        });
 
         twoColor = function(value, max) {
           return Math.pow(value/max, 1.29)
@@ -122,7 +126,7 @@
           //line.push(entry);
           //area.push(entry);
 
-          //heatmap.push(nextHeatmapEntry());
+          heatmap.push(nextHeatmapEntry());
           heatmap2.push(nextMultiLayerHeatmapEntry());
         }
 

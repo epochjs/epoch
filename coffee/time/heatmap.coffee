@@ -58,6 +58,11 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     return prepared
 
+  y: ->
+    d3.scale.linear()
+      .domain(@options.bucketRange)
+      .range([@innerHeight(), 0])
+
   h: ->
     @innerHeight() / @options.buckets
 
@@ -65,7 +70,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     0.5*@w()
 
   #
-  # Painting
+  # Painting and rendering
   #
   _setupPaintCanvas: ->
     # Size the paint canvas to have a couple extra columns so we can perform smooth transitions
@@ -148,9 +153,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     d3.lab(l, a, b).toString()
 
-  #
-  # Rendering
-  #
   draw: (delta=0) ->
     @clear()
     @ctx.drawImage @paint, delta, 0
