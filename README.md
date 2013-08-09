@@ -18,11 +18,11 @@ Epoch requires the following libraries in order to work:
 1. [d3](https://github.com/mbostock/d3)
 2. [jQuery](https://github.com/jquery/jquery)
 
-### Quick Example
+### A Quick Example
 
 First, examine this example bandwidth data and how it is formatted:
 
-```
+```javascript
 var bandwidthData = [
   {
     label: 'Average Bandwidth',
@@ -44,7 +44,7 @@ var bandwidthData = [
 
 Using this data we can easily add a chart to a page by using jQuery:
 
-```
+```javascript
 var barChart = $('div#bar').epoch({
   type: 'time.bar',
   data: bandwidthData
@@ -55,7 +55,7 @@ The chart is automatically sized to fit the containing div (`div#bar`) and the d
 `.epoch` returns a chart instance which we assign to the variable `barChart`. At this point we can setup a simple poll to for new information
 from our stats servers and get the graph updating in real time. Here's an example of how one might do this:
 
-```
+```javascript
 function pollBandwidthData() {
   $.get('/stats/bandwidth', function(data) {
     barChart.push(data);
