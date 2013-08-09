@@ -58,6 +58,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @animation.delta = (value - @value) / @options.fps
     unless @animation.active
       @animation.interval = setInterval @_animate, (1000/@options.fps)
+      @animation.active = true
 
   radius: -> @height / 1.58
   centerX: -> @width / 2
