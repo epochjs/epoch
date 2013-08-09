@@ -9,7 +9,12 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
   setStyles: (className) ->
     styles = @getStyles "rect.bar.#{className.replace(/\s/g,'.')}"
     @ctx.fillStyle = styles.fill
-    @ctx.strokeStyle = styles.stroke
+    
+    if !styles.stroke? or styles.stroke == 'none'
+      @ctx.strokeStyle = 'transparent'
+    else
+      @ctx.strokeStyle = styles.stroke
+
     if styles['stroke-width']?
       @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
