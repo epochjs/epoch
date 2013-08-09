@@ -413,7 +413,7 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
   _prepareLayers: (layers) ->
     y0 = 0
     for d in layers
-      d.y0 = 0
+      d.y0 = y0
       y0 += d.y
     return layers
 

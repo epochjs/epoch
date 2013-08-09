@@ -117,14 +117,14 @@
         });
 
         function pushData() {
-          //gauge.update(Math.random());
+          gauge.update(Math.random());
 
           var entry = nextTimeEntry();
-          // console.log(entry);
+          //console.log(entry);
 
-          //bar.push(entry);
-          //line.push(entry);
-          //area.push(entry);
+          bar.push(entry);
+          line.push(entry);
+          area.push(entry);
 
           heatmap.push(nextHeatmapEntry());
           heatmap2.push(nextMultiLayerHeatmapEntry());
