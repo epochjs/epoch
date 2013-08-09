@@ -208,12 +208,14 @@ for name in CATEGORIES
 startDate = new Date("Mon Jul 04 2013 4:30:00 GMT-0700 (PDT)")
 elapsed = 0
 
+# Used to generate timestamps for visualization test data.
 nextTime = ->
   elapsed++
   d = new Date(startDate.toString())
   d.setSeconds d.getSeconds() + elapsed
   (d.getTime()/1000)|0
 
+# Used to generate entries for test visualization
 window.nextTimeEntry = ->
   t = nextTime()
   [
@@ -268,6 +270,7 @@ for i in [0...35]
 
 hist_elapsed = 0
 
+# Independent timestamp generation method for heatmap test data
 hist_nextTime = ->
   hist_elapsed++
   d = new Date(startDate.toString())
@@ -278,6 +281,7 @@ window.HIST_DATA = [
   { label: 'Alpha', values: [] },
 ]
 
+# Generates an entry containing a histogram for heatmap test data
 window.nextHistEntry = (hist_range=[0,100], time) ->
   time = hist_nextTime() unless time?
   entry = { time: time, histogram: {} }
@@ -289,6 +293,7 @@ window.nextHistEntry = (hist_range=[0,100], time) ->
     entry.histogram[r]++
   return entry
 
+# Generates a fullly layered entry for heatmap test data
 window.nextHeatmapEntry = ->
   time = hist_nextTime()
   rv = []
@@ -315,6 +320,7 @@ hist_dist = [
   [40, 100]
 ]
 
+# Generates entries for multi-layered heatmap data with varying distributions
 window.nextMultiLayerHeatmapEntry = ->
   time = hist_nextTime()
   rv = []

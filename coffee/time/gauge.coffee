@@ -1,7 +1,5 @@
-#
-# Real-time Gauge Visualization
-# Note: Looks best with a 4:3 aspect ratio (w:h)
-#
+
+# Real-time Gauge Visualization. Note: Looks best with a 4:3 aspect ratio (w:h)
 class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   defaults =
     domain: [0, 1]
@@ -11,6 +9,14 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     fps: 34
     format: Epoch.Formats.percent
 
+  # Creates the new gauge chart.
+  # @param [Object] options Options for the gauge chart.
+  # @option options [Array] domain The domain to use when rendering values (default: [0, 1]).
+  # @option options [Integer] ticks Number of ticks to render (default: 10).
+  # @option options [Integer] tickSize The length (in pixels) for each tick (default: 5).
+  # @option options [Integer] tickOffset The number of pixels by which to offset ticks from the outer arc (default: 5).
+  # @option options [Integer] fps The number of animation frames to render per second (default: 34).
+  # @option options [Function] format The formatting function to use when rendering the gauge label (default: Epoch.Formats.percent).
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @value = @options.value or 0
@@ -52,7 +58,8 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       @svg.select('text.value').text(@options.format(@value))
       @draw()
 
-  # TODO "update" or "push"? Also needs to be correctly implemented with tweening
+  # Sets the value for the gauge to display and begins animating the guage.
+  # @param [Number] value Value to set for the gauge.
   update: (value) ->
     @animation.target = value
     @animation.delta = (value - @value) / @options.fps
@@ -60,21 +67,33 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       @animation.interval = setInterval @_animate, (1000/@options.fps)
       @animation.active = true
 
+  # @return [Number] The radius for the gauge.
   radius: -> @height / 1.58
+
+  # @return [Number] The center position x-coordinate for the gauge.
   centerX: -> @width / 2
+
+  # @return [Number] The center position y-coordinate for the gauge.
   centerY: -> 0.68 * @height
+
+  # @return [Number] The y-coordinate for the gauge text display.
   textY: -> 0.48 * @height
 
-  # TODO Fix me, doesn't work with the first part of the domain
+  # @return [Number] The angle to set for the needle given a value within the domain.
+  # @param [Number] value Value to translate into a needle angle.
   getAngle: (value) ->
-    (value / @options.domain[1]) * (Math.PI + 2*Math.PI/8) - Math.PI/2 - Math.PI/8
+    [a, b] = @options.domain
+    ((value - a) / (b - a)) * (Math.PI + 2*Math.PI/8) - Math.PI/2 - Math.PI/8
 
+  # Sets context styles given a particular selector.
+  # @param [String] selector The selector to use when setting the styles.
   setStyles: (selector) ->
     styles = @getStyles selector
     @ctx.fillStyle = styles.fill
     @ctx.strokeStyle = styles.stroke
     @ctx.lineWidth = styles['stroke-width'].replace('px', '') if styles['stroke-width']?
 
+  # Draws the gauge.
   draw: ->
     [cx, cy, r] = [@centerX(), @centerY(), @radius()]
     [tickOffset, tickSize] = [@options.tickOffset, @options.tickSize]
@@ -116,6 +135,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
 
     @drawNeedle()
 
+  # Draws the needle.
   drawNeedle: ->
     [cx, cy, r] = [@centerX(), @centerY(), @radius()]
     ratio = @value / @options.domain[1]

@@ -1,11 +1,12 @@
-#
-# Line Chart
-#
+# Static line chart implementation (using d3).
 class Epoch.Chart.Line extends Epoch.Chart.Plot
+
+  # @return [Function] The line generator used to construct the plot.
   line: ->
     [x, y] = [@x(), @y()]
     d3.svg.line().x((d) => (x d.x)).y((d) => (y d.y))
 
+  # Draws the line chart.
   draw: ->
     [x, y, line] = [@x(), @y(), @line()]
 

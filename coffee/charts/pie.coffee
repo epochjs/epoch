@@ -1,9 +1,14 @@
-# Basic Pie Chart  
+
+# Static Pie Chart implementation (using d3).
 class Epoch.Chart.Pie extends Epoch.Chart.SVG
   defaults =
     margin: 10
     inner: 0
 
+  # Creates a new pie chart.
+  # @param [Object] options Options for the pie chart.
+  # @option options [Number] margin Margins to add around the pie chart (default: 10).
+  # @option options [Number] inner The inner radius for the chart (default: 0).
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     radius = Math.max(@width, @height) / 2
@@ -15,6 +20,7 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
     @svg = @svg.append('g')
       .attr("transform", "translate(#{@width/2}, #{@height/2})")
 
+  # Draws the pie chart
   draw: ->
     arcs = @svg.selectAll(".arc")
       .data(@pie(@data), (d) -> d.data.label)

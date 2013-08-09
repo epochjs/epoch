@@ -1,8 +1,11 @@
-#
-# Epoch jQuery adapter
-#
+
+# Data key to use for storing a reference to the chart instance on an element.
 DATA_NAME = 'epoch-chart'
 
+# Adds an Epoch chart of the given type to the referenced element.
+# @param [Object] options Options for the chart.
+# @option options [String] type The type of chart to append to the referenced element.
+# @return [Object] The chart instance that was associated with the containing element.
 jQuery.fn.epoch = (options) ->
   options.el = @
   unless (chart = @.data(DATA_NAME))?

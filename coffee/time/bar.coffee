@@ -1,11 +1,13 @@
-#
-# Real-time Bar Chart
-#
+
+# Real-time Bar Chart implementation.
 class Epoch.Time.Bar extends Epoch.Time.Stack
-  # Defines an offset for ticks and markers
+
+  # @return [Number] An offset used to align the ticks to the center of the rendered bars.
   _offsetX: ->
    0.5*@w()
 
+  # Sets the styles for the graphics context given a layer class name.
+  # @param [String] className The class name to use when deriving the styles.
   setStyles: (className) ->
     styles = @getStyles "rect.bar.#{className.replace(/\s/g,'.')}"
     @ctx.fillStyle = styles.fill
@@ -18,7 +20,7 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
     if styles['stroke-width']?
       @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-  # Draws the stacked bars in the visualization canvas
+  # Draws the stacked bar chart.
   draw: (delta=0) ->
     @clear()
     [y, w] = [@y(), @w()]

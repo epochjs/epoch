@@ -1,7 +1,9 @@
-#
-# Real-time area chart
-#
+
+# Real-time stacked area chart implementation.
 class Epoch.Time.Area extends Epoch.Time.Stack
+
+  # Sets the appropriate styles to the graphics context given a particular layer.
+  # @param [Object] layer Layer for which to set the styles.
   setStyles: (layer) ->
     if layer.className?
       styles = @getStyles "g.#{layer.className.replace(/\s/g,'.')} path.area"
@@ -13,6 +15,7 @@ class Epoch.Time.Area extends Epoch.Time.Stack
     if styles['stroke-width']?
       @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
+  # Draws the area chart.
   draw: (delta=0) ->
     @clear()
     [y, w] = [@y(), @w()]
@@ -43,5 +46,3 @@ class Epoch.Time.Area extends Epoch.Time.Stack
       @ctx.lineTo(@width+w+delta, @innerHeight())
       @ctx.closePath()
       @ctx.fill()
-
-    # TODO Should we also have strokes? Probably...

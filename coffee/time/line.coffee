@@ -1,14 +1,15 @@
-#
-# Real-time Line Chart
-#
+
+# Real-time line chart implementation
 class Epoch.Time.Line extends Epoch.Time.Plot
+  # Sets the graphics context styles based ont he given layer class name.
+  # @param [String] className The class name of the layer for which to set the styles.
   setStyles: (className) ->
     styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.line"
     @ctx.fillStyle = styles.fill
     @ctx.strokeStyle = styles.stroke
     @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-  # Draws the lines, yo
+  # Draws the line chart.
   draw: (delta=0) ->
     @clear()
     [y, w] = [@y(), @w()]

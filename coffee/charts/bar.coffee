@@ -1,10 +1,4 @@
-# Basic bar chart
-#
-# TODO Implement the style option
-# 
-# Options:
-#   style: 'grouped' (default), 'stacked', or 'normal-stacked'
-#
+# Static bar chart implementation (using d3).
 class Epoch.Chart.Bar extends Epoch.Chart.Plot
   defaults = 
     style: 'grouped'
@@ -12,16 +6,19 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
 
+  # @return [Function] The scale used to generate the chart's x scale.
   x: ->
     d3.scale.ordinal()
       .domain(Epoch.Util.domain(@data))
       .rangeRoundBands([0, @innerWidth()], .1)
 
+  # @return [Function] The x scale used to render the bar chart.
   x1: (x0) ->
     d3.scale.ordinal()
       .domain((layer.label for layer in @data))
       .rangeRoundBands([0, x0.rangeBand()], .08)
 
+  # @return [Function] The y scale used to render the bar chart.
   y: ->
     extent = @extent((d) -> d.y)
     extent[0] = Math.min(0, extent[0])
@@ -29,6 +26,8 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .domain(extent)
       .range([@height - @margins.top - @margins.bottom, 0])
 
+  # Remaps the bar chart data into a form that is easier to display.
+  # @return [Array] The reorganized data.
   _remapData: ->
     map = {}
     for layer in @data
@@ -38,6 +37,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
         map[entry.x].push { label: layer.label, y: entry.y, className: className }
     ({group: k, values: v} for k, v of map)
 
+  # Draws the bar char.
   draw: ->
     [x0, y] = [@x(), @y()]
     x1 = @x1(x0)

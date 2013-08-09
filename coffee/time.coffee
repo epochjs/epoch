@@ -1,29 +1,10 @@
+# Real-time Plot Base Class. Uses an html5 canvas to recreate the basic d3 drawing routines
+# while simultaneously reducing the load on the viewer's cpu (and, you know, not leaking
+# memory which ultimately leads to a crashed browser).
 #
-# Real-time Plot Base Class
-#
-# Some notes about all this crazy:
-#
-# So we have to "reimplement" some of the d3 stuff here because of the
-# demands it is putting on the cpu when doing normal SVG rendering 
-# and transitions.
-#
-# My theory is that d3 was designed for long period (and mostly user 
-# initiated) transitions. Using these assumptions it was made to be as
-# general and as expressive as possible (kudos Bostock, et. al.) but
-# at the expense of time cost optimization.
-#
-# In my testing if we move/exit/enter using the traditional model
-# core usage will jump considerably, which is unacceptable for
-# an all day, erry day, kind of dashboard with many concurrent 
-# visualizations.
-#
-# Thus we reimplement the animation and graph rendering using canvases
-# and piggy back on the graphics card. This has the result of drastically
-# reducing the load on yonder CPU.
-#
-# I swear to god that one of these days I will learn how to write elegant
-# and readible rendering code that also performs well (hopes... dreams...)
-#
+# The class also handles the creation of axes and margins common to all time-series plots.
+# Furthermore it layers the canvas below an SVG element to keep visual consistency when
+# rendering text, glyphs, etc.
 class Epoch.Time.Plot extends Epoch.Chart.Canvas
   defaults =
     fps: 24
@@ -46,6 +27,33 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       left: Epoch.Formats.si
       right: Epoch.Formats.si
 
+  # Creates a new real-time plot.
+  #
+  # @param [Object] options Options for the plot.
+  # @option options [Integer] fps Number of frames per second to use when animating
+  #   the plot.
+  # @option options [Integer] historySize Maximum number of elements to keep in history
+  #   for the plot.
+  # @option options [Integer] windowSize Number of entries to simultaneously display
+  #   when rendering the visualization.
+  # @option options [Integer] queueSize Number of elements to queue while not animating
+  #   but still recieving elements. In some browsers, intervals will not fire if the
+  #   page containing them is not the active tab. By setting a maximum limit to the
+  #   number of unprocessed data points we can ensure that the memory footprint of the
+  #   page does not get out of hand.
+  # @option options [Object] margins Explicit margins to use for the visualization. Note
+  #   that these are optional and will be automatically generated based on which axes are
+  #   used for the visualization. Margins are keyed by their position (top, left, bottom
+  #   and/or right) and should map to [Integer] values.
+  # @option options [Array] axes Which axes to display when rendering the visualization 
+  #   (top, left, bottom, and/or right).
+  # @option options [Object] ticks Number of ticks to display on each axis available axes
+  #   ares: time, left, and right. The number provided for the left and right axes are in
+  #   absolute terms (i.e. there will be exactly that number of ticks). The time ticks
+  #   denote how often a tick should be generated (e.g. if 5 is provided then a tick will
+  #   be added every fifth time you push a new data entry into the visualization).
+  # @option options [Object] tickFormats Formatting functions for ticks on the given axes.
+  #   The avaiable axes are: top, bottom, left, and right.
   constructor: (@options) ->
     givenMargins = Epoch.Util.copy(@options.margins) or {}
     super(@options = Epoch.Util.defaults(@options, defaults))
@@ -92,7 +100,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     # Callback used for animation
     @animationCallback = => @_animate()
 
-  # Creates a copy of the given data fixed to the window size
+  # Sets the data for the visualization (truncated to the history size as defined in the options).
+  # @param [Array] data Layered data to set for the visualization.
   setData: (data) ->
     @data = []
     for i, layer of data
@@ -105,10 +114,15 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       copy.className = classes.join(' ')
       @data.push copy
 
-  # Provides a way for subclasses to easily offset ticks (bar charts are centered, etc.)
+
+  # This method is called to provide a small offset for placement of horizontal ticks.
+  # The value returned will be added to the x value of each tick as they are being
+  # rendered.
+  #
+  # @return [Number] The horizontal offset for the top and bottom axes ticks.
   _offsetX: -> 0
 
-  # Prepares bottom and top time axes for rendering
+  # Builds time axes (bottom and top)
   _prepareTimeAxes: ->
     if @hasAxis('bottom')
       axis = @bottomAxis = @svg.append('g')
@@ -139,55 +153,60 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         k -= tickInterval
       break
 
-  # Builds and prepares the range axes (left and right)
+  # Builds the range axes (left and right)
   _prepareRangeAxes: ->
     if @hasAxis('left')
       @svg.append("g")
         .attr("class", "y axis left")
         .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
-        .call(@_leftAxis())
+        .call(@leftAxis())
 
     if @hasAxis('right')
       @svg.append('g')
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
-        .call(@_rightAxis())
+        .call(@rightAxis())
 
-  # @return The d3 left axis
-  _leftAxis: ->
+  # @return [Object] The d3 left axis.
+  leftAxis: ->
     d3.svg.axis().scale(@y()).orient('left')
       .ticks(@options.ticks.left)
       .tickFormat(@options.tickFormats.left)
 
-  # @return The d3 right axis
-  _rightAxis: ->
+  # @return [Object] The d3 right axis.
+  rightAxis: ->
     d3.svg.axis().scale(@y()).orient('right')
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
 
-  # @param name Name of the axis
-  # @return true if the axis was set in the options, false otherwise.
+  # Determines if the visualization is displaying the axis with the given name.
+  # @param [String] name Name of the axis
+  # @return [Boolean] <code>true</code> if the axis was set in the options, <code>false</code> otherwise.
   hasAxis: (name) ->
     @options.axes.indexOf(name) > -1
 
-  # @return The width of the canvas minus the axes margins
+  # @return [Number] the width of the visualization area of the plot (full width - margins)
   innerWidth: ->
     @width - (@margins.left + @margins.right)
 
-  # @return The height of the canvas minus the axes margins
+  # @return [Number] the height of the visualization area of the plot (full height - margins)
   innerHeight: ->
     @height - (@margins.top + @margins.bottom)
 
   # Abstract method for performing any preprocessing before queuing new entries
-  # @param entry The entry to prepare
+  # @param entry [Object] The entry to prepare.
+  # @return [Object] The prepared entry.
   _prepareEntry: (entry) -> entry
 
   # Abstract method for preparing a group of layered entries entering the visualization
-  # @param layers The layered entries to prepare
+  # @param [Array] layers The layered entries to prepare.
+  # @return [Array] The prepared layers.
   _prepareLayers: (layers) -> layers
     
-  # If there are entries in the incoming data queue this will shift them
-  # into the graph's working set and begin animating the scroll transition.
+  # This method will remove the first incoming entry from the visualization's queue
+  # and shift it into the working set (aka window). It then starts the animating the
+  # transition of the element into the visualization. Triggers the 'transition:start'
+  # only in the case that the animation is actually begun.
   _startTransition: ->
     return if @animation.active == true or @_queue.length == 0
     @trigger 'transition:start'
@@ -196,7 +215,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @animation.interval = setInterval(@animationCallback, 1000/@options.fps)
 
   # Stops animating and clears the animation interval given there is no more
-  # incoming data to process. Also finalizes tick entering and exiting.
+  # incoming data to process. Also finalizes tick entering and exiting. Trigger
+  # the 'transition:end' event.
   _stopTransition: ->
     return unless @inTransition()
     
@@ -228,16 +248,17 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @animation.active = false
       clearInterval @animation.interval
 
-  # True if we are transitioning (scrolling), false otherwise
+  # Determines if the plot is currently animating a transition.
+  # @return [Boolean] <code>true</code> if the plot is animating, <code>false</code> otherwise.
   inTransition: ->
     @animation.active
 
-  # This is used by the application programmer to push new data into
-  # the window of the visualization. Incoming data is not immediately
-  # added to the graph but instead added to a fixed size queue so we can
-  # get around some browser weirdness (and memory bloat). Finally if we're
-  # good to go it will will begin the process of scrolling (or transitioning)
-  # the graph (see _shift below).
+  # This method is used by the application programmer to introduce new data into
+  # the timeseries plot. The method queues the incoming data, ensures a fixed size
+  # for the data queue, and finally calls <code>_startTransition</code> method to
+  # begin animating the plot. Triggers the 'push' event.
+  #
+  # @param [Array] layers Layered incoming visualization data.
   push: (layers) ->
     layers = @_prepareLayers(layers)
 
@@ -248,6 +269,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
     # Push the entry into the queue
     @_queue.push layers.map((entry) => @_prepareEntry(entry))
+
+    @trigger 'push'
 
     # Begin the transition unless we are already doing so
     @_startTransition() unless @inTransition()
@@ -260,6 +283,10 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # off the queue and put it into the working dataset. It also calls through
   # to @_updateTicks to handle horizontal (or "time") axes tick transitions
   # since we're implementing independent of d3 as well.
+  #
+  # Triggers the 'before:shift' event before it has shifted an element
+  # off the queue and the 'after:shift' event after the entry has been shifted
+  # off the queue.
   _shift: ->
     @trigger 'before:shift'
 
@@ -272,30 +299,30 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @svg.selectAll('.y.axis.left').transition()
         .duration(500)
         .ease('linear')
-        .call(@_leftAxis())
+        .call(@leftAxis())
 
     if @hasAxis('right')
       @svg.selectAll('.y.axis.right').transition()
         .duration(500)
         .ease('linear')
-        .call(@_rightAxis())
+        .call(@rightAxis())
 
     @trigger 'after:shift'
 
-  # Performs the animation for transitioning elements into the visualization
+  # Performs the animation for transitioning elements in the visualization.
   _animate: ->
     return unless @inTransition()
     @_stopTransition() if ++@animation.frame == @animation.duration
     @draw(@animation.frame * @animation.delta)
     @_updateTimeAxes()
 
-  # @return The y scale for the graph
+  # @return [Function] The y scale for the graph
   y: ->
     d3.scale.linear()
       .domain(@extent((d) -> d.y))
       .range([@innerHeight(), 0])
 
-  # @return The width of a single section of the graph pretaining to a data point
+  # @return [Number] The width of a single section of the graph pertaining to a data point
   w: ->
     @innerWidth() / @options.windowSize
 
@@ -303,8 +330,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # it checks to see if we also need to update the working tick set and
   # makes the approriate changes for handling tick animation (enter, exit, 
   # and update in the d3 model).
-  # 
-  # @param newTime Current newest timestamp in the data
+  #
+  # @param [Integer] newTime Current newest timestamp in the data
   _updateTicks: (newTime) ->
     return unless @hasAxis('top') or @hasAxis('bottom')
 
@@ -316,7 +343,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     unless @_ticks[0].x - @w() >= 0
       @_ticks[0].exit = true
 
-  # Makes and pushes a new tick into the visualization
+  # Makes and pushes a new tick into the visualization.
+  #
   # @param bucket Index in the data window where the tick should initially be position
   # @param time The unix timestamp associated with the tick
   # @param enter Whether or not the tick should be considered as "newly entering"
@@ -375,7 +403,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     tick.topEl.remove() if tick.topEl?
     tick.bottomEl.remove() if tick.bottomEl?
   
-  # This performs animations for the time axes (top and bottom)
+  # This performs animations for the time axes (top and bottom).
   _updateTimeAxes: ->
     return unless @hasAxis('top') or @hasAxis('bottom')
     [dx, dop] = [@animation.delta, 1 / @options.fps]
@@ -396,20 +424,24 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
   
-  # Clears the render canvas
+  # Clears the render canvas.
   clear: ->
     @ctx.clearRect(0, 0, @width, @height)
 
-  # Abstract method to be overriden in subclasses for performing specific graph drawing
-  # @param frame Animation frame (zero unless the graph is scrolling)
-  draw: (frame=0)->
+  # Draws the visualization in the plot's canvas.
+  # @param delta The current x offset to apply to all elements when rendering. This number
+  #   will be 0 when the plot is not animating and negative when it is.
+  # @abstract It does nothing on its own but is provided so that subclasses can
+  #   define a custom rendering routine.
+  draw: (delta=0)->
 
 
-#
-# Abstract class that is useful for making "stacked" plots
-#
+# Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)
+# @abstract It does not perform rendering but instead formats the data
+#   so as to ease the process of rendering stacked plots.
 class Epoch.Time.Stack extends Epoch.Time.Plot
-  # Stacks incoming entries into the visualization
+  # Adds stacking information for layers entering the visualization.
+  # @param [Array] layers Layers to stack.
   _prepareLayers: (layers) ->
     y0 = 0
     for d in layers
@@ -417,7 +449,8 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
       y0 += d.y
     return layers
 
-  # Stacks all data on full reset
+  # Ensures that elements are stacked when setting the initial data.
+  # @param [Array] data Layered data to set for the visualization.
   setData: (data) ->
     super(data)
     for i in [0...@data[0].values.length]
@@ -426,9 +459,10 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
         layer.values[i].y0 = y0
         y0 += layer.values[i].y
 
-  # Since the time axes are discretely associated with data
-  # entries we can assume that extent will only ever be used
-  # for y scale
+  # Finds the correct extent to use for range axes (left and right).
+  # @return [Array] An extent array with the first element equal to 0
+  #   and the second element equal to the maximum value amongst the
+  #   stacked entries.
   extent: ->
     max = 0
     for i in [0...@data[0].values.length]

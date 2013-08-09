@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CoffeeScript API Documentation</title>
+  <link rel='stylesheet' href='../../../assets/codo.css' type='text/css'>
+  <script src='../../../assets/codo.js'></script>
+  <script src='../../../assets/search_data.js'></script>
+</head>
+  <body>
+    <div id='base' data-path='../../../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../../../README.md.html' title='Epoch'>Epoch</a>
+    &raquo;
+    <a href='../../../class_index.html' title='Index'>Index</a>
+    &raquo;
+    <span class='title'>Epoch</span>
+    &raquo;
+    <span class='title'>Chart</span>
+    &raquo;
+    <span class='title'>Plot</span>
+    <nav>
+      <ul>
+        <li class='noframes'>
+          (<a class='noframes' href='#'>no frames</a>)
+        </li>
+      </ul>
+    </nav>
+    <div id='search'>
+      <a id='class_list_link' href='../../../class_list.html'>Classes</a>
+      <a id='file_list_link' href='../../../file_list.html'>Files</a>
+      <a id='method_list_link' href='../../../method_list.html'>Methods</a>
+      <a id='extra_list_link' href='../../../extra_list.html'>Extras</a>
+    </div>
+  </div>
+  <iframe id='search_frame'></iframe>
+  <div id='fuzzySearch'>
+    <input type='text'>
+    <ol></ol>
+  </div>
+  <div id='help'>
+    <p>
+      Quickly fuzzy find classes, mixins, methods, file:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-T</span>
+        Open fuzzy finder dialog
+      </li>
+    </ul>
+    <p>
+      In frame mode you can toggle the list naviation frame on the left side:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-L</span>
+        Toggle list view
+      </li>
+    </ul>
+    <p>
+      You can focus a list in frame mode or toggle a tab in frameless mode:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-C</span>
+        Class list
+      </li>
+      <li>
+        <span>Ctrl-I</span>
+        Mixin list
+      </li>
+      <li>
+        <span>Ctrl-F</span>
+        File list
+      </li>
+      <li>
+        <span>Ctrl-M</span>
+        Method list
+      </li>
+      <li>
+        <span>Ctrl-E</span>
+        Extras list
+      </li>
+    </ul>
+    <p>
+      You can focus and blur the search input:
+    </p>
+    <ul>
+      <li>
+        <span>Ctrl-S</span>
+        Focus search input
+      </li>
+      <li>
+        <span>Esc</span>
+        Blur search input
+      </li>
+    </ul>
+    <p>
+      In frameless mode you can close the list tab:
+    </p>
+    <ul>
+      <li>
+        <span>Esc</span>
+        Close list tab
+      </li>
+    </ul>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        Class:
+        Epoch.Chart.Plot
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>coffee&#47;charts.coffee</td>
+        </tr>
+        <tr>
+          <td>Inherits:</td>
+          <td>
+            <a href='../../../classes/Epoch/Chart/SVG.html'>Epoch.Chart.SVG</a>
+          </td>
+        </tr>
+      </table>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>Base class for all two-dimensional d3 charts. This class handles axes and margins
+so that subclasses can focus on the construction of particular chart types.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Direct Known Subclasses</h2>
+      <p class='children'>
+                <a href='../../../classes/Epoch/Chart/Area.html'>Epoch.Chart.Area</a>,
+                <a href='../../../classes/Epoch/Chart/Bar.html'>Epoch.Chart.Bar</a>,
+                <a href='../../../classes/Epoch/Chart/Line.html'>Epoch.Chart.Line</a>,
+        <a href='../../../classes/Epoch/Chart/Scatter.html'>Epoch.Chart.Scatter</a>
+      </p>
+      <h2>Instance Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#constructor-instance'>
+        - (void) <strong>constructor</strong>(options = {})
+      </a>
+    </span>
+    <span class='constructor note title'>Constructor</span>
+    <span class='desc'>
+      Creates a new plot chart.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#setTickFormat-instance'>
+        - (void) <strong>setTickFormat</strong>(axis, fn)
+      </a>
+    </span>
+    <span class='desc'>
+      Sets the tick formatting function to use on the given axis.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#hasAxis-instance'>
+        - (Boolean) <strong>hasAxis</strong>(axis)
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#innerWidth-instance'>
+        - (Number) <strong>innerWidth</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#innerHeight-instance'>
+        - (Number) <strong>innerHeight</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#x-instance'>
+        - (Function) <strong>x</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#y-instance'>
+        - (Function) <strong>y</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#bottomAxis-instance'>
+        - (Function) <strong>bottomAxis</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#topAxis-instance'>
+        - (Function) <strong>topAxis</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#leftAxis-instance'>
+        - (Function) <strong>leftAxis</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#rightAxis-instance'>
+        - (Function) <strong>rightAxis</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#draw-instance'>
+        - (void) <strong>draw</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Renders the axes for the visualization (subclasses must implement specific drawing routines).
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#_redrawAxes-instance'>
+        - (void) <strong>_redrawAxes</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Redraws the axes for the visualization.
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#_drawAxes-instance'>
+        - (void) <strong>_drawAxes</strong>()
+      </a>
+    </span>
+    <span class='desc'>
+      Draws the initial axes for the visualization.
+    </span>
+  </li>
+</ul>
+      <h2>
+        <small>Inherited Method Summary</small>
+      </h2>
+      <h3 class='inherited'>
+        Methods inherited from
+        <a href='../../../classes/Epoch/Chart/SVG.html'>Epoch.Chart.SVG</a>
+      </h3>
+      <p class='inherited'>
+        <a href='../../../classes/Epoch/Chart/SVG.html#constructor-instance'>#constructor</a>
+      </p>
+      <h3 class='inherited'>
+        Methods inherited from
+        <a href='../../../classes/Epoch/Chart/Base.html'>Epoch.Chart.Base</a>
+      </h3>
+      <p class='inherited'>
+                <a href='../../../classes/Epoch/Chart/Base.html#constructor-instance'>#constructor</a>,
+                <a href='../../../classes/Epoch/Chart/Base.html#setData-instance'>#setData</a>,
+                <a href='../../../classes/Epoch/Chart/Base.html#update-instance'>#update</a>,
+                <a href='../../../classes/Epoch/Chart/Base.html#draw-instance'>#draw</a>,
+        <a href='../../../classes/Epoch/Chart/Base.html#extent-instance'>#extent</a>
+      </p>
+      <h3 class='inherited'>
+        Methods inherited from
+        <a href='../../../classes/Epoch/Events.html'>Epoch.Events</a>
+      </h3>
+      <p class='inherited'>
+                <a href='../../../classes/Epoch/Events.html#constructor-instance'>#constructor</a>,
+                <a href='../../../classes/Epoch/Events.html#on-instance'>#on</a>,
+                <a href='../../../classes/Epoch/Events.html#off-instance'>#off</a>,
+        <a href='../../../classes/Epoch/Events.html#trigger-instance'>#trigger</a>
+      </p>
+      <h2>Constructor Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='constructor-instance'>
+      - (void) <strong>constructor</strong>(options = {})
+    </p>
+    <div class='docstring'>
+  <p>Creates a new plot chart.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>options</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Options to use when constructing the plot.</span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (option):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>margins</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>For setting explicit values for the top,  right, bottom, and left margins in the visualization. Normally these can be omitted and the class will set appropriately sized margins given which axes are specified.</span>
+    </li>
+    <li>
+      <span class='name'>axes</span>
+      <span class='type'>
+        (<tt>Array</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>A list of axes to display (top, left, bottom, right).</span>
+    </li>
+    <li>
+      <span class='name'>ticks</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Number of ticks to place on the top, left bottom and right axes.</span>
+    </li>
+    <li>
+      <span class='name'>tickFormats</span>
+      <span class='type'>
+        (<tt>Object</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>What tick formatting functions to use for the top, bottom, left, and right axes.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+      <h2>Instance Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='setTickFormat-instance'>
+      - (void) <strong>setTickFormat</strong>(axis, fn)
+    </p>
+    <div class='docstring'>
+  <p>Sets the tick formatting function to use on the given axis.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>axis</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of the axis.</span>
+    </li>
+    <li>
+      <span class='name'>fn</span>
+      <span class='type'>
+        (<tt>Function</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Formatting function to use.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='hasAxis-instance'>
+      - (Boolean) <strong>hasAxis</strong>(axis)
+    </p>
+    <div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>axis</span>
+      <span class='type'>
+        (<tt>String</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Name of axis to check.</span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Boolean</tt>)
+      &mdash;
+      <span class='desc'><code>true</code> if the chart has an axis with a given name, <code>false</code> otherwise.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='innerWidth-instance'>
+      - (Number) <strong>innerWidth</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>Width of the visualization portion of the chart (width - margins).</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='innerHeight-instance'>
+      - (Number) <strong>innerHeight</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Number</tt>)
+      &mdash;
+      <span class='desc'>Height of the visualization portion of the chart (height - margins).</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='x-instance'>
+      - (Function) <strong>x</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>The x scale for the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='y-instance'>
+      - (Function) <strong>y</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>The y scale for the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='bottomAxis-instance'>
+      - (Function) <strong>bottomAxis</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>d3 axis to use for the bottom of the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='topAxis-instance'>
+      - (Function) <strong>topAxis</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>d3 axis to use for the top of the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='leftAxis-instance'>
+      - (Function) <strong>leftAxis</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>d3 axis to use on the left of the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='rightAxis-instance'>
+      - (Function) <strong>rightAxis</strong>()
+    </p>
+    <div class='tags'>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (<tt>Function</tt>)
+      &mdash;
+      <span class='desc'>d3 axis to use on the right of the visualization.</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='draw-instance'>
+      - (void) <strong>draw</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Renders the axes for the visualization (subclasses must implement specific
+drawing routines).</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='_redrawAxes-instance'>
+      - (void) <strong>_redrawAxes</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Redraws the axes for the visualization.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='_drawAxes-instance'>
+      - (void) <strong>_drawAxes</strong>()
+    </p>
+    <div class='docstring'>
+  <p>Draws the initial axes for the visualization.</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  Generated on
+  Thu Aug 08 2013 23:41:06 GMT-0700 (PDT)
+  by
+  <a href='https://github.com/netzpirat/codo' title='CoffeeScript API documentation generator'>Codo</a>
+  v1.7.0
+  (Node.js v0.10.5).
+  &#10034;
+  Press Ctrl-h to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/#!/netzpirat'>@netzpirat</a>
+  &#10034;
+  <a href='https://mksoft.ch'>mksoft.ch</a>
+</div>
+  </body>
+</html>

@@ -1,5 +1,9 @@
-# Area Chart
+
+# Static stacked area chart implementation using d3.
 class Epoch.Chart.Area extends Epoch.Chart.Plot
+
+  # Generates a scale needed to appropriately render the stacked visualization.
+  # @return [Function] The y scale for the visualization.
   y: ->
     a = []
     for layer in @data
@@ -10,6 +14,7 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
       .domain([0, d3.max(a)])
       .range([@height - @margins.top - @margins.bottom, 0])
 
+  # Renders the SVG elements needed to display the stacked area chart.
   draw: ->
     [x, y] = [@x(), @y()]
 

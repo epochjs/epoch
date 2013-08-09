@@ -15,6 +15,7 @@ To work on the epoch charting library itself do the following:
 
 1. Clone the repository
 2. Install the npm package `node-minify`; `npm install -g node-minify`, then `npm link node-minify`. 
+2.2 `npm install -g codo` - Documentation (CLEAN ME UP)
 3. Run `cake build` from the project directory
 4. View `docs/static.html` and `docs/time.html` for a quick overview of the available features
 5. Scour the source for more detailed information (formal documentation coming soon)

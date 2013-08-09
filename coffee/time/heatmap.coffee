@@ -1,6 +1,5 @@
-#
-# Real-time Heatmap
-#
+
+# Real-time Heatmap Implementation.
 class Epoch.Time.Heatmap extends Epoch.Time.Plot
   defaults =
     buckets: 10
@@ -17,6 +16,16 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     quartic: (value, max) -> Math.pow(value/max, 4)
     quintic: (value, max) -> Math.pow(value/max, 5) 
 
+  # Creates a new heatmap.
+  # @param [Object] options Options for the heatmap.
+  # @option options [Integer] buckets Number of vertical buckets to use when normalizing the
+  #   incoming histogram data for visualization in the heatmap (default: 10).
+  # @option options [Array] bucketRange A range of acceptable values to be bucketed (default: [0, 100]).
+  # @option options [String, Function] color The opacity coloring function to use when rendering buckets
+  #   in a column. The built-in functions (referenced by string) are: 'root', 'linear', 'quadratic', 'cubic',
+  #   'quartic', and 'quintic'. A custom function can be supplied given it accepts two parameters (value, max)
+  #   and returns a numeric value from 0 to 1. Default: linear.
+  # @option options [Number] bucketPadding Amount of padding to apply around buckets (default: 2).
   constructor: (@options) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     if Epoch.isString(@options.color)
@@ -30,7 +39,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # Create the paint canvas
     @_setupPaintCanvas()
 
-  # Prepares initially set data for rendering (see _makeBuckets() above)
+  # Prepares initially set data for rendering.
+  # @param [Array] data Layered histogram data for the visualization.
   setData: (data) ->
     super(data)
     for layer in @data
@@ -38,6 +48,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
+  # @param [Object] entry Entry to prepare for visualization.
   _prepareEntry: (entry) ->
     prepared = { time: entry.time, max: 0, buckets: {} }
     [min, max] = @options.bucketRange
@@ -58,20 +69,26 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     return prepared
 
+  # @return [Function] The y scale for the heatmap.
   y: ->
     d3.scale.linear()
       .domain(@options.bucketRange)
       .range([@innerHeight(), 0])
 
+  # @return [Number] The height to render each bucket in a column (disregards padding).
   h: ->
     @innerHeight() / @options.buckets
 
+  # @return [Number] The offset needed to center ticks at the middle of each column.
   _offsetX: ->
     0.5*@w()
 
+  # Creates the painting canvas which is used to perform all the actual drawing. The contents
+  # of the canvas are then copied into the actual display canvas and through some image copy
+  # trickery at the end of a transition the illusion of motion over time is preserved.
   #
-  # Painting and rendering
-  #
+  # Using two canvases in this way allows us to render an incredible number of buckets in the
+  # visualization and animate them at high frame rates without smashing the cpu.
   _setupPaintCanvas: ->
     # Size the paint canvas to have a couple extra columns so we can perform smooth transitions
     @paintWidth = (@options.windowSize + 1) * @w()
@@ -94,6 +111,9 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # buckets to the left (this allows for a fixed cut point and single renders below in @draw)
     @on 'transition:end', '_shiftPaintCanvas'
 
+  # Paints a single entry column on the paint canvas at the given column.
+  # @param [Integer] entryIndex Index of the entry to paint.
+  # @param [Integer] drawColumn Column on the paint canvas to place the visualized entry.
   _paintEntry: (entryIndex=null, drawColumn=null) ->
     [w, h] = [@w(), @h()]
 
@@ -128,12 +148,16 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
       j--
 
+  # This shifts the image contents of the paint canvas to the left by 1 column width.
+  # It is called after a transition has ended (yay, slight of hand).
   _shiftPaintCanvas: ->
     data = @p.getImageData @w(), 0, @paintWidth-@w(), @paintHeight
     @p.putImageData data, 0, 0
 
-    # TODO Implement the "end of transition shift"
-
+  # Performs an averaging of the colors for muli-layer heatmaps using the lab color space.
+  # @param [Array] entries The layers for which the colors are to be averaged.
+  # @param [Number] bucket The bucket in the entries that must be averaged.
+  # @return [String] The css color code for the average of all the layer colors.
   _avgLab: (entries, bucket) ->
     [l, a, b, total] = [0, 0, 0, 0]
     for entry in entries
@@ -153,6 +177,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     d3.lab(l, a, b).toString()
 
+  # Copies the paint canvas onto the display canvas, thus rendering the heatmap.
   draw: (delta=0) ->
     @clear()
     @ctx.drawImage @paint, delta, 0
