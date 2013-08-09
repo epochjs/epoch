@@ -7,6 +7,7 @@
 
 .epoch {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12pt;
 }
 
 // Axes and Ticks
@@ -65,16 +66,49 @@
   }
 }
 
+.epoch.gauge-tiny {
+  width: 120px; height: 90px;
+
+  .gauge-labels {
+    .value { font-size: 80%; }
+  }
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 2px;
+    }
+  }
+}
+
 .epoch.gauge-small {
   width: 180px; height: 135px;
+
+  .gauge-labels {
+    .value { font-size: 120%; }
+  }
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 3px;
+    }
+  }
 }
 
 .epoch.gauge-medium {
   width: 240px; height: 180px;
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 3px;
+    }
+  }
 }
 
 .epoch.gauge-large {
   width: 320px; height: 240px;
+  .gauge-labels {
+    .value { font-size: 180%; }
+  }
 }
 
 .epoch .gauge {

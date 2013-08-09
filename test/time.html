@@ -43,7 +43,14 @@
 
     <p>Interval: <input type="text" name="interval" value="1000"> <button id="begin">Play</button></p>
 
-    <div class="epoch category10" id="reference"></div>
+    <hr>
+
+    <div id="gauges">
+      <div id="gaugeTiny" class="epoch gauge-tiny"></div>
+      <div id="gauge" class="epoch gauge-small"></div>
+      <div id="gaugeMedium" class="epoch gauge-medium"></div>
+      <div id="gaugeLarge" class="epoch gauge-large"></div>
+    </div>
 
     <div id="heatmap" class="epoch category10"></div>
     <div id="heatmap2" class="epoch"></div>
@@ -53,17 +60,17 @@
     <div id="bucketed" class="epoch"></div>
     -->
 
-    <div id="gauge" class="epoch gauge-small"></div>
     <div id="line" class="epoch sparklines" style="width: 812px; height: 30px;margin-left: 44px;"></div>
     <div id="bar" class="epoch category20b" style="width: 900px; height: 200px;"></div>
     <div id="area" class="epoch category20c" style="width: 900px; height: 200px;"></div>
 
 
+    <div class="epoch category10" id="reference"></div>
     <script>
       $(function() {
-        for (var i = 1; i <= 20; i++) {
-          $('#reference').append('<div class="ref category' + i + '"></div>');
-        }
+        // for (var i = 1; i <= 20; i++) {
+        //   $('#reference').append('<div class="ref category' + i + '"></div>');
+        // }
 
         var heatmap = $('#heatmap').epoch({
           type: 'time.heatmap',
@@ -78,9 +85,9 @@
           }
         });
 
-        twoColor = function(value, max) {
-          return Math.pow(value/max, 1.29)
-        }
+        // twoColor = function(value, max) {
+        //   return Math.pow(value/max, 1.29)
+        // }
 
         var heatmap2 = $('#heatmap2').epoch({
           type: 'time.heatmap',
@@ -93,7 +100,10 @@
           bucketPadding: 0
         });
 
-        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 })
+        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 }),
+            gaugeTiny = $('#gaugeTiny').epoch({ type: 'time.gauge', value: 1.0 }),
+            gaugeMedium = $('#gaugeMedium').epoch({type: 'time.gauge', value: 0.0}),
+            gaugeLarge = $('#gaugeLarge').epoch({type: 'time.gauge', value: 0.0 });
 
         var bar = $('#bar').epoch({
           type: 'time.bar',
@@ -118,6 +128,9 @@
 
         function pushData() {
           gauge.update(Math.random());
+          gaugeTiny.update(Math.random());
+          gaugeMedium.update(Math.random());
+          gaugeLarge.update(Math.random());
 
           var entry = nextTimeEntry();
           //console.log(entry);
