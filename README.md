@@ -10,6 +10,14 @@ With Epoch we rewrote those original visualizations from the ground up and const
 The result is a simple to use library for application developers, and a powerful framework for charting and reporting designers.
 
 
+### Prerequisites
+
+Epoch requires the following libraries in order to work:
+
+1. [d3](https://github.com/mbostock/d3)
+2. [jQuery](https://github.com/jquery/jquery)
+
+
 ### Using Epoch
 
 To use epoch to perform charting in your project, do the following:
