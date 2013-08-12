@@ -59,8 +59,10 @@ var areaChart = $('div#areaChart').epoch({
 });
 ```
 
-Viola! With the above code we have a simple to use area chart! The chart can even be updated with automatic animated transitions. To see it in
-action simply call the `update()` method, like so:
+Note that the chart is automatically sized to fit it's parent container (`div#areaChart`) and the jQuery function returns the chart instance
+(which we assign to the `areaChart` variable).
+
+The chart can even be updated with automatic animated transitions. To see it in action simply call the `update()` method on the instance, like so:
 
 ```javascript
 // Define some new data
