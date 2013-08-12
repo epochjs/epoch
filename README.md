@@ -26,7 +26,7 @@ scales, axes, etc.) while the individual charts implement their own specialized 
 Every static chart was built to use the same basic workflow, here's an overview:
 
 1. Create an HTML container.
-  - For easy of use Epoch automagically sizes charts to fit their containers.
+  - Epoch automagically sizes charts to fit their containers.
   - `<div id="myChart" style="width: 200px; height: 200px"></div>`
 2. Fetch and format your data.
   - Each type of chart uses a specific (though often familiar) data format.
