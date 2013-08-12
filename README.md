@@ -183,7 +183,7 @@ Upon calling the `push` method the new data will be added to the visualization a
 </script>
 ```
 
-##### Options:
+The Area chart has the following **Options**:
 
 * *width* - Explicit width for the chart (overrides auto-fit to container width)
 * *height* - Explicit height for the chart (overrides auto-fix to container height)
@@ -192,7 +192,7 @@ Upon calling the `push` method the new data will be added to the visualization a
 * *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
 
-##### Data Format:
+And uses the following **Data Format**:
 
 ```javascript
 // Data should be an array containing layers
