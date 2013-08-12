@@ -34,7 +34,7 @@ Every static chart was built to use the same basic workflow, here's an overview:
 3. Use the jQuery method `.epoch` to create, append, and draw the chart.
   - `var myChart = $('#myChart').epoch({ type: 'line', data: myData });`
 4. When you data changes, simply use the `update` method on the chart instance.
-  - `myChart.update(myNewData)`
+  - `myChart.update(myNewData);`
 
 The rest of this section explains the individual charts in detail.
 
@@ -83,24 +83,21 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 </script>
 ```
 
-Note how we explicitly set the `width` and `height` for the container div (`div#areaChart`)? This allows Epoch to automatically
-size the chart to fill the container (using computed width and height values).
-
 In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
-options are available for `type: area` epoch charts:
+options are available for area charts:
 
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
   - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
   - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 #### bar
@@ -151,23 +148,20 @@ Next, let's take a look at the markup and scripting required to display our bar 
 </script>
 ```
 
-The chart will automatically be sized to it's containing element (in this case to 300px x 100px). 
+The following options are available for `type: area` epoch charts:
 
-In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
-options are available for `type: area` epoch charts:
-
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
   - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
   - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 #### line
@@ -193,7 +187,7 @@ var lineChartData = [
 ];
 ```
 
-Notice that the data is very similar to that of the area chart above, with the exception that they need not cover the same domain
+Notice that the data is very similar to that of the **area** chart above, with the exception that they need not cover the same domain
 nor do the entries in each series have to line up via the `x` coordinate.
 
 Next let's take a look at how you would implement the chart with markup and scripting:
@@ -208,21 +202,20 @@ Next let's take a look at how you would implement the chart with markup and scri
 </script>
 ```
 
-The chart will be automatically sized to that of it's containing element (in this case 700px by 250px). Along with the
-`type` and `data` options, Epoch line charts support the following:
+The line charts supports the following options:
 
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
   - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
   - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 #### Pie
@@ -256,17 +249,16 @@ Once you have your data formatted correctly you can easly add a chart to your pa
 </script>
 ```
 
-The chart will be appended to the containing div and automatically sized to fit its dimensions (in this case 400px by 400px). The pie
-chart also accepts the following parameters during initialization:
+The pie chart accepts the following parameters during initialization:
 
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
 * `margin` - Surrounds the chart with a defined pixel margin
   - Example: `margin: 30`
 * `inner` - Inner radius for the pie chart (for making Donut charts)
   - Example: `inner: 100`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 #### Scatter
@@ -307,16 +299,10 @@ Next, let's see the markup and scripting needed to add the plot to your page:
 </script>
 ```
 
-The plot will be added as an element to the `#scatter` div and be automatically sized to fit its dimensions (in this case
-500px by 500px). Epoch scatter plots can be passed a few different parameters to change their appearance and rendering,
-they are:
+Scatter plots accept the following optional parameters:
 
 * `radius` - How large the "dots" should be in the plot (in pixels)
   - Example: `radius: 4.5`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
 * `margins` - Explicit margin overrides for the chart.
   - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
@@ -325,6 +311,10 @@ they are:
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
   - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 ### Real-time Charts
