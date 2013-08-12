@@ -13,19 +13,7 @@ updating timeseries data.
 them in your page.
 2. Locate and download the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files in this repository, and place
 them in your project (note: `X.Y.Z` is a placeholder for the current version of Epoch).
-3. Include all the required JavaScript and CSS files into your source in the usual manner:
-
-```html
-<html>
-  <head>
-    <!-- jQuery, d3, and other includes here ... -->
-    <script src="js/epoch.min.X.Y.Z.js"></script>
-    <link rel="stylesheet" href="css/epoch.X.Y.Z.min.css">
-  </head>
-  ...
-</html>
-```
-
+3. Include all the required JavaScript and CSS files into your source in the usual manner (probably in the head of the HTML document).
 4. Read the examples and documentation below
 5. Code, let cool, and enjoy (serves millions)
 
