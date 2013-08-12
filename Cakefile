@@ -7,7 +7,7 @@ util = require 'util'
 # Build / Package Rules & Targets
 #
 
-version = '0.3.2'
+version = 'X.Y.Z'
 
 library_order = [
   '*.js'
@@ -31,7 +31,7 @@ dirs =
 
 target =
   package: 'js/epoch.js'
-  compile: "./epoch.#{version}.min.js"
+  compile: "./epoch.%version.min.js"
 
 
 compiler_url = 'http://closure-compiler.appspot.com/compile'
@@ -111,7 +111,7 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
       type: 'gcc'
       language: 'ECMASCRIPT5'
       fileIn: target.package
-      fileOut: target.compile
+      fileOut: target.compile.replace('%version', version)
       callback: (err) ->
         if err?
           error 'compile', err if err?
@@ -120,10 +120,44 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
         done 'compile'
   invoke 'build'
 
-#task 'deploy' 
-#git tag | grep -E "^[0-9]"  | sort -b -t . -k1,1 -k2,2n -k3,3n | tail -1 | awk 'BEGIN{FS=OFS="."}{++$3; print $0}'
-
 task 'watch', ->
   watch 'coffee/', '.coffee', (event, filename) ->
     invoke 'build'
+
+
+#
+# Release Tasks
+#
+
+option '-v', '--version [VERSION_NUMBER]', 'Sets the version number for release'
+
+setVersion = (options, callback) ->
+  cmd = 'git tag | grep -E "^[0-9]"  | sort -b -t . -k1,1 -k2,2n -k3,3n | tail -1 | awk \'BEGIN{FS=OFS="."}{++$3; print $0}\''
+  if options.version? and options.version.match(/^[0-9]+\.[0-9]+\.[0-9]+$/)?
+    version = options.version
+    callback()
+  else if options.version?
+    error('release', 'Version must be supplied in a semantic format (X.Y.Z).')
+  else
+    exec cmd, (err, stdout, stderr) ->
+      error('release', stdout+stderr) if err?
+      version = stdout.replace(/^\s+|\s+$/, '')
+      callback()
+
+task 'sass', 'Compile sass source into css', ->
+  console.log "Compiling scss into css..."
+  exec 'compass compile sass/', (err, o, e) ->
+    error('sass', o+e) if err?
+    done 'sass'
+
+task 'release', 'Releases a new version of the library', (options) ->
+  setVersion options, ->
+    console.log "Building release #{version}..."
+    all ['sass', 'compile'], ->
+      exec "cp css/epoch.css ./epoch.#{version}.min.css", (err, o, e) ->
+        error('release', o+e) if err? 
+
+
+
+
 
