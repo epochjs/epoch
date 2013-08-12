@@ -4,7 +4,7 @@ By Ryan Sandor Richards
 ### Introduction
 
 Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of
-visualization programming: *static charts* for creating historical reports, and *real-time charts* designed for displaying frequently 
+visualization programming: **static charts** for creating historical reports, and **real-time charts** designed for displaying frequently 
 updating time-series data.
 
 ### Prerequisites
@@ -13,6 +13,32 @@ Epoch requires the following libraries in order to work:
 
 1. [d3](https://github.com/mbostock/d3)
 2. [jQuery](https://github.com/jquery/jquery)
+
+### Available Charts
+
+#### Static Charts
+
+Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
+scales, axes, etc.) while the individual charts implement their own specialized drawing routines. Epoch comes with the following
+static charts out of the box:
+
+* Area - Good old stacked area chart
+* Bar - Currently supports grouped bars ("stacked", and "normal stacked" coming soon)
+* Line - The granddaddy of all charts (didn't Newton come up with it or something?)
+* Pie - Also supports inner radius for creating Donut charts
+* Scatter - Nice for visualizing statistical data
+
+#### Real-time Charts
+
+Epoch's **real-time** charts have been fine tuned for displaying frequently updating *timeseries* data. To make them performant (aka
+not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering. Here is a
+list of the charts that are available:
+
+* Area - Area chart that uses a discrete time-domain (via unix timestamps)
+* Bar - Supports only "stacked" bar charts (again uses timestamps for the domain)
+* Gauge - Similar to a speedometer
+* Heatmap - Visualizes histogram data / time (multiple layers use color blending)
+* Line - Run of the mill line chart with a discrete time domain
 
 
 ### Static Chart Example
