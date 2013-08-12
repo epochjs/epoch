@@ -173,8 +173,6 @@ Upon calling the `push` method the new data will be added to the visualization a
 
 #### Area
 
-Usage:
-
 ```html
 <div id="areaChart" style="width: 800px; height: 200px"></div>
 <script>
@@ -185,16 +183,16 @@ Usage:
 </script>
 ```
 
-Available Options:
+**Options:**
 
-* `width` - Explicit width for the chart (overrides auto-fit to container width)
-* `height` - Explicit height for the chart (overrides auto-fix to container height)
-* `margins` - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* `axes` - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
 
-Data Format:
+**Data Format:**
 
 ```javascript
 // Data should be an array containing layers
