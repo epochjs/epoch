@@ -57,7 +57,9 @@ list of the charts that are available:
 * Line - Run of the mill line chart with a discrete time domain
 
 
-### Static Chart Example
+### Examples
+
+#### Static Area Chart
 
 In this example we will show you how to quickly make a static area chart using epoch. First, let's take a gander at the data format for this type of
 chart:
@@ -115,7 +117,7 @@ areaChart.update(newAreaChartData);
 ```
 
 
-### Real-time Chart Example
+#### Real-time Bar Chart
 
 First, examine this example bandwidth data and how it is formatted:
 
@@ -167,13 +169,56 @@ setInterval(pollBandwidthData, 1000);
 Upon calling the `push` method the new data will be added to the visualization and smoothly animated to appear as the next data point.
 
 
+### Static Charts and Data Formats
 
-### Using Epoch
+#### Area
 
-To use epoch to perform charting in your project, do the following:
+Usage:
 
-1. Place the versioned `epoch.X.Y.Z.min.js` file in your project and load it in your page.
-2. Place the `css/epoch.css` in your project and include it in a link reference.
+```html
+<div id="areaChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#areaChart').epoch({
+    type: 'area',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
+```
+
+Available Options:
+
+* `width` - Explicit width for the chart (overrides auto-fit to container width)
+* `height` - Explicit height for the chart (overrides auto-fix to container height)
+* `margins` - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* `axes` - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }
+
+Data Format:
+
+```javascript
+// Data should be an array containing layers
+[
+  // The first layer
+  {
+    label: "Layer 1",
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+  },
+
+  // The second layer
+  {
+    label: "Layer 2",
+    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+  },
+
+  // Add as many layers as you would like!
+]
+```
+
+
+
+### Real-time Charts and Data Formats 
+
 
 
 ### Developing Epoch
