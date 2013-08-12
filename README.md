@@ -202,13 +202,13 @@ options are available for `type: area` epoch charts:
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
 * `margins` - Explicit margin overrides for the chart.
-  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
-  - Example: `['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
-  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
+  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
 #### bar
@@ -269,13 +269,13 @@ options are available for `type: area` epoch charts:
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
 * `margins` - Explicit margin overrides for the chart.
-  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
-  - Example: `['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
-  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
+  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
 #### line
@@ -316,7 +316,7 @@ Next let's take a look at how you would implement the chart with markup and scri
 </script>
 ```
 
-Again, the chart will be automatically sized to that of it's containing element (in this case 700px by 250px). Along with the
+The chart will be automatically sized to that of it's containing element (in this case 700px by 250px). Along with the
 `type` and `data` options, Epoch line charts support the following:
 
 * `width` - Override automatic width with an explicit pixel value
@@ -324,38 +324,23 @@ Again, the chart will be automatically sized to that of it's containing element 
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
 * `margins` - Explicit margin overrides for the chart.
-  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
-  - Example: `['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
-  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
+  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
 #### Pie
 
-```html
-<div id="pie" style="width: 400px; height: 400px"></div>
-<script>
-  $('#pie').epoch({
-    type: 'pie',
-    data: chartData // Must follow the format as defined below...
-  });
-</script>
-```
+Pie charts are useful for displaying the relative sizes of various categories. To begin, let's take a look at the data format
+used by Epoch's pie chart implementation:
 
-The Line chart has the following **Options**:
-
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margin* - Margin size to surround the pie chart. Ex: `10`
-* *inner* - Inner radius for the pie chart (for making Donut charts). Ex `100`
-
-And uses the following **Data Format**:
 
 ```javascript
-[
+var pieData = [
   { label: 'Slice 1', value: 10 },
   { label: 'Slice 2', value: 20 },
   { label: 'Slice 3', value: 40 },
@@ -363,47 +348,91 @@ And uses the following **Data Format**:
 ]
 ```
 
-#### Scatter
+The data itself is an array of objects that represent the slices in the pie chart. The `label` parameter will be used to set
+the label for the slice in the chart and the `value` parameter will be used to determine its visual size in comparison to the
+other slices.
+
+Once you have your data formatted correctly you can easly add a chart to your page using the following markup and script:
 
 ```html
-<div id="scatter" style="width: 800px; height: 200px"></div>
+<div id="pie" style="width: 400px; height: 400px"></div>
 <script>
-  $('#scatter').epoch({
-    type: 'scatter',
-    data: chartData // Must follow the format as defined below...
+  $('#pie').epoch({
+    type: 'pie',
+    data: pieData
   });
 </script>
 ```
 
-The Scatter chart has the following **Options**:
+The chart will be appended to the containing div and automatically sized to fit its dimensions (in this case 400px by 400px). The pie
+chart also accepts the following parameters during initialization:
 
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+* `margin` - Surrounds the chart with a defined pixel margin
+  - Example: `margin: 30`
+* `inner` - Inner radius for the pie chart (for making Donut charts)
+  - Example: `inner: 100`
 
-And uses the following **Data Format**:
+
+#### Scatter
+
+Scatter plots are useful for visualizing statistical or sampling data in hopes of revealing patterns. To begin let's take a look at the
+data format used by scatter plots:
 
 ```javascript
-[
+var scatterData = [
   // The first group
   {
     label: "Group 1",
-    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+    values: [ {x: 5, y: 100}, {x: 93, y: 1424}, ... ]
   },
 
   // The second group
   {
     label: "Group 2",
-    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+    values: [ {x: -52, y: 78}, {x: 120, y: 17}, ... ]
   },
 
-  // Add as many as you would like!
-]
+  ...
+];
 ```
 
+The data is composed of an array containing "groups" of points. Groups need not have the same number of values nor do they
+have to match the same `x` coordinate domains.
+
+Next, let's see the markup and scripting needed to add the plot to your page:
+
+```html
+<div id="scatter" style="width: 500px; height: 500px"></div>
+<script>
+  $('#scatter').epoch({
+    type: 'scatter',
+    data: scatterData
+  });
+</script>
+```
+
+The plot will be added as an element to the `#scatter` div and be automatically sized to fit its dimensions (in this case
+500px by 500px). Epoch scatter plots can be passed a few different parameters to change their appearance and rendering,
+they are:
+
+* `radius` - How large the "dots" should be in the plot (in pixels)
+  - Example: `radius: 4.5`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `axes` - Which axes to display.
+  - Example: `axes: ['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
 ### Real-time Charts
