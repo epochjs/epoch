@@ -9,14 +9,13 @@ updating time-series data.
 
 ### Getting Started
 
-First, it's important to note that Epoch requires the following libraries:
+First, download the following libraries and place them in your project's javascript directory:
 
 1. [d3](https://github.com/mbostock/d3)
 2. [jQuery](https://github.com/jquery/jquery)
 
-Once you have those in place, locate the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files in the Epoch repository,
-download them, and place them and place them in your project. Note that the `X.Y.Z` is a placeholder for the current
-version of Epoch.
+Next, locate and download the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files in this repository, and place
+them in your project (note: `X.Y.Z` is a placeholder for the current version of Epoch).
 
 Finally, include all the required JavaScript and CSS files into your source in the usual manner:
 
