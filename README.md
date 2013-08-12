@@ -17,6 +17,55 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 4. Read the examples and documentation below
 5. Code, let cool, and enjoy (serves millions)
 
+### The "quick" Introduction
+
+Below is a basic example of how you can get a simple area chart working with Epoch:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- include jquery and d3 HERE -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/epoch.X.Y.Z.min.js"></script>
+    <style>
+    #area {
+      width: 700px;
+      height: 200px;
+    }
+
+    #area .layer-1 .area {
+      fill: pink;
+    }
+    </style>
+  </head>
+  <body>
+    <!-- 1. Provide a container for the chart -->
+    <div id="area" class="category10"></div>
+
+    <script>
+    $(function() {
+      // 2. Setup the chart data
+      var data = [
+        { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+        { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+      ]
+
+      // 3. Initialize, place, and draw the chart
+      $('#area').epoch({ type: 'area', data: data });
+    });
+    </script>
+  </body>
+</html>
+```
+A couple of notes:
+
+* The chart is automatically sized to the containing div (700px by 200px)
+* It uses the base coloring of `category10`. These colors are pulled directly from d3's categorical colors.
+  - You can also use: `category20` (default), `category20b`, and `category20c` 
+
+
 
 ### Static Charts
 
@@ -116,7 +165,7 @@ var barChartData = [
       { x: 'C', y: 12 },
       ...
     ]
-  }
+  },
 
   // Second series
   {
@@ -133,8 +182,8 @@ var barChartData = [
 ];
 ```
 
-The bar chart will create groups of bars that share a like `x` value for each independent value present in the data. Currently
-only grouped bar charts are available but we're planning on adding *stacked* and *normalized stacked* charts soon!
+The bar chart will create groups of bars that share a like `x` value for each independent value present in the values array. 
+Currently only grouped bar charts are available but we're planning on adding *stacked* and *normalized stacked* charts soon!
 
 Next, let's take a look at the markup and scripting required to display our bar data:
 
@@ -148,7 +197,7 @@ Next, let's take a look at the markup and scripting required to display our bar 
 </script>
 ```
 
-The following options are available for `type: area` epoch charts:
+The following options are available for bar charts:
 
 * `axes` - Which axes to display.
   - Example: `axes: ['top', right', 'bottom', 'left']`
@@ -183,7 +232,7 @@ var lineChartData = [
     values: [ {x: 20, y: 78}, {x: 30, y: 98}, ... ]
   },
 
-  ... // Add as many series as you would like
+  ...
 ];
 ```
 
@@ -220,7 +269,7 @@ The line charts supports the following options:
 
 #### Pie
 
-Pie charts are useful for displaying the relative sizes of various categories. To begin, let's take a look at the data format
+Pie charts are useful for displaying the relative sizes of various data points. To begin, let's take a look at the data format
 used by Epoch's pie chart implementation:
 
 
