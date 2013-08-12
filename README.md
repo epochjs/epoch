@@ -17,7 +17,7 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 4. Read the examples and documentation below
 5. Code, let cool, and enjoy (serves millions)
 
-### The "quick" Introduction
+### The "quick & dirty" Introduction
 
 Below is a basic example of how you can get a simple area chart working with Epoch:
 
