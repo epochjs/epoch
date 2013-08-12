@@ -21,8 +21,22 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 ### Static Charts
 
 Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
-scales, axes, etc.) while the individual charts implement their own specialized drawing routines. This section details each of the available
-charts in detail.
+scales, axes, etc.) while the individual charts implement their own specialized drawing routines. 
+
+Every static chart was built to use the same basic workflow, here's an overview:
+
+1. Create an HTML container.
+  - For easy of use Epoch automagically sizes charts to fit their containers.
+  - `<div id="myChart" style="width: 200px; height: 200px"></div>`
+2. Fetch and format your data.
+  - Each type of chart uses a specific (though often familiar) data format.
+  - See the documentation below for how each chart is expecting the data.
+3. Use the jQuery method `.epoch` to create, append, and draw the chart.
+  - `var myChart = $('#myChart').epoch({ type: 'line', data: myData });`
+4. When you data changes, simply use the `update` method on the chart instance.
+  - `myChart.update(myNewData)`
+
+The rest of this section explains the individual charts in detail.
 
 
 #### area
