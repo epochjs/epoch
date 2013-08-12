@@ -169,7 +169,7 @@ setInterval(pollBandwidthData, 1000);
 Upon calling the `push` method the new data will be added to the visualization and smoothly animated to appear as the next data point.
 
 
-### Static Charts and Data Formats
+### Static Charts
 
 #### Area
 
@@ -213,9 +213,184 @@ And uses the following **Data Format**:
 ]
 ```
 
+Styles:
+
+```css
+/* Change the color of the first layer to "pink" */
+.layer-1 .area {
+  fill: pink !important;
+}
+```
 
 
-### Real-time Charts and Data Formats 
+#### Bar
+
+```html
+<div id="barChart" style="width: 300px; height: 100px"></div>
+<script>
+  $('#barChart').epoch({
+    type: 'bar',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
+```
+
+The Bar chart has the following **Options**:
+
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+
+And uses the following **Data Format**:
+
+```javascript
+// Data is an array containing independent groups
+[
+  // First bar group
+  {
+    label: 'Group 1',
+    values: [
+      { x: 'A', y: 30 },
+      { x: 'B', y: 10 },
+      { x: 'C', y: 12 },
+      ...
+    ]
+  }
+
+  // Second group
+  {
+    label: 'Group 2',
+    values: [
+      { x: 'A', y: 20 },
+      { x: 'B', y: 39 },
+      { x: 'C', y: 8 },
+      ...
+    ]
+  },
+
+  // Add more groups if you'd like!
+]
+```
+
+#### Line
+
+```html
+<div id="lineChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#areaChart').epoch({
+    type: 'line',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
+```
+
+The Line chart has the following **Options**:
+
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+
+And uses the following **Data Format**:
+
+```javascript
+// Data should be an array containing layers
+[
+  // The first layer
+  {
+    label: "Layer 1",
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+  },
+
+  // The second layer
+  {
+    label: "Layer 2",
+    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+  },
+
+  // Add as many layers as you would like!
+]
+```
+
+#### Pie
+
+```html
+<div id="pie" style="width: 400px; height: 400px"></div>
+<script>
+  $('#pie').epoch({
+    type: 'pie',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
+```
+
+The Line chart has the following **Options**:
+
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margin* - Margin size to surround the pie chart. Ex: `10`
+* *inner* - Inner radius for the pie chart (for making Donut charts). Ex `100`
+
+And uses the following **Data Format**:
+
+```javascript
+[
+  { label: 'Slice 1', value: 10 },
+  { label: 'Slice 2', value: 20 },
+  { label: 'Slice 3', value: 40 },
+  { label: 'Slice 4', value: 30 }
+]
+```
+
+#### Scatter
+
+```html
+<div id="scatter" style="width: 800px; height: 200px"></div>
+<script>
+  $('#scatter').epoch({
+    type: 'scatter',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
+```
+
+The Line chart has the following **Options**:
+
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+
+And uses the following **Data Format**:
+
+```javascript
+[
+  // The first group
+  {
+    label: "Group 1",
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+  },
+
+  // The second group
+  {
+    label: "Group 2",
+    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+  },
+
+  // Add as many as you would like!
+]
+```
+
+
+
+### Real-time Charts
 
 
 
