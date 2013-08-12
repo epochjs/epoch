@@ -147,7 +147,7 @@ Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy.
 scales, axes, etc.) while the individual charts implement their own specialized drawing routines. This section details each of the available
 charts in detail.
 
-#### Area
+#### area
 
 The static area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
 each with their own indepenent series of values. To begin, let's take a look at some example data:
@@ -169,13 +169,14 @@ var areaChartData = [
   // Add as many layers as you would like!
 ];
 ```
+
 As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:
 
 * `label` - The name of the layer
 * `values` - An array of values (each value having an `x` and `y` coordinate)
 
 For the best results each layer should contain the same number of values, with the same `x` coordinates. This will allow
-d3 to make the best looking graphs possible.
+d3 to make the best looking graphs possible. To create a single series plot simply include a single layer.
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
 element in HTML and use the jQuery bindings to create, place, and draw the chart:
@@ -193,53 +194,33 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 Note how we explicitly set the `width` and `height` for the container div (`div#areaChart`)? This allows Epoch to automatically
 size the chart to fill the container (using computed width and height values).
 
-In the script you'll see that we are passing an **options array** to the `.epoch` jQuery function. The ones we defined there
-tell Epoch what `type` of chart you wish to make and what `data` it should use. Here's a complete list of options that will
-work with the `area` type chart:
+In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
+options are available for `type: area` epoch charts:
 
-* *width* - Override automatic width with an explicit pixel value
+* `width` - Override automatic width with an explicit pixel value
   - Example: `width: 320`
-* *height* - Override automatic height with an explicit pixel value
+* `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
-* *margins* - Explicit margin overrides for the chart.
+* `margins` - Explicit margin overrides for the chart.
   - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display.
+* `axes` - Which axes to display.
   - Example: `['top', right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis.
+* `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels.
+* `tickFormats` - What formatting function to use when displaying tick labels.
   - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
-#### Bar
+#### bar
 
-```html
-<div id="barChart" style="width: 300px; height: 100px"></div>
-<script>
-  $('#barChart').epoch({
-    type: 'bar',
-    data: chartData // Must follow the format as defined below...
-  });
-</script>
-```
-
-The Bar chart has the following **Options**:
-
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
-
-And uses the following **Data Format**:
+Epoch's implementation of a multi-series grouped bar chart. Bar charts are useful for showing data by group over a discrete
+domain. First, let's look at how the data is formatted for a bar chart:
 
 ```javascript
-// Data is an array containing independent groups
-[
-  // First bar group
+var barChartData = [
+  // First bar series
   {
-    label: 'Group 1',
+    label: 'Series 1',
     values: [
       { x: 'A', y: 30 },
       { x: 'B', y: 10 },
@@ -248,9 +229,9 @@ And uses the following **Data Format**:
     ]
   }
 
-  // Second group
+  // Second series
   {
-    label: 'Group 2',
+    label: 'Series 2',
     values: [
       { x: 'A', y: 20 },
       { x: 'B', y: 39 },
@@ -259,51 +240,98 @@ And uses the following **Data Format**:
     ]
   },
 
-  // Add more groups if you'd like!
-]
+  ... // Add as many series as you'd like
+];
 ```
 
-#### Line
+The bar chart will create groups of bars that share a like `x` value for each independent value present in the data. Currently
+only grouped bar charts are available but we're planning on adding *stacked* and *normalized stacked* charts soon!
+
+Next, let's take a look at the markup and scripting required to display our bar data:
 
 ```html
-<div id="lineChart" style="width: 800px; height: 200px"></div>
+<div id="barChart" style="width: 300px; height: 100px"></div>
 <script>
-  $('#areaChart').epoch({
-    type: 'line',
-    data: chartData // Must follow the format as defined below...
+  $('#barChart').epoch({
+    type: 'bar',
+    data: barChartData
   });
 </script>
 ```
 
-The Line chart has the following **Options**:
+The chart will automatically be sized to it's containing element (in this case to 300px x 100px). 
 
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
+options are available for `type: area` epoch charts:
 
-And uses the following **Data Format**:
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* `axes` - Which axes to display.
+  - Example: `['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
+
+
+#### line
+
+Line charts are helpful for visualizing single or multi-series data when without stacking or shading. To begin, let's take a look
+at the data format used by epoch's line chart:
 
 ```javascript
-// Data should be an array containing layers
-[
-  // The first layer
+var lineChartData = [
+  // The first series
   {
-    label: "Layer 1",
+    label: "Series 1",
     values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
   },
 
-  // The second layer
+  // The second series
   {
-    label: "Layer 2",
-    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+    label: "Series 2",
+    values: [ {x: 20, y: 78}, {x: 30, y: 98}, ... ]
   },
 
-  // Add as many layers as you would like!
-]
+  ... // Add as many series as you would like
+];
 ```
+
+Notice that the data is very similar to that of the area chart above, with the exception that they need not cover the same domain
+nor do the entries in each series have to line up via the `x` coordinate.
+
+Next let's take a look at how you would implement the chart with markup and scripting:
+
+```html
+<div id="lineChart" style="width: 700px; height: 250px"></div>
+<script>
+  $('#lineChart').epoch({
+    type: 'line',
+    data: lineChartData
+  });
+</script>
+```
+
+Again, the chart will be automatically sized to that of it's containing element (in this case 700px by 250px). Along with the
+`type` and `data` options, Epoch line charts support the following:
+
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* `axes` - Which axes to display.
+  - Example: `['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
+
 
 #### Pie
 
