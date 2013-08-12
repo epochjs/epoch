@@ -26,6 +26,9 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 </html>
 ```
 
+4. Read the examples and documentation below
+5. Code, let cool, and enjoy (serves millions)
+
 ### Quick Start Examples
 
 #### Static Area Chart
