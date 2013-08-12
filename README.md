@@ -3,13 +3,9 @@ By Ryan Sandor Richards
 
 ### Introduction
 
-
-Back in 2011 we built some pretty sweet real-time visualizations for our web based analytics dashboard here at Fastly. They were built to be performant (use as little CPU as possible), efficient (not be memory hogs), and consistent (you can keep them up 24 hours a day, seven days a week). Recently we began expanding our internal tools and it became necessary for us to add charting and reporting across many different applications. Enter Epoch.
-
-With Epoch we rewrote those original visualizations from the ground up and constructed a framework atop which any reasonably kick-ass visualization can be realized. Epoch was also built to be extensible by abstracting away common graphing and charting procedures (scales, axes, ticks, etc.).
-
-The result is a simple to use library for application developers, and a powerful framework for charting and reporting designers.
-
+Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of
+visualization programming: *static charts* for creating historical reports, and *real-time charts* designed for displaying frequently 
+updating time-series data.
 
 ### Prerequisites
 
@@ -18,7 +14,64 @@ Epoch requires the following libraries in order to work:
 1. [d3](https://github.com/mbostock/d3)
 2. [jQuery](https://github.com/jquery/jquery)
 
-### A Quick Example
+
+### Static Chart Example
+
+In this example we will show you how to quickly make a static area chart using epoch. First, let's take a gander at the data format for this type of
+chart:
+
+```javascript
+var areaChartData = [
+  // Define the first "layer" to be shown by the chart...
+  {
+    label: 'Cons',
+    values: [
+      { x: 0, y: 10 },
+      { x: 1, y: 8 },
+      { x: 2, y: 6 },
+      { x: 3, y: 4 }
+    ]
+  },
+
+  // Let's add another layer...
+  {
+    label: 'Pros',
+    values: [
+      { x: 0, y: 2 },
+      { x: 1, y: 4 },
+      { x: 2, y: 8 },
+      { x: 3, y: 16 } 
+    ]
+  }
+];
+```
+
+As shown above, data is defined as an array of *layers* that are composed together to display the chart. Each layer has an optional label and
+must contain a list of values to display.
+
+Next, given we have a suitable HTML container for the chart (in this case a div with the id `areaChart`) we can simply add the chart into the
+dom and render it using the jQuery `.epoch` function:
+
+```javascript
+var areaChart = $('div#areaChart').epoch({
+  type: 'area',
+  data: areaChartData
+});
+```
+
+Viola! With the above code we have a simple to use area chart! The chart can even be updated with automatic animated transitions. To see it in
+action simply call the `update()` method, like so:
+
+```javascript
+// Define some new data
+var newAreaChartData = [ ... ];
+
+// Update the chart
+areaChart.update(newAreaChartData);
+```
+
+
+### Real-time Chart Example
 
 First, examine this example bandwidth data and how it is formatted:
 
@@ -52,8 +105,10 @@ var barChart = $('div#bar').epoch({
 ```
 
 The chart is automatically sized to fit the containing div (`div#bar`) and the data is rendered to the page immediately. The jQuery method
-`.epoch` returns a chart instance which we assign to the variable `barChart`. At this point we can setup a simple poll to for new information
-from our stats servers and get the graph updating in real time. Here's an example of how one might do this:
+`.epoch` returns a chart instance which we assign to the variable `barChart`.
+
+Now assume that we have an endpoint on our api that will give us the latest bandwidth information, let call it `/stats/bandwidth`. Here's
+and example of how one might pull and add the information using the chart's `push()` method:
 
 ```javascript
 function pollBandwidthData() {
@@ -65,7 +120,7 @@ function pollBandwidthData() {
 setInterval(pollBandwidthData, 1000);
 ```
 
-Upon calling the `push` method the new data will be added to the visualization and an animated transition will begin.
+Upon calling the `push` method the new data will be added to the visualization and smoothly animated to appear as the next data point.
 
 
 
