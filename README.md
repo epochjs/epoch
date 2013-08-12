@@ -19,8 +19,6 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 
 ### The "quick & dirty" Introduction
 
-Below is a basic example of how you can get a simple area chart working with Epoch:
-
 ```html
 <!DOCTYPE html>
 <html>
@@ -59,7 +57,6 @@ Below is a basic example of how you can get a simple area chart working with Epo
   </body>
 </html>
 ```
-A couple of notes:
 
 * The chart is automatically sized to the containing div (700px by 200px)
 * It uses the base coloring of `category10`. These colors are pulled directly from d3's categorical colors.
