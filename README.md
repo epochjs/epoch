@@ -30,39 +30,11 @@ Finally, include all the required JavaScript and CSS files into your source in t
 </html>
 ```
 
-### Available Charts
-
-#### Static Charts
-
-Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
-scales, axes, etc.) while the individual charts implement their own specialized drawing routines. Epoch comes with the following
-static charts out of the box:
-
-* Area - Good old stacked area chart
-* Bar - Currently supports grouped bars ("stacked", and "normal stacked" coming soon)
-* Line - The granddaddy of all charts (didn't Newton come up with it or something?)
-* Pie - Also supports inner radius for creating Donut charts
-* Scatter - Nice for visualizing statistical data
-
-#### Real-time Charts
-
-Epoch's **real-time** charts have been fine tuned for displaying frequently updating *timeseries* data. To make them performant (aka
-not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering. Here is a
-list of the charts that are available:
-
-* Area - Area chart that uses a discrete time-domain (via unix timestamps)
-* Bar - Supports only "stacked" bar charts (again uses timestamps for the domain)
-* Gauge - Similar to a speedometer
-* Heatmap - Visualizes histogram data / time (multiple layers use color blending)
-* Line - Run of the mill line chart with a discrete time domain
-
-
-### Examples
+### Quick Start Examples
 
 #### Static Area Chart
 
-In this example we will show you how to quickly make a static area chart using epoch. First, let's take a gander at the data format for this type of
-chart:
+Let's make a quick static area chart using epoch. First, let's take a gander at the data format for this type of chart:
 
 ```javascript
 var areaChartData = [
@@ -171,32 +143,17 @@ Upon calling the `push` method the new data will be added to the visualization a
 
 ### Static Charts
 
+Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
+scales, axes, etc.) while the individual charts implement their own specialized drawing routines. This section details each of the available
+charts in detail.
+
 #### Area
 
-```html
-<div id="areaChart" style="width: 800px; height: 200px"></div>
-<script>
-  $('#areaChart').epoch({
-    type: 'area',
-    data: chartData // Must follow the format as defined below...
-  });
-</script>
-```
-
-The Area chart has the following **Options**:
-
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
-
-And uses the following **Data Format**:
+The static area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
+each with their own indepenent series of values. To begin, let's take a look at some example data:
 
 ```javascript
-// Data should be an array containing layers
-[
+var areaChartData = [
   // The first layer
   {
     label: "Layer 1",
@@ -210,17 +167,42 @@ And uses the following **Data Format**:
   },
 
   // Add as many layers as you would like!
-]
+];
+```
+As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:
+
+* `label` - The name of the layer
+* `values` - An array of values (each value having an `x` and `y` coordinate)
+
+For the best results each layer should contain the same number of values, with the same `x` coordinates. This will allow
+d3 to make the best looking graphs possible.
+
+Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:
+
+```html
+<div id="areaChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#areaChart').epoch({
+    type: 'area',
+    data: chartData // Must follow the format as defined below...
+  });
+</script>
 ```
 
-Styles:
+Note how we explicitly set the `width` and `height` for the container div (`div#areaChart`)? This allows Epoch to automatically
+size the chart to fill the container (using computed width and height values).
 
-```css
-/* Change the color of the first layer to "pink" */
-.layer-1 .area {
-  fill: pink !important;
-}
-```
+In the script you'll see that we are passing an **options array** to the `.epoch` jQuery function. The ones we defined there
+tell Epoch what `type` of chart you wish to make and what `data` it should use. Here's a complete list of options that will
+work with the `area` type chart:
+
+* *width* - Explicit width for the chart (overrides auto-fit to container width)
+* *height* - Explicit height for the chart (overrides auto-fix to container height)
+* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
 
 
 #### Bar
@@ -359,7 +341,7 @@ And uses the following **Data Format**:
 </script>
 ```
 
-The Line chart has the following **Options**:
+The Scatter chart has the following **Options**:
 
 * *width* - Explicit width for the chart (overrides auto-fit to container width)
 * *height* - Explicit height for the chart (overrides auto-fix to container height)
@@ -392,6 +374,19 @@ And uses the following **Data Format**:
 
 ### Real-time Charts
 
+Epoch's **real-time** charts have been fine tuned for displaying frequently updating *timeseries* data. To make them performant (aka
+not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering. This section
+details each of the real-time charts in detail.
+
+#### Area
+
+#### Bar
+
+#### Gauge
+
+#### Heatmap
+
+#### Line
 
 
 ### Developing Epoch
