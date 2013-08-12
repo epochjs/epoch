@@ -197,12 +197,18 @@ In the script you'll see that we are passing an **options array** to the `.epoch
 tell Epoch what `type` of chart you wish to make and what `data` it should use. Here's a complete list of options that will
 work with the `area` type chart:
 
-* *width* - Explicit width for the chart (overrides auto-fit to container width)
-* *height* - Explicit height for the chart (overrides auto-fix to container height)
-* *margins* - Explicit margin overrides for the chart. Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
-* *axes* - Which axes to display. Example: `['top', 'right', 'bottom', 'left']`
-* *ticks* - Number of ticks to display on each axis. Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* *tickFormats* - What formatting function to use when displaying tick labels. Ex: `{ bottom: function(v) { return '$' + v; } }`
+* *width* - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* *height* - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+* *margins* - Explicit margin overrides for the chart.
+  - Example: `{ top: 50, right: 30, bottom: 100, left: 40 }`
+* *axes* - Which axes to display.
+  - Example: `['top', right', 'bottom', 'left']`
+* *ticks* - Number of ticks to display on each axis.
+  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
+* *tickFormats* - What formatting function to use when displaying tick labels.
+  - Ex: `{ bottom: function(d) { return '$' + d.toFixed(2); } }`
 
 
 #### Bar
