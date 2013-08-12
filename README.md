@@ -7,12 +7,29 @@ Epoch is a general purpose charting library for application developers and visua
 visualization programming: **static charts** for creating historical reports, and **real-time charts** designed for displaying frequently 
 updating time-series data.
 
-### Prerequisites
+### Getting Started
 
-Epoch requires the following libraries in order to work:
+First, it's important to note that Epoch requires the following libraries:
 
 1. [d3](https://github.com/mbostock/d3)
 2. [jQuery](https://github.com/jquery/jquery)
+
+Once you have those in place, locate the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files in the Epoch repository,
+download them, and place them and place them in your project. Note that the `X.Y.Z` is a placeholder for the current
+version of Epoch.
+
+Finally, include all the required JavaScript and CSS files into your source in the usual manner:
+
+```html
+<html>
+  <head>
+    <!-- jQuery, d3, and other includes here ... -->
+    <script src="js/epoch.min.X.Y.Z.js"></script>
+    <link rel="stylesheet" href="css/epoch.X.Y.Z.min.css">
+  </head>
+  ...
+</html>
+```
 
 ### Available Charts
 
