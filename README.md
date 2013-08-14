@@ -146,7 +146,7 @@ var areaChartData = [
 ];
 ```
 
-The layer labeled `Layer 1` will be associated in the SVG with the class name `layer-1`. To override it's color simply
+The layer labeled `Layer 1` will be associated in the chart with the class name `layer-1`. To override it's color simply
 use the following CSS:
 
 ```css
