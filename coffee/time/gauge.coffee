@@ -67,6 +67,11 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       @animation.interval = setInterval @_animate, (1000/@options.fps)
       @animation.active = true
 
+  # Alias for the <code>update()</code> method.
+  # @param [Number] value Value to set for the gauge.
+  push: (value) ->
+    @update value
+
   # @return [Number] The radius for the gauge.
   radius: -> @height / 1.58
 
