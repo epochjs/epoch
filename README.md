@@ -17,51 +17,59 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 4. Read the examples and documentation below
 5. Code, let cool, and enjoy (serves millions)
 
-### The "quick & dirty" Introduction
+### A "quick & dirty" Introduction
+
+Here are the basic steps you need to follow to create a multiseries area chart using Epoch:
+
+**1) Include the appropriate scripts and styles**
 
 ```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- include jquery and d3 HERE -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/d3.min.js"></script>
-    <script src="js/epoch.X.Y.Z.min.js"></script>
-    <style>
-    #area {
-      width: 700px;
-      height: 200px;
-    }
-
-    #area .layer-1 .area {
-      fill: pink;
-    }
-    </style>
-  </head>
-  <body>
-    <!-- 1. Provide a container for the chart -->
-    <div id="area" class="category10"></div>
-
-    <script>
-    $(function() {
-      // 2. Setup the chart data
-      var data = [
-        { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
-        { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
-      ]
-
-      // 3. Initialize, place, and draw the chart
-      $('#area').epoch({ type: 'area', data: data });
-    });
-    </script>
-  </body>
-</html>
+<head>
+  <!-- include jquery and d3 HERE -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/d3.min.js"></script>
+  <script src="js/epoch.X.Y.Z.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/epoch.X.Y.Z.min.css">
+</head>
 ```
 
-* The chart is automatically sized to the containing div (700px by 200px)
-* It uses the base coloring of `category10`. These colors are pulled directly from d3's categorical colors.
-  - You can also use: `category20` (default), `category20b`, and `category20c` 
+**2) Create the a container div for the chart**
 
+```html
+<div id="area" class="category10" style="width: 700px; height: 200px;"></div>
+```
+
+* Epoch will size the chart to fix the explicit dimensions of the container
+* The class name "category10" refers to the categorical color scheme to use
+  when rendering the chart. Other options are `category20` (default), 
+  `category20b`, and `category20c`. See the 
+  [d3 categorical color docs](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors)
+  for more information.
+
+**3) Setup the chart's data**
+
+```javascript
+var data = [
+  { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+  { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+];
+```
+
+* Each type of chart has a specific data format it expects. For the most part they are
+  very similar but make sure to read the documentation below to see required format
+  for the type of chart you are using.
+
+**4) Initialize, place, and draw the chart**
+
+```javascript
+var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
+```
+
+* We use custom jQuery method `.epoch` to create the chart. It will automatically place it as child
+  of the our container div and size it to fill the div completely.
+* The `.epoch` function returns a programming interface with with to interact with the chart
+  (in this example it is assigned to the `areaChartInstance` variable). Primarily you can use this to
+  update the chart with new data (ex: `areaChartInstance.update(myNewData);`).
 
 
 ### Static Charts
