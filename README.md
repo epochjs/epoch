@@ -670,7 +670,96 @@ This type of chart has the most "intense" data format, with each entry expecting
 and example:
 
 ```javascript
+var heatmapData = [
+  // First Series
+  {
+    label: 'Series 1',
+    values: [
+      {
+        time: 1370044800,
+        histogram: {
+          18: 49,
+          104: 10,
+          ...
+        }
+      },
+
+      {
+        time: 1370044801,
+        histogram: {
+          9: 8,
+          120: 17,
+          ...
+        }
+      },
+    ]
+  },
+
+  ...
+];
 ```
+
+As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:
+
+* `label` - The name of the layer
+* `value` - A list of unix timestamp associated sparse histograms:
+  - `time` - The unix timestam for the entry
+  - `histogram` - A "sparse" frequency hash that maps values to frequencies
+
+Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:
+
+```html
+<div id="heatmapChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#lineChart').epoch({
+    type: 'time.heatmap',
+    data: heatmapData
+  });
+</script>
+```
+
+The heatmap is one of the most configurable of all Epoch charts, here's a run down of the available options:
+
+* `buckets` - Number of buckets to display in each column of the visible chart window.
+  - Example: `buckets: 20`
+* `bucketRange` - The range covered by the buckets.
+  - Note: values that fall above the range will be placed in the top most bucket, and
+    values that fall below the range will be placed in the bottom must bucker.
+  - Example: `bucketRange: [0, 1000]`
+* `bucketPadding` - Amount of padding to place around buckets in the display
+  - Example: `bucketPadding: 0`
+* `opacity` - The opacity function to use when rendering buckets
+  - Each bucket will be rendered using a specific opacity. More saturated colors represent higher values in
+    histogram and more transparent colors represent lower values.
+  - There are many built-in opacity functions: `root`, `linear`, `quadratic`, `cubic`, `quartic`, and `quintic`.
+  - You can define your own custom function, see the example below.
+  - Example: `opacity: function(value, max) { return Math.pow(value/max, 0.384); }`
+* `axes` - Which axes to display.
+  - Example: `axes: ['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ time: 10, right: 5, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
+* `fps` - Number of frames per second that transitions animations should use.
+  - High values for this number are basically inpeceptible and can cause a big performance hit.
+  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
+  - Example: `fps: 60`
+* `windowSize` - Number of entries to display in the graph.
+  - Example: `windowSize: 60` (shows a minute of by second data)
+* `historySize` - Number of historical entries to hold at any time.
+  - Example: `historySize: 240`
+* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
+  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
+    memory bloating).
+  - Example: `queueSize: 120`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
 
 
 ### Developing Epoch

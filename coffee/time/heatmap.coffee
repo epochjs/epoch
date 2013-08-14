@@ -4,7 +4,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   defaults =
     buckets: 10
     bucketRange: [0, 100]
-    color: 'linear'
+    opacity: 'linear'
     bucketPadding: 2
 
   # Easy to use "named" color functions
@@ -21,18 +21,18 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # @option options [Integer] buckets Number of vertical buckets to use when normalizing the
   #   incoming histogram data for visualization in the heatmap (default: 10).
   # @option options [Array] bucketRange A range of acceptable values to be bucketed (default: [0, 100]).
-  # @option options [String, Function] color The opacity coloring function to use when rendering buckets
+  # @option options [String, Function] opacity The opacity coloring function to use when rendering buckets
   #   in a column. The built-in functions (referenced by string) are: 'root', 'linear', 'quadratic', 'cubic',
   #   'quartic', and 'quintic'. A custom function can be supplied given it accepts two parameters (value, max)
   #   and returns a numeric value from 0 to 1. Default: linear.
   # @option options [Number] bucketPadding Amount of padding to apply around buckets (default: 2).
   constructor: (@options) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
-    if Epoch.isString(@options.color)
-      @_colorFn = colorFunctions[@options.color]
-      Epoch.exception "Unknown coloring function provided '#{@options.color}'" unless @_colorFn?
-    else if Epoch.isFunction(@options.color)
-      @_colorFn = @options.color
+    if Epoch.isString(@options.opacity)
+      @_colorFn = colorFunctions[@options.opacity]
+      Epoch.exception "Unknown coloring function provided '#{@options.opacity}'" unless @_colorFn?
+    else if Epoch.isFunction(@options.opacity)
+      @_colorFn = @options.opacity
     else
       Epoch.exception "Unknown type for provided coloring function."
 
