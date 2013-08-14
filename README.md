@@ -72,6 +72,89 @@ var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
   (in this example it is assigned to the `areaChartInstance` variable). For basic charts such as
   this it is used to update the chart's data, for example: `areaChartInstance.update(myNewData);`.
 
+### Visual Styles
+
+Epoch charts use CSS to set fill colors, strokes, etc. By default charts are colored using
+[d3 categorical color](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors). You can easily override
+these default colors or create your own custom categories.
+
+#### Using Categorical Colors
+
+We support the following categorical color sets:
+
+* `category20` (default)
+* `category20b`
+* `category20c`
+* `category10`
+
+You can change a chart's color set by simply adding a class to the chart, like so:
+
+```html
+<div id="container1" class="epoch category20"></div>
+<div id="container1" class="epoch category20b"></div>
+<div id="container1" class="epoch category20c"></div>
+<div id="container1" class="epoch category10"></div>
+```
+
+We achieve this by adding a category class to each element in a chart that needs to be rendered using the categorical color.
+
+#### Creating Your Own Categories
+
+The preferred method for doing this would be to use a css preprocessor like Sass or Less, here's an example of a simple color
+scheme as written in SCSS:
+
+```scss
+$colors: red, green, blue, orange, yellow;
+
+.epoch.my-colors {
+  @for $i from 1 through 5 {
+    .category#{$i} {
+      .line { stroke: nth($colors, $i); }
+      .area, .dot { fill: nth($colors, $i); }
+    }
+    .arc.category#{$i} path {
+      fill: nth($colors, $i);
+    }
+    .bar.category#{$i} { 
+      fill: nth($colors, $i);
+    }
+  }
+}
+```
+
+You could then apply the class to your containers and see your colors in action:
+
+```html
+<div id="myChart" class="epoch my-colors"></div>
+```
+
+In the future we will be creating SCSS and LESS plugins with mixins you can use to more easily define custom color categories.
+
+
+#### Specific Overrides
+
+For multi-series charts, the data format requires that you supply a `label` for each series. We create a "dasherized"
+class name from this label and associate it with the rendered output of the chart. For instance, take the following
+data for an area chart:
+
+```javascript
+var areaChartData = [
+  {
+    label: "Layer 1",
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000} ]
+  }
+];
+```
+
+The layer labeled `Layer 1` will be associated in the SVG with the class name `layer-1`. To override it's color simply
+use the following CSS:
+
+```css
+#myChartContainer .layer-1 .area {
+  fill: pink;
+}
+```
+
 
 ### Basic Charts
 
