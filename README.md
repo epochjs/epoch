@@ -4,7 +4,7 @@ By Ryan Sandor Richards
 ### Introduction
 
 Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of
-visualization programming: **static charts** for creating historical reports, and **real-time charts** for displaying frequently 
+visualization programming: **basic charts** for creating historical reports, and **real-time charts** for displaying frequently 
 updating timeseries data.
 
 ### Getting Started
@@ -19,7 +19,7 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 
 ### A "quick & dirty" Introduction
 
-Here are the basic steps you need to follow to create a multiseries area chart using Epoch:
+Here are the basic steps you need to follow to create a multi-series area chart using Epoch:
 
 **1) Include the appropriate scripts and styles**
 
@@ -73,12 +73,12 @@ var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
   this it is used to update the chart's data, for example: `areaChartInstance.update(myNewData);`.
 
 
-### Static Charts
+### Basic Charts
 
-Epoch's **Static** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
+Epoch's **Basic** charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
 scales, axes, etc.) while the individual charts implement their own specialized drawing routines. 
 
-Every static chart was built to use the same basic workflow, here's an overview:
+Every basic chart was built to use the same workflow, here's an overview:
 
 1. Create an HTML container.
   - Epoch automagically sizes charts to fit their containers.
@@ -96,7 +96,7 @@ The rest of this section explains the individual charts in detail.
 
 #### area
 
-The static area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
+The basic area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
 each with their own indepenent series of values. To begin, let's take a look at some example data:
 
 ```javascript
@@ -133,7 +133,7 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 <script>
   $('#areaChart').epoch({
     type: 'area',
-    data: chartData // Must follow the format as defined below...
+    data: areaChartData
   });
 </script>
 ```
@@ -375,18 +375,176 @@ Scatter plots accept the following optional parameters:
 ### Real-time Charts
 
 Epoch's **real-time** charts have been fine tuned for displaying frequently updating *timeseries* data. To make them performant (aka
-not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering. This section
-details each of the real-time charts in detail.
+not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering.
 
-#### Area
+Every real-time chart has a name prefixed with `time.` and was built to use the same workflow, here's an overview:
 
-#### Bar
+1. Create an HTML container.
+  - Epoch automagically sizes charts to fit their containers.
+  - `<div id="myChart" style="width: 200px; height: 200px"></div>`
+2. Fetch and format your data.
+  - Each type of chart uses a specific (though often familiar) data format.
+  - See the documentation below for how each chart is expecting the data.
+3. Use the jQuery method `.epoch` to create, append, and draw the chart.
+  - `var myChart = $('#myChart').epoch({ type: 'time.line', data: myData });`
+4. When you have a new data point to append to the chart, use the `.push` method:
+  - `myChart.push(nextDataPoint);`
 
-#### Gauge
+The rest of this section explains the individual charts in detail.
 
-#### Heatmap
 
-#### Line
+#### time.area
+
+The real-time area chart works in a very similar way to the basic area chart detailed above. It is used to show relative sizes of
+multi-series data as it evolves over time.
+
+```javascript
+var areaChartData = [
+  // The first layer
+  {
+    label: "Layer 1",
+    values: [ {time: 1370044800, y: 100}, {time: 1370044801, y: 1000}, ... ]
+  },
+
+  // The second layer
+  {
+    label: "Layer 2",
+    values: [ {time: 1370044800, y: 78}, {time: 1370044801, y: 98}, ... ]
+  },
+
+  ...
+];
+```
+
+As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:
+
+* `label` - The name of the layer
+* `values` - An array of values each value having a unix timestamp (`time`) and a value at that time (`y`)
+
+The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same `time` value.
+
+Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:
+
+```html
+<div id="areaChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#areaChart').epoch({
+    type: 'time.area',
+    data: areaChartData
+  });
+</script>
+```
+
+In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
+options are available for area charts:
+
+* `axes` - Which axes to display.
+  - Example: `axes: ['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ time: 10, right: 5, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
+* `fps` - Number of frames per second that transitions animations should use.
+  - High values for this number are basically inpeceptible and can cause a big performance hit.
+  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
+  - Example: `fps: 60`
+* `windowSize` - Number of entries to display in the graph.
+  - Example: `windowSize: 60` (shows a minute of by second data)
+* `historySize` - Number of historical entries to hold at any time.
+  - Example: `historySize: 240`
+* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
+  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
+    memory bloating).
+  - Example: `queueSize: 120`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+
+#### time.bar
+
+The real-time bar chart works in a very similar way to the basic bar chart detailed above. It is used to show relative sizes of
+multi-series data in the form of stacked bars as it evolves over time.
+
+```javascript
+var barChartData = [
+  // First series
+  {
+    label: "Series 1",
+    values: [ {time: 1370044800, y: 100}, {time: 1370044801, y: 1000}, ... ]
+  },
+
+  // The second series
+  {
+    label: "Series 2",
+    values: [ {time: 1370044800, y: 78}, {time: 1370044801, y: 98}, ... ]
+  },
+
+  ...
+];
+```
+
+As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:
+
+* `label` - The name of the layer
+* `values` - An array of values each value having a unix timestamp (`time`) and a value at that time (`y`)
+
+The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same `time` value.
+
+Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:
+
+```html
+<div id="barChart" style="width: 800px; height: 200px"></div>
+<script>
+  $('#barChart').epoch({
+    type: 'time.bar',
+    data: barChart
+  });
+</script>
+```
+
+In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
+options are available for real-time bar charts:
+
+* `axes` - Which axes to display.
+  - Example: `axes: ['top', right', 'bottom', 'left']`
+* `ticks` - Number of ticks to display on each axis.
+  - Example: `{ time: 10, right: 5, left: 5 }`
+* `tickFormats` - What formatting function to use when displaying tick labels.
+  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
+* `fps` - Number of frames per second that transitions animations should use.
+  - High values for this number are basically inpeceptible and can cause a big performance hit.
+  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
+  - Example: `fps: 60`
+* `windowSize` - Number of entries to display in the graph.
+  - Example: `windowSize: 60` (shows a minute of by second data)
+* `historySize` - Number of historical entries to hold at any time.
+  - Example: `historySize: 240`
+* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
+  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
+    memory bloating).
+  - Example: `queueSize: 120`
+* `margins` - Explicit margin overrides for the chart.
+  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
+* `width` - Override automatic width with an explicit pixel value
+  - Example: `width: 320`
+* `height` - Override automatic height with an explicit pixel value
+  - Example: `height: 240`
+
+
+#### time.gauge
+
+#### time.heatmap
+
+#### time.line
 
 
 ### Developing Epoch
