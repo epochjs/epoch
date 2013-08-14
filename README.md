@@ -712,7 +712,7 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 ```html
 <div id="heatmapChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#lineChart').epoch({
+  $('#heatmapChart').epoch({
     type: 'time.heatmap',
     data: heatmapData
   });
