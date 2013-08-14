@@ -55,9 +55,10 @@ var data = [
 ];
 ```
 
-* Each type of chart has a specific data format it expects. For the most part they are
-  very similar but make sure to read the documentation below to see required format
-  for the type of chart you are using.
+* Each chart type expects a certain data format. For the most part they are very similar to
+  the example given above. Some types of charts (e.g. pie, guage, heatmap) require rather
+  different formats. Make sure to read the chart-by-chart documentation below to see exactly
+  what each type expects.
 
 **4) Initialize, place, and draw the chart**
 
