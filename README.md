@@ -104,7 +104,7 @@ The preferred method for doing this would be to use a css preprocessor like Sass
 scheme as written in SCSS:
 
 ```scss
-$colors: red, green, blue, orange, yellow;
+$colors: red, green, blue, pink, yellow;
 
 .epoch.my-colors {
   @for $i from 1 through 5 {
