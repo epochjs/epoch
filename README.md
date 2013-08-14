@@ -69,8 +69,8 @@ var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
 * We use custom jQuery method `.epoch` to create the chart. It will automatically place it as child
   of the our container div and size it to fill the div completely.
 * The `.epoch` function returns a programming interface with with to interact with the chart
-  (in this example it is assigned to the `areaChartInstance` variable). Primarily you can use this to
-  update the chart with new data (ex: `areaChartInstance.update(myNewData);`).
+  (in this example it is assigned to the `areaChartInstance` variable). For basic charts such as
+  this it is used to update the chart's data, for example: `areaChartInstance.update(myNewData);`.
 
 
 ### Static Charts
