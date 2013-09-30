@@ -62,7 +62,11 @@ Epoch.Util.defaults = (options, defaults) ->
 # @example Formatting a very large number
 #   Epoch.Util.formatSI(1120000) == "1.1 M"
 Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
-  return v if v < 1000
+  if v < 1000
+    q = v
+    q = q.toFixed(fixed) unless (q|0) == q and !fixIntegers
+    return q
+
   for i, label of ['K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     base = Math.pow(10, ((i|0)+1)*3)
     if v >= base and v < Math.pow(10, ((i|0)+2)*3)
