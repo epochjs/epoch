@@ -850,9 +850,8 @@ The heatmap is one of the most configurable of all Epoch charts, here's a run do
 To work on the epoch charting library itself do the following:
 
 1. Clone the repository
-2. Install the npm package `node-minify`; `npm install -g node-minify`, then `npm link node-minify`. 
-2.2 `npm install -g codo` - Documentation (CLEAN ME UP)
-3. Run `cake build` from the project directory
+2. In the clone, `npm install`
+3. then `cake build`.
 4. View `docs/static.html` and `docs/time.html` for a quick overview of the available features
 5. Scour the source for more detailed information (formal documentation coming soon)
 6. Let cool and enjoy (serves millions).
