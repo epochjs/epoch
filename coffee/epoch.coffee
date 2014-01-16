@@ -235,8 +235,10 @@ class Epoch.Chart.SVG extends Epoch.Chart.Base
       @svg = d3.select(@el.get(0)).append('svg')
     else
       @svg = d3.select(document.createElement('svg'))
-    @svg.attr('width', @width).attr('height', @height)
-
+    @svg.attr
+        xmlns: 'http://www.w3.org/2000/svg',
+        width: @width,
+        height: @height
 
 # Base Class for all Canvas based charts.
 class Epoch.Chart.Canvas extends Epoch.Chart.Base
