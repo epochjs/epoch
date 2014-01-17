@@ -28,15 +28,14 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
 
     data = stack(@data)
 
-    # 1) Join
+    @svg.selectAll('.layer').remove()
+
     layer = @svg.selectAll('.layer')
       .data(@data, (d) -> d.label)
 
-    # 2) Update
-    layer.select('.area').transition().duration(500)
+    layer.select('.area')
       .attr('d', (d) -> area(d.values))
 
-    # 3) Enter / Create
     layer.enter().append('g')
       .attr('class', (d) -> d.className)
 
@@ -44,12 +43,5 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
       .attr('class', 'area')
       .attr('d', (d) -> area(d.values))
 
-    # 4) Update new & existing
+    super()
 
-    # 5) Exit / Remove
-    layer.exit().transition()
-      .duration(750)
-      .style('opacity', 0)
-      .remove()
-
-    super()   
