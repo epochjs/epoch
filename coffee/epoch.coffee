@@ -72,8 +72,22 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
     if v >= base and v < Math.pow(10, ((i|0)+2)*3)
       q = v/base
       q = q.toFixed(fixed) unless (q|0) == q and !fixIntegers
-      return "#{q} #{label}" 
+      return "#{q} #{label}"
 
+# Formats large bandwidth and disk space usage numbers with byte postfixes (e.g. KB, MB, GB, etc.)
+# @param [Number] v Value to format.
+# @param [Integer] fixed Number of floating point digits to fix after conversion.
+# @param [Boolean] fixIntegers Whether or not to add floating point digits to non-floating point results.
+# @example Formatting a large number of bytes
+#   Epoch.Util.formatBytes(5.21 * Math.pow(2, 20)) == "5.2 MB"
+Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
+  return "#{v} B" if v < 1024
+  for i, label of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    base = Math.pow(1024, (i|0)+1)
+    if v >= base and v < Math.pow(1024, (i|0)+2)
+      q = v/base
+      q = q.toFixed(fixed) unless (q|0) == q and !fix_integers
+      return "#{q} #{label}"
 
 # @return a "dasherized" css class names from a given string
 # @example Using dasherize
@@ -113,6 +127,9 @@ Epoch.Formats.percent = (d) -> (d*100).toFixed(1) + "%"
 # Tick formatter for seconds from timestamp data.
 Epoch.Formats.seconds = (t) -> d3Seconds(new Date(t*1000))
 d3Seconds = d3.time.format('%I:%M:%S %p')
+
+# Tick formatter for bytes
+Epoch.Formats.bytes = (d) -> Epoch.Util.formatBytes(d)
 
 
 # Basic eventing base class for all Epoch classes.
@@ -211,7 +228,7 @@ class Epoch.Chart.Base extends Epoch.Events
   draw: ->
 
   # Calculates an extent throughout the layers based on the given comparator.
-  # @param [Function] cmp Comparator to use for performing the min and max for the extent 
+  # @param [Function] cmp Comparator to use for performing the min and max for the extent
   #   calculation.
   # @return [Array] an extent array with the first element as the minimum value in the
   #   chart's data set and the second element as the maximum.
@@ -220,11 +237,11 @@ class Epoch.Chart.Base extends Epoch.Events
       d3.min(@data, (layer) -> d3.min(layer.values, cmp)),
       d3.max(@data, (layer) -> d3.max(layer.values, cmp))
     ]
-      
+
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base
-  # Initializes the chart and places the rendering SVG in the specified HTML 
+  # Initializes the chart and places the rendering SVG in the specified HTML
   # containing element.
   # @param [Object] options Options for the SVG chart.
   # @option options [HTMLElement] el Container element for the chart.
@@ -298,7 +315,7 @@ class QueryCSS
     clone.removeAttr('style')
     QueryCSS.container.append(clone)
     svg = $('svg', clone)
-    
+
     # 2) Create Reference Element
     levels = selector.split(/\s+/)
     parent = root = put(levels.shift())
