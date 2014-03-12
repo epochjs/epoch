@@ -31,10 +31,10 @@
         clear: both;
       }
 
-      #reference .ref { 
-        width: 30px; 
-        height: 30px; 
-        display: inline-block; 
+      #reference .ref {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
       }
     </style>
   </head>
@@ -114,13 +114,14 @@
           }
         });
 
-        var line = $('#line').epoch({ 
+        var line = $('#line').epoch({
           type: 'time.line',
           data: TIME_DATA_SHORT_2,
-          axes: [] 
+          axes: ['left', 'right'],
+          ticks: { left: 2, right: 1 }
         });
 
-        var area = $('#area').epoch({ 
+        var area = $('#area').epoch({
           type: 'time.area',
           data: TIME_DATA_SHORT_2,
           axes: ['left', 'bottom', 'right']

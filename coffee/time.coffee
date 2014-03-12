@@ -45,7 +45,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   #   that these are optional and will be automatically generated based on which axes are
   #   used for the visualization. Margins are keyed by their position (top, left, bottom
   #   and/or right) and should map to [Integer] values.
-  # @option options [Array] axes Which axes to display when rendering the visualization 
+  # @option options [Array] axes Which axes to display when rendering the visualization
   #   (top, left, bottom, and/or right).
   # @option options [Object] ticks Number of ticks to display on each axis available axes
   #   ares: time, left, and right. The number provided for the left and right axes are in
@@ -84,7 +84,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       top: "#{@margins.top}px"
       left: "#{@margins.left}px"
       'z-index': '-1'
-      
+
     # Animation / Transitions
     @animation =
       interval: null
@@ -167,17 +167,27 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
         .call(@rightAxis())
 
+
   # @return [Object] The d3 left axis.
   leftAxis: ->
-    d3.svg.axis().scale(@y()).orient('left')
-      .ticks(@options.ticks.left)
+    ticks = @options.ticks.left
+    axis = d3.svg.axis().scale(@y()).orient('left')
       .tickFormat(@options.tickFormats.left)
+    if ticks == 2
+      axis.tickValues @extent((d) -> d.y)
+    else
+      axis.ticks(ticks)
 
   # @return [Object] The d3 right axis.
   rightAxis: ->
-    d3.svg.axis().scale(@y()).orient('right')
-      .ticks(@options.ticks.right)
-      .tickFormat(@options.tickFormats.right)
+    extent = @extent((d) -> d.y)
+    ticks = @options.ticks.right
+    axis = d3.svg.axis().scale(@y()).orient('right')
+      .tickFormat(@options.tickFormats.left)
+    if ticks == 2
+      axis.tickValues @extent((d) -> d.y)
+    else
+      axis.ticks(ticks)
 
   # Determines if the visualization is displaying the axis with the given name.
   # @param [String] name Name of the axis
@@ -202,7 +212,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @param [Array] layers The layered entries to prepare.
   # @return [Array] The prepared layers.
   _prepareLayers: (layers) -> layers
-    
+
   # This method will remove the first incoming entry from the visualization's queue
   # and shift it into the working set (aka window). It then starts the animating the
   # transition of the element into the visualization. Triggers the 'transition:start'
@@ -219,7 +229,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # the 'transition:end' event.
   _stopTransition: ->
     return unless @inTransition()
-    
+
     # Shift data off the end
     for layer in @data
       continue unless layer.values.length > @options.windowSize + 1
@@ -276,10 +286,10 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @_startTransition() unless @inTransition()
 
 
-  # Shift elements off the incoming data queue (see the implementation of 
+  # Shift elements off the incoming data queue (see the implementation of
   # push above).
   #
-  # If there's data to be shoved into the visualization it will pull it 
+  # If there's data to be shoved into the visualization it will pull it
   # off the queue and put it into the working dataset. It also calls through
   # to @_updateTicks to handle horizontal (or "time") axes tick transitions
   # since we're implementing independent of d3 as well.
@@ -328,7 +338,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # This is called every time we introduce new data (as a result of _shift)
   # it checks to see if we also need to update the working tick set and
-  # makes the approriate changes for handling tick animation (enter, exit, 
+  # makes the approriate changes for handling tick animation (enter, exit,
   # and update in the d3 model).
   #
   # @param [Integer] newTime Current newest timestamp in the data
@@ -388,7 +398,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('dy', -10)
         .text(@options.tickFormats.top(tick.time))
 
-      tick.topEl = $(g[0])      
+      tick.topEl = $(g[0])
 
     if reverse
       @_ticks.unshift tick
@@ -402,7 +412,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     tick = @_ticks.shift()
     tick.topEl.remove() if tick.topEl?
     tick.bottomEl.remove() if tick.bottomEl?
-  
+
   # This performs animations for the time axes (top and bottom).
   _updateTimeAxes: ->
     return unless @hasAxis('top') or @hasAxis('bottom')
@@ -419,11 +429,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         tick.opacity += dop
       else if tick.exit
         tick.opacity -= dop
-      
+
       if tick.enter or tick.exit
         tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
-  
+
   # Clears the render canvas.
   clear: ->
     @ctx.clearRect(0, 0, @width, @height)
