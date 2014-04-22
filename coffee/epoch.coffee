@@ -291,6 +291,10 @@ class QueryCSS
   # The svg reference container
   @container = null
 
+  # Purges the selector to style cache
+  @purge: ->
+    QueryCSS.cache = {}
+
   # Called on load to insert the css reference element container.
   @load: ->
     $('body').append('<div id="_canvas_css_reference"></div>')
@@ -337,5 +341,7 @@ class QueryCSS
     return styles
 
 $ QueryCSS.load
+
+Epoch.QueryCSS = QueryCSS
 
 # "I think, baby, I was born just a little late!" -- Middle Class Rut
