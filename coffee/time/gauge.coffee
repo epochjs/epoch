@@ -35,7 +35,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       'z-index': '1'
 
     @svg.append('g')
-      .attr('transform', "translate(#{@centerX()}, #{@textY()})")
+      .attr('transform', "translate(#{@textX()}, #{@textY()})")
       .append('text')
         .attr('class', 'value')
         .text(@options.format(@value))
@@ -73,13 +73,16 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @update value
 
   # @return [Number] The radius for the gauge.
-  radius: -> @height / 1.58
+  radius: -> @getHeight() / 1.58
 
   # @return [Number] The center position x-coordinate for the gauge.
-  centerX: -> @width / 2
+  centerX: -> @getWidth() / 2
 
   # @return [Number] The center position y-coordinate for the gauge.
-  centerY: -> 0.68 * @height
+  centerY: -> 0.68 * @getHeight()
+
+  # @return [Number] The x-coordinate for the gauge text display.
+  textX: -> @width / 2
 
   # @return [Number] The y-coordinate for the gauge text display.
   textY: -> 0.48 * @height
@@ -103,7 +106,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     [cx, cy, r] = [@centerX(), @centerY(), @radius()]
     [tickOffset, tickSize] = [@options.tickOffset, @options.tickSize]
 
-    @ctx.clearRect(0, 0, @width, @height)
+    @clear()
     
     # Draw Ticks
     t = d3.scale.linear()
@@ -151,15 +154,15 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @ctx.translate cx, cy
     @ctx.rotate @getAngle(@value)
 
-    @ctx.moveTo 4, 0
-    @ctx.lineTo -4, 0
-    @ctx.lineTo -1, 19-r
+    @ctx.moveTo 4 * @pixelRatio, 0
+    @ctx.lineTo -4 * @pixelRatio, 0
+    @ctx.lineTo -1 * @pixelRatio, 19-r
     @ctx.lineTo 1, 19-r
     @ctx.fill()
 
     @setStyles '.epoch .gauge .needle-base'
     @ctx.beginPath()
-    @ctx.arc 0, 0, (@width / 25), 0, 2*Math.PI
+    @ctx.arc 0, 0, (@getWidth() / 25), 0, 2*Math.PI
     @ctx.fill()
 
     @ctx.restore()
