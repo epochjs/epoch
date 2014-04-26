@@ -267,9 +267,29 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
   constructor: (@options={}) ->
     super(@options)
     @canvas = $("<canvas></canvas>")
-    @canvas.attr('width', @width).attr('height', @height)
+
+    if window.devicePixelRatio?
+      @pixelRatio = window.devicePixelRatio
+    else
+      @pixelRatio = 1
+
+    @canvas.css
+      'width': "#{@width}px"
+      'height': "#{@height}px"
+
+    @canvas.attr('width', @width * @pixelRatio).attr('height', @height * @pixelRatio)
     @el.append(@canvas) if @el?
     @ctx = @canvas.get(0).getContext('2d')
+
+  # @return [Number] width of the canvas with respect to the pixel ratio of the display
+  getWidth: -> @width * @pixelRatio
+
+  # @return [Number] height of the canvas with respect to the pixel ratio of the display
+  getHeight: -> @height * @pixelRatio
+
+  # Clears the render canvas.
+  clear: ->
+    @ctx.clearRect(0, 0, @getWidth(), @getHeight())
 
   # @return [Object] computed styles for the given selector in the context of this chart.
   # @param [String] selector The selector used to compute the styles.
@@ -281,7 +301,6 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
 # This allows canvas based visualizations to use the same styles as their
 # SVG counterparts.
 class QueryCSS
-
   # Key-Value cache for computed styles that we found using this class.
   @cache = {}
 
@@ -303,7 +322,18 @@ class QueryCSS
   # @return [String] A unique identifier for the given container.
   # @param container The containing element for a chart.
   @containerId: (container) ->
-    "#{container.attr('id')}.#{container.attr('class')}"
+    id = container.attr('id')
+    if (klass = container.attr('class'))?
+      klass = klass.split(/\s+/).join('.') 
+
+    if id? and klass?
+      "\##{id}.#{klass}"
+    else if id?
+      "\##{id}"
+    else if klass?
+      ".#{klass}"
+    else
+      ""
 
   # @return The computed styles for the given selector in the given container element.
   # @param [String] selector Selector from which to derive the styles.
