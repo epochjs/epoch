@@ -99,10 +99,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @p = @paint.getContext('2d')
 
     # Paint the initial data (rendering backwards from just before the fixed paint position)
-    entryIndex = @data[0].values.length
-    drawColumn = @options.windowSize
-    while (--entryIndex >= 0) and (--drawColumn >= 0)
-      @_paintEntry(entryIndex, drawColumn)
+    @redraw()
 
     # Hook into the events to paint the next row after it's been shifted into the data
     @on 'after:shift', '_paintEntry'
@@ -110,6 +107,13 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # At the end of a transition we must reset the paint canvas by shifting the viewable
     # buckets to the left (this allows for a fixed cut point and single renders below in @draw)
     @on 'transition:end', '_shiftPaintCanvas'
+
+  # Redraws the entire heatmap for the current data.
+  redraw: ->
+    entryIndex = @data[0].values.length
+    drawColumn = @options.windowSize
+    while (--entryIndex >= 0) and (--drawColumn >= 0)
+      @_paintEntry(entryIndex, drawColumn)
 
   # Paints a single entry column on the paint canvas at the given column.
   # @param [Integer] entryIndex Index of the entry to paint.
