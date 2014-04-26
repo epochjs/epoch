@@ -72,6 +72,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @svg = d3.select(@el.get(0)).insert('svg', ':first-child')
       .attr('width', @width)
       .attr('height', @height)
+      .style('z-index', '1000')
 
     # Position the canvas "under" the SVG element
     if @el.css('position') != 'absolute' and @el.css('position') != 'relative'
@@ -83,7 +84,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       position: 'absolute'
       top: "#{@margins.top}px"
       left: "#{@margins.left}px"
-      'z-index': '-1'
+      'z-index': '999'
 
     # Animation / Transitions
     @animation =
@@ -433,10 +434,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       if tick.enter or tick.exit
         tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
-
-  # Clears the render canvas.
-  clear: ->
-    @ctx.clearRect(0, 0, @width, @height)
 
   # Draws the visualization in the plot's canvas.
   # @param delta The current x offset to apply to all elements when rendering. This number
