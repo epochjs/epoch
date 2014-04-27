@@ -15,12 +15,10 @@ class Epoch.Time.Area extends Epoch.Time.Stack
     if styles['stroke-width']?
       @ctx.lineWidth = styles['stroke-width'].replace('px', '')
 
-  # Draws the area chart.
-  draw: (delta=0) ->
-    @clear()
+  # Draws areas for the chart
+  _drawAreas: (delta=0) ->
     [y, w] = [@y(), @w()]
 
-    # Draw the areas
     for i in [@data.length-1..0]
       layer = @data[i]
       @setStyles layer
@@ -46,3 +44,32 @@ class Epoch.Time.Area extends Epoch.Time.Stack
       @ctx.lineTo(@width*@pixelRatio+w+delta, @innerHeight())
       @ctx.closePath()
       @ctx.fill()
+
+  # Draws strokes for the chart
+  _drawStrokes: (delta=0) ->
+    [y, w] = [@y(), @w()]
+
+    for i in [@data.length-1..0]
+      layer = @data[i]
+      @setStyles layer
+      @ctx.beginPath()
+
+      [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
+      firstX = null
+      while (--i >= -2) and (--k >= 0)
+        entry = layer.values[k]
+        args = [(i+1)*w+delta, y(entry.y + entry.y0)]
+        args[0] += w if trans
+        if i == @options.windowSize - 1
+          @ctx.moveTo.apply @ctx, args
+        else
+          @ctx.lineTo.apply @ctx, args
+
+      @ctx.stroke()
+
+  # Draws the area chart.
+  draw: (delta=0) ->
+    @clear()
+    @_drawAreas(delta)
+    @_drawStrokes(delta)
+    
