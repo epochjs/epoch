@@ -871,4 +871,4 @@ To work on the epoch charting library itself do the following:
 4. View `docs/static.html` and `docs/time.html` for a quick overview of the available features
 5. Scour the source for more detailed information (formal documentation coming soon)
 6. Let cool and enjoy (serves millions).
-
+7. Keep the documentation up-to-date run `codo` from the command line
