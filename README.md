@@ -473,7 +473,19 @@ Every real-time chart has a name prefixed with `time.` and was built to use the 
 4. When you have a new data point to append to the chart, use the `.push` method:
   - `myChart.push(nextDataPoint);`
 
-The rest of this section explains the individual charts in detail.
+
+#### Device Pixel Ratio
+
+Epoch supports high resolution displays by automatically detecting and setting the appropriate pixel ratio for the canvas based real-time charts. You can override this behavior by explicitly setting the pixel ratio for any chart described below. Here's an example of how to do this:
+
+```javascript
+$('#my-chart').epoch({
+  type: 'time.line',
+  pixelRatio: 1
+})
+```
+
+Note that the `pixelRatio` option must be an integer >= 1.
 
 
 #### time.area
