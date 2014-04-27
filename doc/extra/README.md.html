@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>Epoch Documentation</title>
+  <script src='../javascript/application.js'></script>
+  <script src='../javascript/search.js'></script>
+  <link rel='stylesheet' href='../stylesheets/application.css' type='text/css'>
+</head>
+  <body>
+    <div id='base' data-path='../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../extra/README.md.html' title='Codo'>
+      Codo
+    </a>
+    &raquo;
+    <a href='../alphabetical_index.html' title='Index'>
+      Index
+    </a>
+    &raquo;
+    <span class='title'>README.md</span>
+  </div>
+</div>
+    <div id='content'>
+      <nav class='toc'>
+        <p class='title'>
+          <a class='hide_toc' href='#'>
+            <strong>Table of Contents</strong>
+          </a>
+          <small>
+            (<a class='float_toc' href='#'>left</a>)
+          </small>
+        </p>
+      </nav>
+      <div id='filecontents'>
+        <h2 id="epoch-the-fastly-charting-library">Epoch - The Fastly Charting Library</h2><p>By Ryan Sandor Richards</p><h3 id="introduction">Introduction</h3><p>Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of
+visualization programming: <strong>basic charts</strong> for creating historical reports, and <strong>real-time charts</strong> for displaying frequently 
+updating timeseries data.</p><h3 id="getting-started">Getting Started</h3>
+<ol>
+<li><a href="https://github.com/mbostock/d3">d3</a> and <a href="https://github.com/jquery/jquery">jQuery</a> are required, so make sure you are including
+them in your page.</li>
+<li>Locate and download the <code>epoch.X.Y.Z.min.js</code> and <code>epoch.X.Y.Z.min.css</code> files in this repository, and place
+them in your project (note: <code>X.Y.Z</code> is a placeholder for the current version of Epoch).</li>
+<li>Include all the required JavaScript and CSS files into your source in the usual manner (probably in the head of the HTML document).</li>
+<li>Read the examples and documentation below</li>
+<li>Code, let cool, and enjoy (serves millions)</li>
+</ol>
+<h3 id="a-quick-dirty-introduction">A &quot;quick &amp; dirty&quot; Introduction</h3><p>Here are the basic steps you need to follow to create a multi-series area chart using Epoch:</p><p><strong>1) Include the appropriate scripts and styles</strong></p><pre><code class="lang-html">&lt;head&gt;
+  &lt;!-- include jquery and d3 HERE --&gt;
+  &lt;script src=&quot;js/jquery.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;js/d3.min.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;js/epoch.X.Y.Z.min.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/epoch.X.Y.Z.min.css&quot;&gt;
+&lt;/head&gt;
+</code></pre><p><strong>2) Create the a container div for the chart</strong></p><pre><code class="lang-html">&lt;div id=&quot;area&quot; class=&quot;category10&quot; style=&quot;width: 700px; height: 200px;&quot;&gt;&lt;/div&gt;
+</code></pre>
+<ul>
+<li>Epoch will size the chart to fix the explicit dimensions of the container</li>
+<li>The class name &quot;category10&quot; refers to the categorical color scheme to use
+when rendering the chart. Other options are <code>category20</code> (default), 
+<code>category20b</code>, and <code>category20c</code>. See the 
+<a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors">d3 categorical color docs</a>
+for more information.</li>
+</ul><p><strong>3) Setup the chart&#39;s data</strong></p><pre><code class="lang-javascript">var data = [
+  { label: &#39;Layer 1&#39;, values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+  { label: &#39;Layer 2&#39;, values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+];
+</code></pre>
+<ul>
+<li>Each chart type expects a certain data format. For the most part they are very similar to
+the example given above. Some types of charts (e.g. pie, guage, heatmap) require rather
+different formats. Make sure to read the chart-by-chart documentation below to see exactly
+what each type expects.</li>
+</ul><p><strong>4) Initialize, place, and draw the chart</strong></p><pre><code class="lang-javascript">var areaChartInstance = $(&#39;#area&#39;).epoch({ type: &#39;area&#39;, data: data });
+</code></pre>
+<ul>
+<li>We use custom jQuery method <code>.epoch</code> to create the chart. It will automatically place it as child
+of the our container div and size it to fill the div completely.</li>
+<li>The <code>.epoch</code> function returns a programming interface with with to interact with the chart
+(in this example it is assigned to the <code>areaChartInstance</code> variable). For basic charts such as
+this it is used to update the chart&#39;s data, for example: <code>areaChartInstance.update(myNewData);</code>.</li>
+</ul>
+<h3 id="visual-styles">Visual Styles</h3><p>Epoch charts use CSS to set fill colors, strokes, etc. By default charts are colored using
+<a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors">d3 categorical color</a>. You can easily override
+these default colors or create your own custom categories.</p><h4 id="using-categorical-colors">Using Categorical Colors</h4><p>We support the following categorical color sets:</p><ul>
+<li><code>category20</code> (default)</li>
+<li><code>category20b</code></li>
+<li><code>category20c</code></li>
+<li><code>category10</code></li>
+</ul><p>You can change a chart&#39;s color set by simply adding a class to the chart, like so:</p><pre><code class="lang-html">&lt;div id=&quot;container1&quot; class=&quot;epoch category20&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;container1&quot; class=&quot;epoch category20b&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;container1&quot; class=&quot;epoch category20c&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;container1&quot; class=&quot;epoch category10&quot;&gt;&lt;/div&gt;
+</code></pre><p>We achieve this by adding a category class to each element in a chart that needs to be rendered using the categorical color.</p><h4 id="creating-your-own-categories">Creating Your Own Categories</h4><p>The preferred method for doing this would be to use a css preprocessor like Sass or Less, here&#39;s an example of a simple color
+scheme as written in SCSS:</p><pre><code class="lang-scss">$colors: red, green, blue, pink, yellow;
+
+.epoch.my-colors {
+  @for $i from 1 through 5 {
+    .category#{$i} {
+      .line { stroke: nth($colors, $i); }
+      .area, .dot { fill: nth($colors, $i); }
+    }
+    .arc.category#{$i} path {
+      fill: nth($colors, $i);
+    }
+    .bar.category#{$i} { 
+      fill: nth($colors, $i);
+    }
+  }
+}
+</code></pre><p>You could then apply the class to your containers and see your colors in action:</p><pre><code class="lang-html">&lt;div id=&quot;myChart&quot; class=&quot;epoch my-colors&quot;&gt;&lt;/div&gt;
+</code></pre><p>In the future we will be creating SCSS and LESS plugins with mixins you can use to more easily define custom color categories.</p><h4 id="specific-overrides">Specific Overrides</h4><p>For multi-series charts, the data format requires that you supply a <code>label</code> for each series. We create a &quot;dasherized&quot;
+class name from this label and associate it with the rendered output of the chart. For instance, take the following
+data for an area chart:</p><pre><code class="lang-javascript">var areaChartData = [
+  {
+    label: &quot;Layer 1&quot;,
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000} ]
+  }
+];
+</code></pre><p>The layer labeled <code>Layer 1</code> will be associated in the chart with the class name <code>layer-1</code>. To override it&#39;s color simply
+use the following CSS:</p><pre><code class="lang-css">#myChartContainer .layer-1 .area {
+  fill: pink;
+}
+</code></pre>
+<h3 id="basic-charts">Basic Charts</h3><p>Epoch&#39;s <strong>Basic</strong> charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up
+scales, axes, etc.) while the individual charts implement their own specialized drawing routines. </p><p>Every basic chart was built to use the same workflow, here&#39;s an overview:</p><ol>
+<li>Create an HTML container.<ul>
+<li>Epoch automagically sizes charts to fit their containers.</li>
+<li><code>&lt;div id=&quot;myChart&quot; style=&quot;width: 200px; height: 200px&quot;&gt;&lt;/div&gt;</code></li>
+</ul>
+</li>
+<li>Fetch and format your data.<ul>
+<li>Each type of chart uses a specific (though often familiar) data format.</li>
+<li>See the documentation below for how each chart is expecting the data.</li>
+</ul>
+</li>
+<li>Use the jQuery method <code>.epoch</code> to create, append, and draw the chart.<ul>
+<li><code>var myChart = $(&#39;#myChart&#39;).epoch({ type: &#39;line&#39;, data: myData });</code></li>
+</ul>
+</li>
+<li>When you data changes, simply use the <code>update</code> method on the chart instance.<ul>
+<li><code>myChart.update(myNewData);</code></li>
+</ul>
+</li>
+</ol><p>The rest of this section explains the individual charts in detail.</p><h4 id="area">area</h4><p>The basic area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
+each with their own indepenent series of values. To begin, let&#39;s take a look at some example data:</p><pre><code class="lang-javascript">var areaChartData = [
+  // The first layer
+  {
+    label: &quot;Layer 1&quot;,
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+  },
+
+  // The second layer
+  {
+    label: &quot;Layer 2&quot;,
+    values: [ {x: 0, y: 78}, {x: 20, y: 98}, ... ]
+  },
+
+  // Add as many layers as you would like!
+];
+</code></pre><p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p><ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values (each value having an <code>x</code> and <code>y</code> coordinate)</li>
+</ul><p>For the best results each layer should contain the same number of values, with the same <code>x</code> coordinates. This will allow
+d3 to make the best looking graphs possible. To create a single series plot simply include a single layer.</p><p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p><pre><code class="lang-html">&lt;div id=&quot;areaChart&quot; style=&quot;width: 800px; height: 200px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#areaChart&#39;).epoch({
+    type: &#39;area&#39;,
+    data: areaChartData
+  });
+&lt;/script&gt;
+</code></pre><p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for area charts:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ top: 10, right: 5, bottom: 20, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { bottom: function(d) { return &#39;$&#39; + d.toFixed(2); } }</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="bar">bar</h4><p>Epoch&#39;s implementation of a multi-series grouped bar chart. Bar charts are useful for showing data by group over a discrete
+domain. First, let&#39;s look at how the data is formatted for a bar chart:</p><pre><code class="lang-javascript">var barChartData = [
+  // First bar series
+  {
+    label: &#39;Series 1&#39;,
+    values: [
+      { x: &#39;A&#39;, y: 30 },
+      { x: &#39;B&#39;, y: 10 },
+      { x: &#39;C&#39;, y: 12 },
+      ...
+    ]
+  },
+
+  // Second series
+  {
+    label: &#39;Series 2&#39;,
+    values: [
+      { x: &#39;A&#39;, y: 20 },
+      { x: &#39;B&#39;, y: 39 },
+      { x: &#39;C&#39;, y: 8 },
+      ...
+    ]
+  },
+
+  ... // Add as many series as you&#39;d like
+];
+</code></pre><p>The bar chart will create groups of bars that share a like <code>x</code> value for each independent value present in the values array. 
+Currently only grouped bar charts are available but we&#39;re planning on adding <em>stacked</em> and <em>normalized stacked</em> charts soon!</p><p>Next, let&#39;s take a look at the markup and scripting required to display our bar data:</p><pre><code class="lang-html">&lt;div id=&quot;barChart&quot; style=&quot;width: 300px; height: 100px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#barChart&#39;).epoch({
+    type: &#39;bar&#39;,
+    data: barChartData
+  });
+&lt;/script&gt;
+</code></pre><p>The following options are available for bar charts:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ top: 10, right: 5, bottom: 20, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { bottom: function(d) { return &#39;$&#39; + d.toFixed(2); } }</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="line">line</h4><p>Line charts are helpful for visualizing single or multi-series data when without stacking or shading. To begin, let&#39;s take a look
+at the data format used by epoch&#39;s line chart:</p><pre><code class="lang-javascript">var lineChartData = [
+  // The first series
+  {
+    label: &quot;Series 1&quot;,
+    values: [ {x: 0, y: 100}, {x: 20, y: 1000}, ... ]
+  },
+
+  // The second series
+  {
+    label: &quot;Series 2&quot;,
+    values: [ {x: 20, y: 78}, {x: 30, y: 98}, ... ]
+  },
+
+  ...
+];
+</code></pre><p>Notice that the data is very similar to that of the <strong>area</strong> chart above, with the exception that they need not cover the same domain
+nor do the entries in each series have to line up via the <code>x</code> coordinate.</p><p>Next let&#39;s take a look at how you would implement the chart with markup and scripting:</p><pre><code class="lang-html">&lt;div id=&quot;lineChart&quot; style=&quot;width: 700px; height: 250px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#lineChart&#39;).epoch({
+    type: &#39;line&#39;,
+    data: lineChartData
+  });
+&lt;/script&gt;
+</code></pre><p>The line charts supports the following options:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ top: 10, right: 5, bottom: 20, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { bottom: function(d) { return &#39;$&#39; + d.toFixed(2); } }</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="pie">Pie</h4><p>Pie charts are useful for displaying the relative sizes of various data points. To begin, let&#39;s take a look at the data format
+used by Epoch&#39;s pie chart implementation:</p><pre><code class="lang-javascript">var pieData = [
+  { label: &#39;Slice 1&#39;, value: 10 },
+  { label: &#39;Slice 2&#39;, value: 20 },
+  { label: &#39;Slice 3&#39;, value: 40 },
+  { label: &#39;Slice 4&#39;, value: 30 }
+]
+</code></pre><p>The data itself is an array of objects that represent the slices in the pie chart. The <code>label</code> parameter will be used to set
+the label for the slice in the chart and the <code>value</code> parameter will be used to determine its visual size in comparison to the
+other slices.</p><p>Once you have your data formatted correctly you can easly add a chart to your page using the following markup and script:</p><pre><code class="lang-html">&lt;div id=&quot;pie&quot; style=&quot;width: 400px; height: 400px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#pie&#39;).epoch({
+    type: &#39;pie&#39;,
+    data: pieData
+  });
+&lt;/script&gt;
+</code></pre><p>The pie chart accepts the following parameters during initialization:</p><ul>
+<li><code>margin</code> - Surrounds the chart with a defined pixel margin<ul>
+<li>Example: <code>margin: 30</code></li>
+</ul>
+</li>
+<li><code>inner</code> - Inner radius for the pie chart (for making Donut charts)<ul>
+<li>Example: <code>inner: 100</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="scatter">Scatter</h4><p>Scatter plots are useful for visualizing statistical or sampling data in hopes of revealing patterns. To begin let&#39;s take a look at the
+data format used by scatter plots:</p><pre><code class="lang-javascript">var scatterData = [
+  // The first group
+  {
+    label: &quot;Group 1&quot;,
+    values: [ {x: 5, y: 100}, {x: 93, y: 1424}, ... ]
+  },
+
+  // The second group
+  {
+    label: &quot;Group 2&quot;,
+    values: [ {x: -52, y: 78}, {x: 120, y: 17}, ... ]
+  },
+
+  ...
+];
+</code></pre><p>The data is composed of an array containing &quot;groups&quot; of points. Groups need not have the same number of values nor do they
+have to match the same <code>x</code> coordinate domains.</p><p>Next, let&#39;s see the markup and scripting needed to add the plot to your page:</p><pre><code class="lang-html">&lt;div id=&quot;scatter&quot; style=&quot;width: 500px; height: 500px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#scatter&#39;).epoch({
+    type: &#39;scatter&#39;,
+    data: scatterData
+  });
+&lt;/script&gt;
+</code></pre><p>Scatter plots accept the following optional parameters:</p><ul>
+<li><code>radius</code> - How large the &quot;dots&quot; should be in the plot (in pixels)<ul>
+<li>Example: <code>radius: 4.5</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ top: 10, right: 5, bottom: 20, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { bottom: function(d) { return &#39;$&#39; + d.toFixed(2); } }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="real-time-charts">Real-time Charts</h3><p>Epoch&#39;s <strong>real-time</strong> charts have been fine tuned for displaying frequently updating <em>timeseries</em> data. To make them performant (aka
+not crash the browser) we&#39;ve implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering.</p><p>Every real-time chart has a name prefixed with <code>time.</code> and was built to use the same workflow, here&#39;s an overview:</p><ol>
+<li>Create an HTML container.<ul>
+<li>Epoch automagically sizes charts to fit their containers.</li>
+<li><code>&lt;div id=&quot;myChart&quot; style=&quot;width: 200px; height: 200px&quot;&gt;&lt;/div&gt;</code></li>
+</ul>
+</li>
+<li>Fetch and format your data.<ul>
+<li>Each type of chart uses a specific (though often familiar) data format.</li>
+<li>See the documentation below for how each chart is expecting the data.</li>
+</ul>
+</li>
+<li>Use the jQuery method <code>.epoch</code> to create, append, and draw the chart.<ul>
+<li><code>var myChart = $(&#39;#myChart&#39;).epoch({ type: &#39;time.line&#39;, data: myData });</code></li>
+</ul>
+</li>
+<li>When you have a new data point to append to the chart, use the <code>.push</code> method:<ul>
+<li><code>myChart.push(nextDataPoint);</code></li>
+</ul>
+</li>
+</ol>
+<h4 id="device-pixel-ratio">Device Pixel Ratio</h4><p>Epoch supports high resolution displays by automatically detecting and setting the appropriate pixel ratio for the canvas based real-time charts. You can override this behavior by explicitly setting the pixel ratio for any chart described below. Here&#39;s an example of how to do this:</p><pre><code class="lang-javascript">$(&#39;#my-chart&#39;).epoch({
+  type: &#39;time.line&#39;,
+  pixelRatio: 1
+})
+</code></pre><p>Note that the <code>pixelRatio</code> option must be an integer &gt;= 1.</p><h4 id="time-area">time.area</h4><p>The real-time area chart works in a very similar way to the basic area chart detailed above. It is used to show relative sizes of
+multi-series data as it evolves over time.</p><pre><code class="lang-javascript">var areaChartData = [
+  // The first layer
+  {
+    label: &quot;Layer 1&quot;,
+    values: [ {time: 1370044800, y: 100}, {time: 1370044801, y: 1000}, ... ]
+  },
+
+  // The second layer
+  {
+    label: &quot;Layer 2&quot;,
+    values: [ {time: 1370044800, y: 78}, {time: 1370044801, y: 98}, ... ]
+  },
+
+  ...
+];
+</code></pre><p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p><ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul><p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p><p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p><pre><code class="lang-html">&lt;div id=&quot;areaChart&quot; style=&quot;width: 800px; height: 200px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#areaChart&#39;).epoch({
+    type: &#39;time.area&#39;,
+    data: areaChartData
+  });
+&lt;/script&gt;
+</code></pre><p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for area charts:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul>
+</li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul>
+</li>
+<li><code>windowSize</code> - Number of entries to display in the graph.<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul>
+</li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul>
+</li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+<h4 id="time-bar">time.bar</h4><p>The real-time bar chart is used to show relative sizes of multi-series data in the form of <em>stacked bars</em> as it evolves over time.</p><pre><code class="lang-javascript">var barChartData = [
+  // First series
+  {
+    label: &quot;Series 1&quot;,
+    values: [ {time: 1370044800, y: 100}, {time: 1370044801, y: 1000}, ... ]
+  },
+
+  // The second series
+  {
+    label: &quot;Series 2&quot;,
+    values: [ {time: 1370044800, y: 78}, {time: 1370044801, y: 98}, ... ]
+  },
+
+  ...
+];
+</code></pre><p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p><ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul><p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p><p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p><pre><code class="lang-html">&lt;div id=&quot;barChart&quot; style=&quot;width: 800px; height: 200px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#barChart&#39;).epoch({
+    type: &#39;time.bar&#39;,
+    data: barChartData
+  });
+&lt;/script&gt;
+</code></pre><p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for real-time bar charts:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul>
+</li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul>
+</li>
+<li><code>windowSize</code> - Number of entries to display in the graph.<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul>
+</li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul>
+</li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+<h4 id="time-line">time.line</h4><p>The real-time line chart is used to display multi-series data as it changes over time. To begin, the chart uses the following
+data format:</p><pre><code class="lang-javascript">var lineChartData = [
+  // First series
+  {
+    label: &quot;Series 1&quot;,
+    values: [ {time: 1370044800, y: 100}, {time: 1370044801, y: 1000}, ... ]
+  },
+
+  // The second series
+  {
+    label: &quot;Series 2&quot;,
+    values: [ {time: 1370044800, y: 78}, {time: 1370044801, y: 98}, ... ]
+  },
+
+  ...
+];
+</code></pre><p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p><ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul><p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p><p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p><pre><code class="lang-html">&lt;div id=&quot;lineChart&quot; style=&quot;width: 800px; height: 200px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#lineChart&#39;).epoch({
+    type: &#39;time.bar&#39;,
+    data: lineChartData
+  });
+&lt;/script&gt;
+</code></pre><p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for real-time bar charts:</p><ul>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul>
+</li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul>
+</li>
+<li><code>windowSize</code> - Number of entries to display in the graph.<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul>
+</li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul>
+</li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+<h4 id="time-gauge">time.gauge</h4><p>The gauge chart is used to monitor values over a particular range as they change over time. The chart displays a gauge that is similar to
+an automobile speedometer.</p><p>Unlike most Epoch charts the time gauge does not accept a <code>data</code> parameter upon initialization. Instead it has no <em>memory</em> and only knows
+about its current <code>value</code>.</p><p>The real-time gauge chart is also programmed to fit a <strong>specific aspect ratio</strong> (4:3). To aid programmers we have included a few css
+classes you can use to automatically size the chart:</p><ul>
+<li><code>gauge-tiny</code> (120px by 90px)</li>
+<li><code>gauge-small</code> (180px by 135px)</li>
+<li><code>gauge-medium</code> (240px by 180px)</li>
+<li><code>gauge-large</code> (320px by 240px)</li>
+</ul><p>You do not have to use these classes, but you must ensure that your chart container is constrained to the 4 to 3 aspect ratio in order
+for the chart to render correctly. Let&#39;s take a look at how one might create a new gauge chart:</p><pre><code class="lang-html">&lt;div id=&quot;gaugeChart&quot; class=&quot;epoch gauge-small&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#gaugeChart&#39;).epoch({
+    type: &#39;time.gauge&#39;,
+    value: 0.5
+  });
+&lt;/script&gt;
+</code></pre><p>The gauge chart can be configured for your particular use case using the following optional parameters:</p><ul>
+<li><code>domain</code> - The input domain when setting the value for the gauge chart.<ul>
+<li>Essentially this is an array with the first element representing the minimum value to expect
+and the second element representing the maximum value to expect.</li>
+<li>Example: <code>domain: [0, 1]</code> (the chart should expect data between 0 and 1)</li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of tick marks to display on the chart.<ul>
+<li>Example: <code>ticks: 10</code></li>
+</ul>
+</li>
+<li><code>tickSize</code> - Size in pixels for each tick.<ul>
+<li>Example: <code>tickSize: 5</code></li>
+</ul>
+</li>
+<li><code>tickOffset</code> - Number of pixels to offset ticks by from the outter arc of the gauge.<ul>
+<li>Example: <code>tickOffset: 10</code></li>
+</ul>
+</li>
+<li><code>format</code> - The number formatter to use for the gauge&#39;s internal display label<ul>
+<li>Example: <code>format: function(v) { return (v*100).toFixed(2) + &#39;%&#39;; }</code></li>
+</ul>
+</li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul>
+</li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+<h4 id="time-heatmap">time.heatmap</h4><p>The real-time heatmap chart is used to visualize normalized histogram data over time. It works by first sorting incoming histograms
+into a small set of discrete buckets. For multi-series data it uses color blending to show series concentration.</p><p>This type of chart has the most &quot;intense&quot; data format, with each entry expecting a sparse histogram. Let&#39;s examine this format using
+and example:</p><pre><code class="lang-javascript">var heatmapData = [
+  // First Series
+  {
+    label: &#39;Series 1&#39;,
+    values: [
+      {
+        time: 1370044800,
+        histogram: {
+          18: 49,
+          104: 10,
+          ...
+        }
+      },
+
+      {
+        time: 1370044801,
+        histogram: {
+          9: 8,
+          120: 17,
+          ...
+        }
+      },
+    ]
+  },
+
+  ...
+];
+</code></pre><p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p><ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>value</code> - A list of unix timestamp associated sparse histograms:<ul>
+<li><code>time</code> - The unix timestam for the entry</li>
+<li><code>histogram</code> - A &quot;sparse&quot; frequency hash that maps values to frequencies</li>
+</ul>
+</li>
+</ul><p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p><pre><code class="lang-html">&lt;div id=&quot;heatmapChart&quot; style=&quot;width: 800px; height: 200px&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+  $(&#39;#heatmapChart&#39;).epoch({
+    type: &#39;time.heatmap&#39;,
+    data: heatmapData
+  });
+&lt;/script&gt;
+</code></pre><p>The heatmap is one of the most configurable of all Epoch charts, here&#39;s a run down of the available options:</p><ul>
+<li><code>buckets</code> - Number of buckets to display in each column of the visible chart window.<ul>
+<li>Example: <code>buckets: 20</code></li>
+</ul>
+</li>
+<li><code>bucketRange</code> - The range covered by the buckets.<ul>
+<li>Note: values that fall above the range will be placed in the top most bucket, and
+values that fall below the range will be placed in the bottom must bucker.</li>
+<li>Example: <code>bucketRange: [0, 1000]</code></li>
+</ul>
+</li>
+<li><code>bucketPadding</code> - Amount of padding to place around buckets in the display<ul>
+<li>Example: <code>bucketPadding: 0</code></li>
+</ul>
+</li>
+<li><code>opacity</code> - The opacity function to use when rendering buckets<ul>
+<li>Each bucket will be rendered using a specific opacity. More saturated colors represent higher values in
+histogram and more transparent colors represent lower values.</li>
+<li>There are many built-in opacity functions: <code>root</code>, <code>linear</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, and <code>quintic</code>.</li>
+<li>You can define your own custom function, see the example below.</li>
+<li>Example: <code>opacity: function(value, max) { return Math.pow(value/max, 0.384); }</code></li>
+</ul>
+</li>
+<li><code>axes</code> - Which axes to display.<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul>
+</li>
+<li><code>ticks</code> - Number of ticks to display on each axis.<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul>
+</li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul>
+</li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul>
+</li>
+<li><code>windowSize</code> - Number of entries to display in the graph.<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul>
+</li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul>
+</li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul>
+</li>
+<li><code>margins</code> - Explicit margin overrides for the chart.<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul>
+</li>
+<li><code>width</code> - Override automatic width with an explicit pixel value<ul>
+<li>Example: <code>width: 320</code></li>
+</ul>
+</li>
+<li><code>height</code> - Override automatic height with an explicit pixel value<ul>
+<li>Example: <code>height: 240</code></li>
+</ul>
+</li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+<h3 id="developing-epoch">Developing Epoch</h3><p>To work on the epoch charting library itself do the following:</p><ol>
+<li>Clone the repository</li>
+<li>In the clone, <code>npm install</code></li>
+<li>then <code>cake build</code>.</li>
+<li>View <code>docs/static.html</code> and <code>docs/time.html</code> for a quick overview of the available features</li>
+<li>Scour the source for more detailed information (formal documentation coming soon)</li>
+<li>Let cool and enjoy (serves millions).</li>
+</ol>
+
+      </div>
+    </div>
+    <div id='footer'>
+  April 26, 14 22:38:58 by
+  <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
+    Codo
+  </a>
+  2.0.8
+  &#10034;
+  Press H to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/netzpirat' target='_parent'>@netzpirat</a>
+  &#10034;
+  <a href='http://twitter.com/_inossidabile' target='_parent'>@_inossidabile</a>
+</div>
+<iframe id='search_frame'></iframe>
+<div id='fuzzySearch'>
+  <input type='text'>
+  <ol></ol>
+</div>
+<div id='help'>
+  <p>
+    Quickly fuzzy find classes, mixins, methods, file:
+  </p>
+  <ul>
+    <li>
+      <span>T</span>
+      Open fuzzy finder dialog
+    </li>
+  </ul>
+  <p>
+    Control the navigation frame:
+  </p>
+  <ul>
+    <li>
+      <span>L</span>
+      Toggle list view
+    </li>
+    <li>
+      <span>C</span>
+      Show class list
+    </li>
+    <li>
+      <span>I</span>
+      Show mixin list
+    </li>
+    <li>
+      <span>F</span>
+      Show file list
+    </li>
+    <li>
+      <span>M</span>
+      Show method list
+    </li>
+    <li>
+      <span>E</span>
+      Show extras list
+    </li>
+  </ul>
+  <p>
+    You can focus and blur the search input:
+  </p>
+  <ul>
+    <li>
+      <span>S</span>
+      Focus search input
+    </li>
+    <li>
+      <span>Esc</span>
+      Blur search input
+    </li>
+  </ul>
+</div>
+  </body>
+</html>

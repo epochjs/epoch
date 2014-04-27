@@ -1,0 +1,10 @@
+--name       "Codo"
+--readme     README.md
+--title      "Epoch Documentation"
+--private
+--quiet
+--extension  coffee
+--output     ./doc
+./coffee
+-
+LICENSE
