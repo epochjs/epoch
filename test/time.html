@@ -46,10 +46,12 @@
     <hr>
 
     <div id="gauges">
-      <div id="gaugeTiny" class="epoch gauge-tiny"></div>
+      <!-- <div id="gaugeTiny" class="epoch gauge-tiny"></div> -->
       <div id="gauge" class="epoch gauge-small"></div>
+      <!-- 
       <div id="gaugeMedium" class="epoch gauge-medium"></div>
       <div id="gaugeLarge" class="epoch gauge-large"></div>
+    -->
     </div>
 
     <div id="heatmap" class="epoch category10"></div>
@@ -100,10 +102,10 @@
           bucketPadding: 0
         });
 
-        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 }),
+        var gauge = $('#gauge').epoch({ type: 'time.gauge', value: 0.0 });/*,
             gaugeTiny = $('#gaugeTiny').epoch({ type: 'time.gauge', value: 1.0 }),
             gaugeMedium = $('#gaugeMedium').epoch({type: 'time.gauge', value: 0.0}),
-            gaugeLarge = $('#gaugeLarge').epoch({type: 'time.gauge', value: 0.0 });
+            gaugeLarge = $('#gaugeLarge').epoch({type: 'time.gauge', value: 0.0 });*/
 
         var bar = $('#bar').epoch({
           type: 'time.bar',
@@ -128,10 +130,10 @@
         });
 
         function pushData() {
-          gauge.update(Math.random());
+          gauge.update(Math.random());/*
           gaugeTiny.update(Math.random());
           gaugeMedium.update(Math.random());
-          gaugeLarge.update(Math.random());
+          gaugeLarge.update(Math.random());*/
 
           var entry = nextTimeEntry();
           //console.log(entry);

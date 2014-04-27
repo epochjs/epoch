@@ -75,13 +75,19 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       .domain(@options.bucketRange)
       .range([@innerHeight(), 0])
 
+  # @return [Function] The y scale for the svg portions of the heatmap.
+  ySvg: ->
+    d3.scale.linear()
+      .domain(@options.bucketRange)
+      .range([@innerHeight() / @pixelRatio, 0])
+
   # @return [Number] The height to render each bucket in a column (disregards padding).
   h: ->
     @innerHeight() / @options.buckets
 
   # @return [Number] The offset needed to center ticks at the middle of each column.
   _offsetX: ->
-    0.5*@w()
+    0.5 * @w() / @pixelRatio
 
   # Creates the painting canvas which is used to perform all the actual drawing. The contents
   # of the canvas are then copied into the actual display canvas and through some image copy
@@ -92,7 +98,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   _setupPaintCanvas: ->
     # Size the paint canvas to have a couple extra columns so we can perform smooth transitions
     @paintWidth = (@options.windowSize + 1) * @w()
-    @paintHeight = @height
+    @paintHeight = @height * @pixelRatio
 
     # Create the "memory only" canvas and nab the drawing context
     @paint = $("<canvas width='#{@paintWidth}' height='#{@paintHeight}'>").get(0)

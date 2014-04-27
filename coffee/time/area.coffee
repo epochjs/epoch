@@ -43,6 +43,6 @@ class Epoch.Time.Area extends Epoch.Time.Stack
         borderX = (i+2)*w+delta
 
       @ctx.lineTo(borderX, @innerHeight())
-      @ctx.lineTo(@width+w+delta, @innerHeight())
+      @ctx.lineTo(@width*@pixelRatio+w+delta, @innerHeight())
       @ctx.closePath()
       @ctx.fill()

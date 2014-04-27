@@ -79,9 +79,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @el.css('position', 'relative')
 
     @canvas.attr('width', @innerWidth())
-    @canvas.attr('height', @innerHeight() + @margins.bottom)
+    @canvas.attr('height', @innerHeight())
     @canvas.css
       position: 'absolute'
+      width: "#{@innerWidth() / @pixelRatio}px"
+      height: "#{@innerHeight() / @pixelRatio}px"
       top: "#{@margins.top}px"
       left: "#{@margins.left}px"
       'z-index': '999'
@@ -91,6 +93,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       interval: null
       active: false
       delta: -(@w() / @options.fps),
+      tickDelta: -( (@w() / @pixelRatio) / @options.fps )
       frame: 0,
       duration: @options.fps
 
@@ -128,10 +131,10 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     if @hasAxis('bottom')
       axis = @bottomAxis = @svg.append('g')
         .attr('class', "x axis bottom canvas")
-        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()+@margins.top})")
+        .attr('transform', "translate(#{@margins.left-1}, #{@innerHeight()/@pixelRatio+@margins.top})")
       axis.append('path')
         .attr('class', 'domain')
-        .attr('d', "M0,0H#{@innerWidth()+1}")
+        .attr('d', "M0,0H#{@innerWidth()/@pixelRatio+1}")
 
     if @hasAxis('top')
       axis = @topAxis = @svg.append('g')
@@ -139,7 +142,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('transform', "translate(#{@margins.left-1}, #{@margins.top})")
       axis.append('path')
         .attr('class', 'domain')
-        .attr('d', "M0,0H#{@innerWidth()+1}")
+        .attr('d', "M0,0H#{@innerWidth()/@pixelRatio+1}")
 
     tickInterval = @options.ticks.time
     @_ticks = []
@@ -172,7 +175,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @return [Object] The d3 left axis.
   leftAxis: ->
     ticks = @options.ticks.left
-    axis = d3.svg.axis().scale(@y()).orient('left')
+    axis = d3.svg.axis().scale(@ySvg()).orient('left')
       .tickFormat(@options.tickFormats.left)
     if ticks == 2
       axis.tickValues @extent((d) -> d.y)
@@ -183,7 +186,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   rightAxis: ->
     extent = @extent((d) -> d.y)
     ticks = @options.ticks.right
-    axis = d3.svg.axis().scale(@y()).orient('right')
+    axis = d3.svg.axis().scale(@ySvg()).orient('right')
       .tickFormat(@options.tickFormats.left)
     if ticks == 2
       axis.tickValues @extent((d) -> d.y)
@@ -198,11 +201,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # @return [Number] the width of the visualization area of the plot (full width - margins)
   innerWidth: ->
-    @width - (@margins.left + @margins.right)
+    (@width - (@margins.left + @margins.right)) * @pixelRatio
 
   # @return [Number] the height of the visualization area of the plot (full height - margins)
   innerHeight: ->
-    @height - (@margins.top + @margins.bottom)
+    (@height - (@margins.top + @margins.bottom)) * @pixelRatio
 
   # Abstract method for performing any preprocessing before queuing new entries
   # @param entry [Object] The entry to prepare.
@@ -327,11 +330,17 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @draw(@animation.frame * @animation.delta)
     @_updateTimeAxes()
 
-  # @return [Function] The y scale for the graph
+  # @return [Function] The y scale for the plot
   y: ->
     d3.scale.linear()
       .domain(@extent((d) -> d.y))
       .range([@innerHeight(), 0])
+
+  # @return [Function] The y scale for the svg portions of the plot
+  ySvg: ->
+    d3.scale.linear()
+      .domain(@extent((d) -> d.y))
+      .range([@innerHeight() / @pixelRatio, 0])    
 
   # @return [Number] The width of a single section of the graph pertaining to a data point
   w: ->
@@ -351,7 +360,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @_pushTick(@options.windowSize, newTime, true)
 
     # Outgoing ticks
-    unless @_ticks[0].x - @w() >= 0
+    unless @_ticks[0].x - (@w()/@pixelRatio) >= 0
       @_ticks[0].exit = true
 
   # Makes and pushes a new tick into the visualization.
@@ -364,7 +373,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     return unless @hasAxis('top') or @hasAxis('bottom')
     tick =
       time: time
-      x: bucket*@w() + @_offsetX()
+      x: bucket*(@w()/@pixelRatio) + @_offsetX()
       opacity: if enter then 0 else 1
       enter: if enter then true else false
       exit: false
@@ -417,7 +426,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # This performs animations for the time axes (top and bottom).
   _updateTimeAxes: ->
     return unless @hasAxis('top') or @hasAxis('bottom')
-    [dx, dop] = [@animation.delta, 1 / @options.fps]
+    [dx, dop] = [@animation.tickDelta, 1 / @options.fps]
 
     for tick in @_ticks
       tick.x += dx

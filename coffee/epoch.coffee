@@ -268,7 +268,9 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
     super(@options)
     @canvas = $("<canvas></canvas>")
 
-    if window.devicePixelRatio?
+    if @options.pixelRatio?
+      @pixelRatio = @options.pixelRatio
+    else if window.devicePixelRatio?
       @pixelRatio = window.devicePixelRatio
     else
       @pixelRatio = 1
