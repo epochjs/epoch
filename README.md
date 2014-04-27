@@ -560,6 +560,7 @@ options are available for area charts:
   - Example: `width: 320`
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
+* `pixelRatio` - Override detected pixel ratio with an explicit value
 
 #### time.bar
 
@@ -632,6 +633,7 @@ options are available for real-time bar charts:
   - Example: `width: 320`
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
+* `pixelRatio` - Override detected pixel ratio with an explicit value
 
 #### time.line
 
@@ -705,6 +707,7 @@ options are available for real-time bar charts:
   - Example: `width: 320`
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
+* `pixelRatio` - Override detected pixel ratio with an explicit value
 
 
 #### time.gauge
@@ -754,6 +757,7 @@ The gauge chart can be configured for your particular use case using the followi
   - High values for this number are basically inpeceptible and can cause a big performance hit.
   - The default of `24` tends to work very well, but you can increase it to get smoother animations.
   - Example: `fps: 60`
+* `pixelRatio` - Override detected pixel ratio with an explicit value
 
 
 #### time.heatmap
@@ -855,7 +859,7 @@ The heatmap is one of the most configurable of all Epoch charts, here's a run do
   - Example: `width: 320`
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
-
+* `pixelRatio` - Override detected pixel ratio with an explicit value
 
 ### Developing Epoch
 
