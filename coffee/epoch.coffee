@@ -201,6 +201,12 @@ class Epoch.Chart.Base extends Epoch.Events
       @width = defaults.dimensions.width unless @width?
       @height = defaults.dimensions.height unless @height?
 
+  # Determines if the chart is currently visible in a document.
+  # @return [Boolean] True if the chart is visible, false otherwise.
+  isVisible: ->
+    return false unless @el?
+    @el.is(':visible')
+
   # Set the initial data for the chart.
   # @param data Data to initially set for the given chart. The data format can vary
   #   from chart to chart. The base class assumes that the data provided will be an
