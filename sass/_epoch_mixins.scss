@@ -1,0 +1,59 @@
+/**
+ * Generates the styles needed to define a fill color for a given class name.
+ * @param $name Name of the class to use (sans the leading .)
+ * @param $color Fill color to associate with the class name.
+ */
+@mixin epoch-color($name, $color) {
+  div.ref.#{$name} {
+    background-color: $color;
+  }
+  .#{$name} {
+    .line { stroke: $color; }
+    .area, .dot { fill: $color; }
+  }
+  .arc.#{$name} path {
+    fill: $color;
+  }
+  .bar.#{$name} { 
+    fill: $color;
+  }
+  .#{$name} {
+    .bucket { fill: $color; }
+  }
+}
+
+/**
+ * Produces categorical color classes for plots (excluding heatmaps).
+ * @param $list List of colors to use for each category.
+ * @param $entries Size of the input list.
+ */
+@mixin epoch-category-colors($list, $entries) {
+  @for $i from 1 through $entries {
+    div.ref.category#{$i} {
+      background-color: nth($list, $i);
+    }
+    .category#{$i} {
+      .line { stroke: nth($list, $i); }
+      .area, .dot { fill: nth($list, $i); }
+    }
+    .arc.category#{$i} path {
+      fill: nth($list, $i);
+    }
+    .bar.category#{$i} { 
+      fill: nth($list, $i);
+    }
+  }
+}
+
+/**
+ * Produces categorical colors for heatmaps.
+ * @param $list List of colors to use for categories.
+ * @param $entries Size of the input list.
+ */
+@mixin epoch-heatmap-colors($list, $entries) {
+  @for $i from 1 through $entries {
+    .category#{$i} {
+      .bucket { fill: nth($list, $i); }
+    }
+  }
+}

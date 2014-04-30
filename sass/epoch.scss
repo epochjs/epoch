@@ -2,8 +2,9 @@
  * Fastly Charts Base CSS
  * By Ryan Sandor Richards
  * Copyright 2013 Fastly, Inc.
- *
  */
+
+@import "epoch_mixins";
 
 .epoch {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -135,30 +136,12 @@
 }
 
 // Categorical Colors
-@mixin category-colors($list, $entries) {
-  @for $i from 1 through $entries {
-    div.ref.category#{$i} {
-      background-color: nth($list, $i);
-    }
-    .category#{$i} {
-      .line { stroke: nth($list, $i); }
-      .area, .dot { fill: nth($list, $i); }
-    }
-    .arc.category#{$i} path {
-      fill: nth($list, $i);
-    }
-    .bar.category#{$i} { 
-      fill: nth($list, $i);
-    }
-  }
-}
-
 $category10:
   #1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd,
   #8c564b, #e377c2, #7f7f7f, #bcbd22, #17becf;
 
 .epoch, .epoch.category10 {
-  @include category-colors($category10, 10);
+  @include epoch-category-colors($category10, 10);
 }
 
 $category20:
@@ -168,7 +151,7 @@ $category20:
   #c7c7c7, #bcbd22, #dbdb8d, #17becf, #9edae5;
 
 .epoch.category20 {
-  @include category-colors($category20, 20);
+  @include epoch-category-colors($category20, 20);
 }
 
 $category20b:
@@ -178,7 +161,7 @@ $category20b:
   #e7969c, #7b4173, #a55194, #ce6dbd, #de9ed6;
 
 .epoch.category20b {
-  @include category-colors($category20b, 20);
+  @include epoch-category-colors($category20b, 20);
 }
 
 $category20c:
@@ -188,7 +171,7 @@ $category20c:
   #dadaeb, #636363, #969696, #bdbdbd, #d9d9d9;
 
 .epoch.category20c {
-  @include category-colors($category20c, 20);
+  @include epoch-category-colors($category20c, 20);
 }
 
 
@@ -203,19 +186,11 @@ $category20c:
 // Note: darker colors work better since we use opacity to denote "height" or "intensity" for each bucket
 //       after picking a mix color.
 //
-@mixin heatmap-colors($list, $entries) {
-  @for $i from 1 through $entries {
-    .category#{$i} {
-      .bucket { fill: nth($list, $i); }
-    }
-  }
-}
-
 $heatmap5:
   #1f77b4, #2ca02c, #d62728, #8c564b, #7f7f7f;
 
 .epoch, .epoch.heatmap5 {
-  @include heatmap-colors($heatmap5, 5);
+  @include epoch-heatmap-colors($heatmap5, 5);
 }
 
 
