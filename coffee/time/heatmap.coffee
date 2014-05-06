@@ -154,8 +154,9 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       max = 0
       for entry in entries
         max += (entry.buckets[bucket] / sum) * maxTotal
-      @p.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
-      @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
+      if sum > 0
+        @p.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
+        @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
       j--
 
   # This shifts the image contents of the paint canvas to the left by 1 column width.
