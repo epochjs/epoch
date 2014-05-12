@@ -179,6 +179,8 @@ The rest of this section explains the individual charts in detail.
 
 #### area
 
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/basic/area.png)
+
 The basic area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
 each with their own indepenent series of values. To begin, let's take a look at some example data:
 
@@ -239,6 +241,7 @@ options are available for area charts:
 
 
 #### bar
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/basic/bar.png)
 
 Epoch's implementation of a multi-series grouped bar chart. Bar charts are useful for showing data by group over a discrete
 domain. First, let's look at how the data is formatted for a bar chart:
@@ -303,6 +306,7 @@ The following options are available for bar charts:
 
 
 #### line
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/basic/line.png)
 
 Line charts are helpful for visualizing single or multi-series data when without stacking or shading. To begin, let's take a look
 at the data format used by epoch's line chart:
@@ -357,6 +361,7 @@ The line charts supports the following options:
 
 
 #### Pie
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/basic/pie.png)
 
 Pie charts are useful for displaying the relative sizes of various data points. To begin, let's take a look at the data format
 used by Epoch's pie chart implementation:
@@ -400,6 +405,7 @@ The pie chart accepts the following parameters during initialization:
 
 
 #### Scatter
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/basic/scatter.png)
 
 Scatter plots are useful for visualizing statistical or sampling data in hopes of revealing patterns. To begin let's take a look at the
 data format used by scatter plots:
@@ -489,6 +495,7 @@ Note that the `pixelRatio` option must be an integer >= 1.
 
 
 #### time.area
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/time/area.png)
 
 The real-time area chart works in a very similar way to the basic area chart detailed above. It is used to show relative sizes of
 multi-series data as it evolves over time.
@@ -563,6 +570,7 @@ options are available for area charts:
 * `pixelRatio` - Override detected pixel ratio with an explicit value
 
 #### time.bar
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/time/bar.png)
 
 The real-time bar chart is used to show relative sizes of multi-series data in the form of *stacked bars* as it evolves over time.
 
@@ -636,6 +644,7 @@ options are available for real-time bar charts:
 * `pixelRatio` - Override detected pixel ratio with an explicit value
 
 #### time.line
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/time/line.png)
 
 The real-time line chart is used to display multi-series data as it changes over time. To begin, the chart uses the following
 data format:
@@ -711,6 +720,7 @@ options are available for real-time bar charts:
 
 
 #### time.gauge
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/time/gauge.png)
 
 The gauge chart is used to monitor values over a particular range as they change over time. The chart displays a gauge that is similar to
 an automobile speedometer.
@@ -761,6 +771,7 @@ The gauge chart can be configured for your particular use case using the followi
 
 
 #### time.heatmap
+![alt tag](https://raw.githubusercontent.com/fastly/epoch/master/docs/images/time/heatmap.png)
 
 The real-time heatmap chart is used to visualize normalized histogram data over time. It works by first sorting incoming histograms
 into a small set of discrete buckets. For multi-series data it uses color blending to show series concentration.
