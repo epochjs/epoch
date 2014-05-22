@@ -3,6 +3,7 @@ layout: docs
 title: Basic Charts
 nav: nav/basic.html
 header-active: basic
+root: ../
 ---
 ## Basic Charts 
 

@@ -2,6 +2,7 @@
 layout: default
 title: Epoch - Getting Started
 header-active: getting-started
+root: ../
 ---
 
 ## Getting Started

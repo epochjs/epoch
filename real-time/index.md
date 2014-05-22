@@ -3,6 +3,7 @@ layout: docs
 title: Basic Charts
 nav: nav/realtime.html
 header-active: real-time
+root: ../
 ---
 ## Real-time
 
