@@ -1,0 +1,30 @@
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Epoch</a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li {% if page.header-active == "getting-started" %}class="active" {% endif %}>
+                <a href="/getting-started/">Getting Started</a>
+              </li>
+              <li {% if page.header-active == "basic" %}class="active" {% endif %}>
+                <a href="/basic/">Basic Charts</a>
+              </li>
+              <li {% if page.header-active == "real-time" %}class="active" {% endif %}>
+                <a href="/real-time/">Real-time Charts</a>
+              </li>
+              <li {% if page.header-active == "advanced-topics" %}class="active" {% endif %}>
+                <a href="/advanced-topics/">Advanced Topics</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>

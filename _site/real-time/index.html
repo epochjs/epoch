@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Epoch - Basic Charts</title>
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/syntax.css">
+        <link rel="stylesheet" href="/css/epoch.css">
+        <link rel="stylesheet" href="/css/site.css">
+
+        <script src="/js/jquery.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/d3.js"></script>
+        <script src="/js/epoch.js"></script>
+        <script src="/js/data.js"></script>
+    </head>
+    <body class="docs">
+            <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Epoch</a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li >
+                <a href="/getting-started/">Getting Started</a>
+              </li>
+              <li >
+                <a href="/basic/">Basic Charts</a>
+              </li>
+              <li class="active" >
+                <a href="/real-time/">Real-time Charts</a>
+              </li>
+              <li >
+                <a href="/advanced-topics/">Advanced Topics</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="container">
+        <div class="row">
+          <div id="content" class="col-md-9">
+            <h2 id="toc_0">Real-time</h2>
+
+<p>Epoch&#39;s <strong>real-time</strong> charts have been fine tuned for displaying frequently updating <em>timeseries</em> data. To make them performant (aka not crash the browser) we&#39;ve implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering.</p>
+
+<h3 id="toc_1">Using Real-time Charts</h3>
+
+<p>Every real-time chart has a name prefixed with <code>time.</code> and was built to use the same workflow, here&#39;s an overview:</p>
+
+<ol>
+<li>Create an HTML container.
+
+<ul>
+<li>Epoch automagically sizes charts to fit their containers.</li>
+<li><code>&lt;div id=&quot;myChart&quot; style=&quot;width: 200px; height: 200px&quot;&gt;&lt;/div&gt;</code></li>
+</ul></li>
+<li>Fetch and format your data.
+
+<ul>
+<li>Each type of chart uses a specific (though often familiar) data format.</li>
+<li>See the documentation below for how each chart is expecting the data.</li>
+</ul></li>
+<li>Use the jQuery method <code>.epoch</code> to create, append, and draw the chart.
+
+<ul>
+<li><code>var myChart = $(&#39;#myChart&#39;).epoch({ type: &#39;time.line&#39;, data: myData });</code></li>
+</ul></li>
+<li>When you have a new data point to append to the chart, use the <code>.push</code> method:
+
+<ul>
+<li><code>myChart.push(nextDataPoint);</code></li>
+</ul></li>
+</ol>
+
+<h3 id="toc_2">Device Pixel Ratio</h3>
+
+<p>Epoch supports high resolution displays by automatically detecting and setting the appropriate pixel ratio for the canvas based real-time charts. You can override this behavior by explicitly setting the pixel ratio for any chart described below. Here&#39;s an example of how to do this:</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#my-chart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.line&#39;</span><span class="p">,</span>
+  <span class="nx">pixelRatio</span><span class="o">:</span> <span class="mi">1</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>Note that the <code>pixelRatio</code> option must be an integer &gt;= 1.</p>
+
+<h3 id="area">Area</h3>
+
+<div id="real-time-area" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(4);
+
+    var chart = $('#real-time-area').epoch({
+        type: 'time.area',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+    
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>
+
+<p>The real-time area chart works in a very similar way to the basic area chart detailed above. It is used to show relative sizes of
+multi-series data as it evolves over time.</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">areaChartData</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="c1">// The first layer</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Layer 1&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">100</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">1000</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="c1">// The second layer</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Layer 2&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">78</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">98</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+<span class="p">];</span>
+</code></pre></div>
+<p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p>
+
+<ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul>
+
+<p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p>
+
+<p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;areaChart&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 800px; height: 200px&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#areaChart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.area&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">areaChartData</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div>
+<p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for area charts:</p>
+
+<ul>
+<li><code>axes</code> - Which axes to display.
+
+<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul></li>
+<li><code>ticks</code> - Number of ticks to display on each axis.
+
+<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul></li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.
+
+<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul></li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.
+
+<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul></li>
+<li><code>windowSize</code> - Number of entries to display in the graph.
+
+<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul></li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.
+
+<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul></li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.
+
+<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul></li>
+<li><code>margins</code> - Explicit margin overrides for the chart.
+
+<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul></li>
+<li><code>width</code> - Override automatic width with an explicit pixel value
+
+<ul>
+<li>Example: <code>width: 320</code></li>
+</ul></li>
+<li><code>height</code> - Override automatic height with an explicit pixel value
+
+<ul>
+<li>Example: <code>height: 240</code></li>
+</ul></li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+
+<h3 id="bar">Bar</h3>
+
+<div id="real-time-bar" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(3);
+
+    var chart = $('#real-time-bar').epoch({
+        type: 'time.bar',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>
+
+<p>The real-time bar chart is used to show relative sizes of multi-series data in the form of <em>stacked bars</em> as it evolves over time.</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">barChartData</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="c1">// First series</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Series 1&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">100</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">1000</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="c1">// The second series</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Series 2&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">78</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">98</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+<span class="p">];</span>
+</code></pre></div>
+<p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p>
+
+<ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul>
+
+<p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p>
+
+<p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;barChart&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 800px; height: 200px&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#barChart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.bar&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">barChartData</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div>
+<p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for real-time bar charts:</p>
+
+<ul>
+<li><code>axes</code> - Which axes to display.
+
+<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul></li>
+<li><code>ticks</code> - Number of ticks to display on each axis.
+
+<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul></li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.
+
+<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul></li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.
+
+<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul></li>
+<li><code>windowSize</code> - Number of entries to display in the graph.
+
+<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul></li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.
+
+<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul></li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.
+
+<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul></li>
+<li><code>margins</code> - Explicit margin overrides for the chart.
+
+<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul></li>
+<li><code>width</code> - Override automatic width with an explicit pixel value
+
+<ul>
+<li>Example: <code>width: 320</code></li>
+</ul></li>
+<li><code>height</code> - Override automatic height with an explicit pixel value
+
+<ul>
+<li>Example: <code>height: 240</code></li>
+</ul></li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+
+<h3 id="gauge">Gauge</h3>
+
+<style>
+    .gauges .epoch {
+        display: inline-block;
+    }
+</style>
+
+<div class="gauges">
+    <div id="real-time-gauge4" class="epoch gauge-large"></div>
+    <div id="real-time-gauge" class="epoch gauge-medium"></div>
+    <div id="real-time-gauge2" class="epoch gauge-small"></div>
+    <div id="real-time-gauge3" class="epoch gauge-tiny"></div>
+</div>
+
+<script>
+$(function() {
+    var data = new GaugeData();
+
+    var charts = [
+        $('#real-time-gauge').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge2').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge3').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge4').epoch({ type: 'time.gauge', value: data.next() })
+    ];
+
+    function updateCharts() {
+        for (var i = 0; i < charts.length; i++) {
+            charts[i].update(data.next());
+        }
+    }
+
+    setInterval(updateCharts, 1000);
+    updateCharts();
+});
+</script>
+
+<p>The gauge chart is used to monitor values over a particular range as they change over time. The chart displays a gauge that is similar to
+an automobile speedometer.</p>
+
+<p>Unlike most Epoch charts the time gauge does not accept a <code>data</code> parameter upon initialization. Instead it has no <em>memory</em> and only knows
+about its current <code>value</code>.</p>
+
+<p>The real-time gauge chart is also programmed to fit a <strong>specific aspect ratio</strong> (4:3). To aid programmers we have included a few css
+classes you can use to automatically size the chart:</p>
+
+<ul>
+<li><code>gauge-tiny</code> (120px by 90px)</li>
+<li><code>gauge-small</code> (180px by 135px)</li>
+<li><code>gauge-medium</code> (240px by 180px)</li>
+<li><code>gauge-large</code> (320px by 240px)</li>
+</ul>
+
+<p>You do not have to use these classes, but you must ensure that your chart container is constrained to the 4 to 3 aspect ratio in order
+for the chart to render correctly. Let&#39;s take a look at how one might create a new gauge chart:</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;gaugeChart&quot;</span> <span class="na">class=</span><span class="s">&quot;epoch gauge-small&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#gaugeChart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.gauge&#39;</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="mf">0.5</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div>
+<p>The gauge chart can be configured for your particular use case using the following optional parameters:</p>
+
+<ul>
+<li><code>domain</code> - The input domain when setting the value for the gauge chart.
+
+<ul>
+<li>Essentially this is an array with the first element representing the minimum value to expect
+and the second element representing the maximum value to expect.</li>
+<li>Example: <code>domain: [0, 1]</code> (the chart should expect data between 0 and 1)</li>
+</ul></li>
+<li><code>ticks</code> - Number of tick marks to display on the chart.
+
+<ul>
+<li>Example: <code>ticks: 10</code></li>
+</ul></li>
+<li><code>tickSize</code> - Size in pixels for each tick.
+
+<ul>
+<li>Example: <code>tickSize: 5</code></li>
+</ul></li>
+<li><code>tickOffset</code> - Number of pixels to offset ticks by from the outter arc of the gauge.
+
+<ul>
+<li>Example: <code>tickOffset: 10</code></li>
+</ul></li>
+<li><code>format</code> - The number formatter to use for the gauge&#39;s internal display label
+
+<ul>
+<li>Example: <code>format: function(v) { return (v*100).toFixed(2) + &#39;%&#39;; }</code></li>
+</ul></li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.
+
+<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul></li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+
+<h3 id="heatmap">Heatmap</h3>
+
+<div id="real-time-heatmap" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new HeatmapData(1);
+
+    var chart = $('#real-time-heatmap').epoch({
+        type: 'time.heatmap',
+        data: data.history(),
+        windowSize: 60,
+        buckets: 20,
+        bucketRange: [0, 100],
+        axes: ['left', 'bottom', 'right'],
+        opacity: function(v, max) { return Math.pow((v/max), 0.7);}
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>
+
+<p>The real-time heatmap chart is used to visualize normalized histogram data over time. It works by first sorting incoming histograms
+into a small set of discrete buckets. For multi-series data it uses color blending to show series concentration.</p>
+
+<p>This type of chart has the most &quot;intense&quot; data format, with each entry expecting a sparse histogram. Let&#39;s examine this format using
+and example:</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">heatmapData</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="c1">// First Series</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Series 1&#39;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span>
+        <span class="nx">histogram</span><span class="o">:</span> <span class="p">{</span>
+          <span class="mi">18</span><span class="o">:</span> <span class="mi">49</span><span class="p">,</span>
+          <span class="mi">104</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+          <span class="p">...</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+
+      <span class="p">{</span>
+        <span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span>
+        <span class="nx">histogram</span><span class="o">:</span> <span class="p">{</span>
+          <span class="mi">9</span><span class="o">:</span> <span class="mi">8</span><span class="p">,</span>
+          <span class="mi">120</span><span class="o">:</span> <span class="mi">17</span><span class="p">,</span>
+          <span class="p">...</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+<span class="p">];</span>
+</code></pre></div>
+<p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p>
+
+<ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>value</code> - A list of unix timestamp associated sparse histograms:
+
+<ul>
+<li><code>time</code> - The unix timestam for the entry</li>
+<li><code>histogram</code> - A &quot;sparse&quot; frequency hash that maps values to frequencies</li>
+</ul></li>
+</ul>
+
+<p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;heatmapChart&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 800px; height: 200px&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#heatmapChart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.heatmap&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">heatmapData</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div>
+<p>The heatmap is one of the most configurable of all Epoch charts, here&#39;s a run down of the available options:</p>
+
+<ul>
+<li><code>buckets</code> - Number of buckets to display in each column of the visible chart window.
+
+<ul>
+<li>Example: <code>buckets: 20</code></li>
+</ul></li>
+<li><code>bucketRange</code> - The range covered by the buckets.
+
+<ul>
+<li>Note: values that fall above the range will be placed in the top most bucket, and
+values that fall below the range will be placed in the bottom must bucker.</li>
+<li>Example: <code>bucketRange: [0, 1000]</code></li>
+</ul></li>
+<li><code>bucketPadding</code> - Amount of padding to place around buckets in the display
+
+<ul>
+<li>Example: <code>bucketPadding: 0</code></li>
+</ul></li>
+<li><code>opacity</code> - The opacity function to use when rendering buckets
+
+<ul>
+<li>Each bucket will be rendered using a specific opacity. More saturated colors represent higher values in
+histogram and more transparent colors represent lower values.</li>
+<li>There are many built-in opacity functions: <code>root</code>, <code>linear</code>, <code>quadratic</code>, <code>cubic</code>, <code>quartic</code>, and <code>quintic</code>.</li>
+<li>You can define your own custom function, see the example below.</li>
+<li>Example: <code>opacity: function(value, max) { return Math.pow(value/max, 0.384); }</code></li>
+</ul></li>
+<li><code>axes</code> - Which axes to display.
+
+<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul></li>
+<li><code>ticks</code> - Number of ticks to display on each axis.
+
+<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul></li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.
+
+<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul></li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.
+
+<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul></li>
+<li><code>windowSize</code> - Number of entries to display in the graph.
+
+<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul></li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.
+
+<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul></li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.
+
+<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul></li>
+<li><code>margins</code> - Explicit margin overrides for the chart.
+
+<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul></li>
+<li><code>width</code> - Override automatic width with an explicit pixel value
+
+<ul>
+<li>Example: <code>width: 320</code></li>
+</ul></li>
+<li><code>height</code> - Override automatic height with an explicit pixel value
+
+<ul>
+<li>Example: <code>height: 240</code></li>
+</ul></li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+
+<h3 id="line">Line</h3>
+
+<div id="real-time-line" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(2);
+
+    var chart = $('#real-time-line').epoch({
+        type: 'time.line',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>
+
+<p>The real-time line chart is used to display multi-series data as it changes over time. To begin, the chart uses the following
+data format:</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">lineChartData</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="c1">// First series</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Series 1&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">100</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">1000</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="c1">// The second series</span>
+  <span class="p">{</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;Series 2&quot;</span><span class="p">,</span>
+    <span class="nx">values</span><span class="o">:</span> <span class="p">[</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044800</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">78</span><span class="p">},</span> <span class="p">{</span><span class="nx">time</span><span class="o">:</span> <span class="mi">1370044801</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">98</span><span class="p">},</span> <span class="p">...</span> <span class="p">]</span>
+  <span class="p">},</span>
+
+  <span class="p">...</span>
+<span class="p">];</span>
+</code></pre></div>
+<p>As you can see the data is arranged as an array of layers. Each layer is an object that has the following properties:</p>
+
+<ul>
+<li><code>label</code> - The name of the layer</li>
+<li><code>values</code> - An array of values each value having a unix timestamp (<code>time</code>) and a value at that time (<code>y</code>)</li>
+</ul>
+
+<p>The real-time chart requires that values in each layer have the exact same number of elements and that each corresponding
+entry have the same <code>time</code> value.</p>
+
+<p>Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
+element in HTML and use the jQuery bindings to create, place, and draw the chart:</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;lineChart&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 800px; height: 200px&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#lineChart&#39;</span><span class="p">).</span><span class="nx">epoch</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;time.bar&#39;</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">lineChartData</span>
+  <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div>
+<p>In the <code>&lt;script&gt;</code> portion of the example above you&#39;ll notice that we are passing options to the <code>.epoch</code> method. The following
+options are available for real-time bar charts:</p>
+
+<ul>
+<li><code>axes</code> - Which axes to display.
+
+<ul>
+<li>Example: <code>axes: [&#39;top&#39;, right&#39;, &#39;bottom&#39;, &#39;left&#39;]</code></li>
+</ul></li>
+<li><code>ticks</code> - Number of ticks to display on each axis.
+
+<ul>
+<li>Example: <code>{ time: 10, right: 5, left: 5 }</code></li>
+</ul></li>
+<li><code>tickFormats</code> - What formatting function to use when displaying tick labels.
+
+<ul>
+<li>Example: <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></li>
+</ul></li>
+<li><code>fps</code> - Number of frames per second that transitions animations should use.
+
+<ul>
+<li>High values for this number are basically inpeceptible and can cause a big performance hit.</li>
+<li>The default of <code>24</code> tends to work very well, but you can increase it to get smoother animations.</li>
+<li>Example: <code>fps: 60</code></li>
+</ul></li>
+<li><code>windowSize</code> - Number of entries to display in the graph.
+
+<ul>
+<li>Example: <code>windowSize: 60</code> (shows a minute of by second data)</li>
+</ul></li>
+<li><code>historySize</code> - Number of historical entries to hold at any time.
+
+<ul>
+<li>Example: <code>historySize: 240</code></li>
+</ul></li>
+<li><code>queueSize</code> - Number of entries to keep in working memory while the chart is not animating transitions.
+
+<ul>
+<li>Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
+bound the number of entries that have been recieved via the <code>.push</code> in this case (so as to reduce
+memory bloating).</li>
+<li>Example: <code>queueSize: 120</code></li>
+</ul></li>
+<li><code>margins</code> - Explicit margin overrides for the chart.
+
+<ul>
+<li>Example: <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></li>
+</ul></li>
+<li><code>width</code> - Override automatic width with an explicit pixel value
+
+<ul>
+<li>Example: <code>width: 320</code></li>
+</ul></li>
+<li><code>height</code> - Override automatic height with an explicit pixel value
+
+<ul>
+<li>Example: <code>height: 240</code></li>
+</ul></li>
+<li><code>pixelRatio</code> - Override detected pixel ratio with an explicit value</li>
+</ul>
+
+          </div>
+          <div id="nav" class="col-md-3">
+            <ul class="nav">
+    <li><a href="#toc_1">Using Real-time Charts</a></li>
+    <li><a href="#toc_2">Device Pixel Ratio</a></li>
+    <li><a href="#area">Area</a></li>
+    <li><a href="#bar">Bar</a></li>
+    <li><a href="#gauge">Gauge</a></li>
+    <li><a href="#heatmap">Heatmap</a></li>
+    <li><a href="#line">Line</a></li>
+</ul>
+          </div>
+        </div>
+
+        <div id="footer" class="row">
+          <div class="col-md-12">
+            <p class="text-center"><small>Copyright &copy; <span class="year"></span> Fastly, Inc.</small></p>
+          </div>
+        </div>
+      </div>
+
+      <script src="/js/site.js"></script>
+    </body>
+</html>

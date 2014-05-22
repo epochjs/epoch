@@ -1,0 +1,26 @@
+<div id="basic-area-example" class="epoch" style="width: 720px; height: 180px"></div>
+<p>fuck</p>
+<script>
+console.log("hello");
+
+$(function() {
+    console.log("STFUNOOB");
+    var data = [
+        {
+            label: 'Layer 1',
+            values: [
+                {x: 0, y: 1},
+                {x: 1, y: 2},
+                {x: 2, y: 4},
+                {x: 3, y: 8},
+                {x: 4, y: 16}
+            ]
+        }
+    ];
+
+    $('#basic-area-example').epoch({
+        type: 'area',
+        data: data
+    });
+});
+</script>

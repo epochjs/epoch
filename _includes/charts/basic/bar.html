@@ -1,0 +1,48 @@
+<h3 id="bar" style="margin-bottom: 20px; padding-bottom: 19px; border-bottom: 1px solid #ccc">
+    Bar
+    <small class="pull-right">
+        Data: &nbsp;
+        <button type="button" class="basic-bar-data btn btn-default active" data-value="0">Set A</button>
+        <button type="button" class="basic-bar-data btn btn-default" data-value="1">Set B</button>
+    </small>
+</h3>
+
+<div id="basic-bar-example" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+
+    var data1 = [{label: 'Series 1', values: []}];
+
+    for (var i = 1; i <= 15; i++) {
+        var x = String.fromCharCode(64 + i),
+            y = Math.log(i);
+        data1[0].values.push({ x: x, y: y });
+    }
+
+    var data2 = [
+        {label: 'Series 1', values: []},
+        {label: 'Series 2', values: []},
+        {label: 'Series 3', values: []}
+    ];
+
+    for (var i = 1; i <= 6; i++) {
+        var x = String.fromCharCode(96 + i);
+        data2[0].values.push({ x: x, y: i });
+        data2[1].values.push({ x: x, y: Math.pow(i, 0.5) });
+        data2[2].values.push({ x: x, y: Math.log(i+1) });
+    }
+
+    var data = [data1, data2],
+        bar = $('#basic-bar-example').epoch({ type: 'bar', data: data1 });
+
+    $('.basic-bar-data').on('click', function(e) {
+        e.preventDefault();
+        $('.basic-bar-data').removeClass('active');
+        $(e.target).addClass('active');
+        var index = parseInt($(e.target).attr('data-value'));
+        bar.setData(data[index]);
+        bar.draw();
+    });
+});
+</script>

@@ -1,0 +1,56 @@
+<h3 id="area">
+    Area
+    <small class="pull-right">
+        Data: &nbsp;
+        <button type="button" class="basic-area-data btn btn-default active" data-value="0">Set A</button>
+        <button type="button" class="basic-area-data btn btn-default" data-value="1">Set B</button>
+    </small>
+</h3>
+
+<div id="basic-area-example" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var values = [];
+
+    var data1 = [
+        {label: 'Cos', values: []},
+        {label: 'Sin', values: []}
+    ];
+
+    var data2 = [
+        {label: 'Sqrt', values: []},
+        {label: 'Cbrt', values: []},
+        {label: '4th', values: []}
+    ];
+
+    for (var i = 0; i <= 128; i++) {
+        var x = 4 * Math.PI * (i / 128);
+        data1[0].values.push({x: x, y: Math.cos(x) + 1});
+        data1[1].values.push({x: x, y: Math.sin(x) + 1});
+
+        var x2 = 20 * (i / 128);
+        data2[0].values.push({x: x2, y: Math.sqrt(x2)});
+        data2[1].values.push({x: x2, y: Math.pow(x2, (1/3)) });
+        data2[2].values.push({x: x2, y: Math.pow(x2, (1/4)) });
+    }
+
+    var data = [data1, data2];
+
+    var area = $('#basic-area-example').epoch({
+        type: 'area',
+        data: data1,
+        axes: ['bottom', 'left', 'right']
+    });
+
+    $('.basic-area-data').on('click', function(e) {
+        e.preventDefault();
+
+        $('.basic-area-data').removeClass('active');
+        $(e.target).addClass('active');
+        var index = parseInt($(e.target).attr('data-value'));
+        area.setData(data[index]);
+        area.draw();
+    });
+});
+</script>

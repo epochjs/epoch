@@ -1,0 +1,18 @@
+<h3 id="line">Line</h3>
+
+<div id="real-time-line" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(2);
+
+    var chart = $('#real-time-line').epoch({
+        type: 'time.line',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>

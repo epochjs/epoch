@@ -1,0 +1,18 @@
+<h3 id="bar">Bar</h3>
+
+<div id="real-time-bar" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(3);
+
+    var chart = $('#real-time-bar').epoch({
+        type: 'time.bar',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>

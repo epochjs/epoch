@@ -1,0 +1,54 @@
+<h3 id="scatter" style="margin-bottom: 20px; padding-bottom: 19px; border-bottom: 1px solid #ccc">
+    Scatter
+    <small class="pull-right">
+        Data: &nbsp;
+        <button type="button" class="basic-scatter-data btn btn-default active" data-value="0">Set A</button>
+        <button type="button" class="basic-scatter-data btn btn-default" data-value="1">Set B</button>
+    </small>
+</h3>
+
+<div id="basic-scatter-example" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var DATA_LENGTH = 64;
+
+    var data1 = [
+        { label: 'A', values: [] },
+        { label: 'B', values: [] }
+    ];
+
+    var data2 = [
+        { label: 'A', values: [] },
+        { label: 'B', values: [] },
+        { label: 'C', values: [] }
+    ];
+
+    for (var i = 0; i < DATA_LENGTH; i++) {
+        for (var j = 0; j < data1.length; j++) {
+            data1[j].values.push({ x: (Math.random() * 1000), y: (Math.random() * 200) });
+        }
+
+        for (var j = 0; j < data2.length; j++) {
+            data2[j].values.push({ x: (Math.random() * 1000), y: (Math.random() * 200) });
+        }
+    }
+
+    var data = [data1, data2];
+
+    var chart = $('#basic-scatter-example').epoch({
+        type: 'scatter',
+        data: data1,
+        axes: ['top', 'bottom', 'left', 'right'],
+        radius: 2.2
+    });
+
+    $('.basic-scatter-data').on('click', function(e) {
+        e.preventDefault()
+        $('.basic-scatter-data').removeClass('active');
+        $(e.target).addClass('active');
+        var d = data[$(e.target).attr('data-value')];
+        chart.update(d);
+    });
+});
+</script>

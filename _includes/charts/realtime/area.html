@@ -1,0 +1,18 @@
+<h3 id="area">Area</h3>
+
+<div id="real-time-area" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new RealTimeData(4);
+
+    var chart = $('#real-time-area').epoch({
+        type: 'time.area',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right']
+    });
+    
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>

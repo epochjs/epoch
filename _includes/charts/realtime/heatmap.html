@@ -1,0 +1,22 @@
+<h3 id="heatmap">Heatmap</h3>
+
+<div id="real-time-heatmap" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data = new HeatmapData(1);
+
+    var chart = $('#real-time-heatmap').epoch({
+        type: 'time.heatmap',
+        data: data.history(),
+        windowSize: 60,
+        buckets: 20,
+        bucketRange: [0, 100],
+        axes: ['left', 'bottom', 'right'],
+        opacity: function(v, max) { return Math.pow((v/max), 0.7);}
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>

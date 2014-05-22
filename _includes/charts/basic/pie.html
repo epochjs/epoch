@@ -1,0 +1,54 @@
+
+<h3 id="pie" style="margin-bottom: 20px; padding-bottom: 19px; border-bottom: 1px solid #ccc">
+    Pie
+    <small class="pull-right">
+        Data: &nbsp;
+        <button type="button" class="basic-pie-data btn btn-default active" data-value="0">Set A</button>
+        <button type="button" class="basic-pie-data btn btn-default" data-value="1">Set B</button>
+    </small>
+</h3>
+
+<div id="basic-pie-example" class="epoch" style="width: 200px; height: 200px"></div>
+<div id="basic-donut-example" class="epoch" style="width: 200px; height: 200px"></div>
+
+<script>
+$(function() {
+    var data1 = [
+        { label: 'A', value: 30 },
+        { label: 'B', value: 20 },
+        { label: 'C', value: 50 }
+    ];
+
+    var data2 = [
+        { label: 'D', value: 30 },
+        { label: 'E', value: 20 },
+        { label: 'F', value: 50 },
+        { label: 'G', value: 40 },
+        { label: 'H', value: 17 }
+    ];
+
+    var data = [data1, data2];
+
+    var pie = $('#basic-pie-example').epoch({
+        type: 'pie',
+        data: data1
+    });
+
+    var donut = $('#basic-donut-example').epoch({
+        type: 'pie',
+        data: data1,
+        inner: 58
+    });
+
+    $('.basic-pie-data').on('click', function(e) {
+        e.preventDefault();
+        $('.basic-pie-data').removeClass('active');
+        $(e.target).addClass('active');
+        var index = parseInt($(e.target).attr('data-value'));
+        pie.setData(data[index]);
+        pie.draw();
+        donut.setData(data[index]);
+        donut.draw();
+    });
+});
+</script>

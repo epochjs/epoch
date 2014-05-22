@@ -1,0 +1,18 @@
+body.docs h3 {
+  margin-top: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 19px;
+  border-bottom: 1px solid #ccc;
+}
+
+body.docs #nav.affix {
+  right: 9px;
+}
+
+body.docs #nav li {
+  border-left: 4px solid transparent;
+}
+
+body.docs #nav li.active {
+  border-left: 4px solid red;
+}

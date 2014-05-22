@@ -1,0 +1,6 @@
+name: Epoch by Fastly
+markdown: redcarpet
+redcarpet:
+    extensions: [with_toc_data]
+pygments: true
+relative_permalinks: false

@@ -1,0 +1,47 @@
+<h3 id="line" style="margin-bottom: 20px; padding-bottom: 19px; border-bottom: 1px solid #ccc">
+    Line
+    <small class="pull-right">
+        Data: &nbsp;
+        <button type="button" class="basic-line-data btn btn-default active" data-value="0">Set A</button>
+        <button type="button" class="basic-line-data btn btn-default" data-value="1">Set B</button>
+    </small>
+</h3>
+
+<div id="basic-line-example" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var data1 = [{label: 'Layer 1', values: []}];
+    for (var i = 0; i <= 128; i++) {
+        var x = 20 * (i / 128) - 10,
+            y = Math.cos(x) * x;
+        data1[0].values.push({x: x, y: y});
+    }
+
+    var data2 = [
+        {label: 'Layer 1', values: []},
+        {label: 'Layer 2', values: []},
+        {label: 'Layer 3', values: []}
+    ];
+
+    for (var i = 0; i < 256; i++) {
+        var x = 40 * (i / 256) - 20;
+        data2[0].values.push({ x: x, y: Math.sin(x) * (x / 4) });
+        data2[1].values.push({ x: x, y: Math.cos(x) * (x / Math.PI) });
+        data2[2].values.push({ x: x, y: Math.sin(x) * (x / 2) });
+    }
+
+    var data = [data1, data2];
+    var line = $('#basic-line-example').epoch({type: 'line', data: data1});
+
+    $('.basic-line-data').on('click', function(e) {
+        e.preventDefault();
+        $('.basic-line-data').removeClass('active');
+        $(e.target).addClass('active');
+        var index = parseInt($(e.target).attr('data-value'));
+        line.setData(data[index]);
+        line.draw();
+    });
+});
+</script>
+

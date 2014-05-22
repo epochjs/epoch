@@ -1,0 +1,36 @@
+<h3 id="gauge">Gauge</h3>
+
+<style>
+    .gauges .epoch {
+        display: inline-block;
+    }
+</style>
+
+<div class="gauges">
+    <div id="real-time-gauge4" class="epoch gauge-large"></div>
+    <div id="real-time-gauge" class="epoch gauge-medium"></div>
+    <div id="real-time-gauge2" class="epoch gauge-small"></div>
+    <div id="real-time-gauge3" class="epoch gauge-tiny"></div>
+</div>
+
+<script>
+$(function() {
+    var data = new GaugeData();
+
+    var charts = [
+        $('#real-time-gauge').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge2').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge3').epoch({ type: 'time.gauge', value: data.next() }),
+        $('#real-time-gauge4').epoch({ type: 'time.gauge', value: data.next() })
+    ];
+
+    function updateCharts() {
+        for (var i = 0; i < charts.length; i++) {
+            charts[i].update(data.next());
+        }
+    }
+
+    setInterval(updateCharts, 1000);
+    updateCharts();
+});
+</script>
