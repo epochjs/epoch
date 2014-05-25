@@ -7,22 +7,22 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{% page.root %}}">Epoch</a>
+            <a class="navbar-brand" href="{{ site.baseurl }}">Epoch</a>
           </div>
 
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               <li {% if page.header-active == "getting-started" %}class="active" {% endif %}>
-                <a href="{{ page.root }}getting-started/">Getting Started</a>
+                <a href="{{ site.baseurl }}getting-started/">Getting Started</a>
               </li>
               <li {% if page.header-active == "basic" %}class="active" {% endif %}>
-                <a href="{{% page.root %}}basic/">Basic Charts</a>
+                <a href="{{ site.baseurl }}basic/">Basic Charts</a>
               </li>
               <li {% if page.header-active == "real-time" %}class="active" {% endif %}>
-                <a href="{{% page.root %}}real-time/">Real-time Charts</a>
+                <a href="{{ site.baseurl }}real-time/">Real-time Charts</a>
               </li>
               <li {% if page.header-active == "advanced-topics" %}class="active" {% endif %}>
-                <a href="{{% page.root %}}advanced-topics/">Advanced Topics</a>
+                <a href="{{ site.baseurl }}advanced-topics/">Advanced Topics</a>
               </li>
             </ul>
           </div>

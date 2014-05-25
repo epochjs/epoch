@@ -4,3 +4,4 @@ redcarpet:
     extensions: [with_toc_data]
 pygments: true
 relative_permalinks: false
+baseurl: /epoch/
