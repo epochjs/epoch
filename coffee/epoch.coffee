@@ -322,19 +322,21 @@ class QueryCSS
   @purge: ->
     QueryCSS.cache = {}
 
-  # Called on load to insert the css reference element container.
-  @load: ->
+  # Gets the reference element container.
+  @getContainer: ->
+    return QueryCSS.container if QueryCSS.container?
     $('body').append('<div id="_canvas_css_reference"></div>')
     QueryCSS.container = $('#_canvas_css_reference', 'body')
 
-  # @return [String] A unique identifier for the given container.
+  # @return [String] A unique identifier for the given container and selector.
+  # @param [String] selector Selector from which to derive the styles
   # @param container The containing element for a chart.
-  @containerId: (container) ->
+  @hash: (selector, container) ->
     id = container.attr('id')
     if (klass = container.attr('class'))?
       klass = klass.split(/\s+/).join('.') 
 
-    if id? and klass?
+    pre = if id? and klass?
       "\##{id}.#{klass}"
     else if id?
       "\##{id}"
@@ -343,19 +345,23 @@ class QueryCSS
     else
       ""
 
+    return "#{pre}__#{selector}"
+
   # @return The computed styles for the given selector in the given container element.
   # @param [String] selector Selector from which to derive the styles.
   # @param container HTML containing element in which to place the reference SVG.
   @getStyles: (selector, container) ->
     # 0) Check for cached styles
-    cacheKey = "#{QueryCSS.containerId(container)}__#{selector}"
+    cacheKey = QueryCSS.hash(selector, container)
     cache = QueryCSS.cache[cacheKey]
     return cache if cache?
 
     # 1) Create Reference SVG
     clone = $(container).clone().html('<svg></svg>')
     clone.removeAttr('style')
-    QueryCSS.container.append(clone)
+
+  
+    QueryCSS.getContainer().append(clone)
     svg = $('svg', clone)
 
     # 2) Create Reference Element
@@ -375,10 +381,8 @@ class QueryCSS
     QueryCSS.cache[cacheKey] = styles
 
     # 4) Cleanup and return the styles
-    $(clone, QueryCSS.container).remove()
+    $(clone, QueryCSS.getContainer()).remove()
     return styles
-
-$ QueryCSS.load
 
 Epoch.QueryCSS = QueryCSS
 
