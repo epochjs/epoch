@@ -15,8 +15,8 @@ library_order = [
 
 package_order = [
   'epoch.js',
-  'charts.js',
-  'charts/*.js',
+  'basic.js',
+  'basic/*.js',
   'time.js',
   'time/*.js',
   'adapters.js',

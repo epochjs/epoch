@@ -1,6 +1,7 @@
 
-# Base class for all two-dimensional d3 charts. This class handles axes and margins
-# so that subclasses can focus on the construction of particular chart types.
+# Base class for all two-dimensional basic d3 charts. This class handles axes and 
+# margins so that subclasses can focus on the construction of particular chart
+# types.
 class Epoch.Chart.Plot extends Epoch.Chart.SVG
   defaults =
     margins:
