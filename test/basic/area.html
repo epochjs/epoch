@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+    </head>
+    <body>
+        <h1>Basic Area Chart Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Area</p>
+
+        <ol>
+            <li><a href="#test-1">Single Series</a></li>
+            <li><a href="#test-2">Single Series II</a></li>
+            <li><a href="#test-3">Multi Series</a></li>
+            <li><a href="#test-4">Multi Series II</a></li>
+            <li><a href="#test-5">Single Series Transition</a></li>
+            <li><a href="#test-6">Multi Series Transition</a></li>
+        </ol>
+
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series</h2>
+            <p>It should display a plot of <code>y = cos(x) + 1</code> over the range <code>[0, 2&pi;)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        (function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1;
+                data[0].values.push({x: x, y: y});
+            }
+
+            $(function() {
+                $('#test-1 .epoch').epoch({
+                    type: 'area',
+                    data: data
+                });
+            });
+        })();
+        </script>
+
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Single Series II</h2>
+            <p>It should display a plot of <code>y = sin(x) + 1</code> over the range <code>[0, 2&pi;)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        (function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.sin(x) + 1;
+                data[0].values.push({x: x, y: y});
+            }
+
+            $(function() {
+                $('#test-2 .epoch').epoch({
+                    type: 'area',
+                    data: data
+                });
+            });
+        })();
+        </script>
+
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Multi-series Plot</h2>
+            <p>
+                It should display a plot of the following functions stacked atop one another:
+                <ul>
+                    <li><code>y = x</code></li>
+                    <li><code>y = 2x</code></li>
+                    <li><code>y = 3x</code></li>
+                </ul>
+                over the range <code>[0, 10)</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        (function(){
+            var data = [
+                {label: 'A', values: []},
+                {label: 'B', values: []},
+                {label: 'C', values: []}
+            ];
+
+            var length = 32;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length;
+                data[0].values.push({x: x, y: x});
+                data[1].values.push({x: x, y: 2*x});
+                data[2].values.push({x: x, y: 3*x});
+            }
+
+            $(function() {
+                $('#test-3 .epoch').epoch({
+                    type: 'area',
+                    data: data
+                });
+            });
+        })();
+        </script>
+
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Multi-series Plot II</h2>
+            <p>
+                It should display a plot of the following functions stacked atop one another:
+                <ul>
+                    <li><code>y = |x|</code></li>
+                    <li><code>y = x<sup>2</sup></code></li>
+                </ul>
+                over the range [-1, 1).
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        (function() {
+            var data = [
+                {label: 'A', values: []},
+                {label: 'B', values: []}
+            ];
+            
+            var length = 64;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i - length / 2)  / (length / 2);
+                data[0].values.push({x: x, y: Math.abs(x)});
+                data[1].values.push({x: x, y: Math.pow(x, 2)});
+            }
+
+            $(function() {
+                $('#test-4 .epoch').epoch({
+                    type: 'area',
+                    data: data
+                });
+            });
+        })();
+        </script>
+        
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Single Series Transition</h2>
+            <p>
+                It should correctly transition between the plots <code>y = |x|</code> over the range [-10, 10] and <code>y = x<sup>2</sup></code> over the range [-20, 20]. The transition should be initiated when pressing the buttons below the plot.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">y = x</button>
+                <button data-index="1">y = x^2</button>
+            </p>
+        </div>
+
+        <script>
+        (function() {
+            var data1 = [{label: 'A', values: []}],
+                data2 = [{label: 'B', values: []}],
+                length = 20;
+
+            for (var i = 0; i < length; i++) {
+                var x1 = (i - length / 2) * 10 / (length / 2),
+                    y1 = Math.abs(x1),
+                    x2 = (i - length / 2) * 20 / (length / 2),
+                    y2 = Math.pow(x2, 2);
+                data1[0].values.push({x: x1, y: y1});
+                data2[0].values.push({x: x2, y: y2});
+            }
+
+            var data = [data1, data2];
+
+            $(function() {
+                var chart = $('#test-5 .epoch').epoch({
+                    type: 'area',
+                    data: data1
+                });
+
+                $('#test-5 button').on('click', function(e) {
+                    var index = parseInt($(e.target).attr('data-index'));
+                    chart.update(data[index]);
+                });
+            });
+        })();
+        </script>
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Multi Series Transition</h2>
+            <p>
+                It should correctly render and transition between Set A:
+                <ul>
+                    <li><code>y = x</code></li>
+                    <li><code>y = 2*x</code></li>
+                    <li><code>y = 3*x</code></li>
+                </ul>
+                over the range [1, 100). and Set B:
+                <ul>
+                    <li><code>y = ln(x)</code></li>
+                    <li><code>y = 2*ln(x)</code></li>
+                    <li><code>y = 3*ln(x)</code></li>
+                </ul>
+                over the range [1, 100). The transition should be initiated when pressing the buttons below the plot.
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Set A</button>
+                <button data-index="1">Set B</button>
+            </p>
+        </div>
+
+        <script>
+        (function() {
+            var data1 = [
+                {label: 'A', values: []},
+                {label: 'B', values: []},
+                {label: 'C', values: []}
+            ];
+
+            var data2 = [
+                {label: 'A', values: []},
+                {label: 'B', values: []},
+                {label: 'C', values: []}
+            ];
+
+            var data = [data1, data2],
+                length = 128;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i * 99 / length) + 1;
+
+                data1[0].values.push({x: x, y: x});
+                data1[1].values.push({x: x, y: 2*x});
+                data1[2].values.push({x: x, y: 3*x});
+
+                data2[0].values.push({x: x, y: Math.log(x)});
+                data2[1].values.push({x: x, y: 2*Math.log(x)});
+                data2[2].values.push({x: x, y: 3*Math.log(x)});
+            }
+
+            $(function() {
+                var chart = $('#test-6 .epoch').epoch({
+                    type: 'area', 
+                    data: data1
+                });
+
+                $('#test-6 button').on('click', function(e) {
+                    var index = parseInt($(e.target).attr('data-index'));
+                    chart.update(data[index]);
+                });
+            });
+        })();
+        </script>
+
+    </body>
+</html>
