@@ -100,9 +100,13 @@ Epoch.Util.dasherize = (str) ->
 # @param [String] key The key name of the value at on each entry in the layers.
 Epoch.Util.domain = (layers, key='x') ->
   set = {}
+  domain = []
   for layer in layers
-    set[entry[key]] = true for entry in layer.values
-  (k for k, v of set)
+    for entry in layer.values
+      continue if set[entry[key]]?
+      domain.push(entry[key])
+      set[entry[key]] = true 
+  return domain
 
 # Converts a CSS color string into an RGBA string with the given opacity
 # @param [String] color Color string to convert into an rgba
