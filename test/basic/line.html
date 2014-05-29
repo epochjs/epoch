@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+    </head>
+    <body>
+        <h1>Basic Bar Chart Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Bar</p>
+
+        <ol>
+            <li><a href="#test-1">Single Series</a></li>
+            <li><a href="#test-2">Single Series II</a></li>
+            <li><a href="#test-3">Multi Series</a></li>
+            <li><a href="#test-4">Single Series Transition</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series</h2>
+            <p>Display a plot of <code>y = cos(x)</code> over the range <code>[-2&pi;, 2&pi;)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * 4 * Math.PI / length - 2 * Math.PI,
+                    y = Math.cos(x);
+                data[0].values.push({x: x, y: y});
+            }
+            $('#test-1 .epoch').epoch({ type: 'line', data: data });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Single Series II</h2>
+            <p>Display a plot of <code>y = e<sup>x</sup>*sin(x)</code> from <code>[0, &pi)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * Math.PI / length,
+                    y = Math.exp(x) * Math.sin(x);
+                data[0].values.push({x: x, y: y});
+            }
+            $('#test-2 .epoch').epoch({type: 'line', data: data});
+        })
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Multi Series</h2>
+            <p>
+                Display a plot of the following functions over the range [0, 2&pi;]:
+                <ul>
+                    <li><code>x*sin(x)</code></li>
+                    <li><code>x*cos(x)</code></li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    { label: 'A', values: [] },
+                    { label: 'B', values: [] }
+                ],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length;
+                data[0].values.push({x: x, y: x*Math.sin(x)});
+                data[1].values.push({x: x, y: x*Math.cos(x)});
+            }
+            $('#test-3 .epoch').epoch({type: 'line', data: data});
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Single Series Transition</h2>
+            <p>
+                Correctly transition between the functions <code>y = 1 / x</code> and <code>y = x<sup>2</sup></code> over the range [1, 2).
+                Use the buttons below the chart to initiate the transitions.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">y = 1 / x</button>
+                <button data-index="1">y = x^2</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data1 = [{label: 'A', values: []}],
+                data2 = [{label: 'B', values: []}],
+                data = [data1, data2],
+                length = 128;
+
+            for (var i = 0; i < length; i++) {
+                var x = i / length + 1;
+                data1[0].values.push({x: x, y: 1/x});
+                data2[0].values.push({x: x, y: x*x});
+            }
+
+            var chart  = $('#test-4 .epoch').epoch({ type: 'line', data: data1 });
+
+            $('#test-4 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+    </body>
+</html>
