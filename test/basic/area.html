@@ -18,6 +18,9 @@
             <li><a href="#test-4">Multi Series II</a></li>
             <li><a href="#test-5">Single Series Transition</a></li>
             <li><a href="#test-6">Multi Series Transition</a></li>
+            <li><a href="#test-7">Single Series to Multi Series Transition</a></li>
+            <li><a href="#test-8">Layer Color Override</a></li>
+            <li><a href="#test-9">Categorical Color Switching</a></li>
         </ol>
 
 
@@ -29,7 +32,7 @@
         </div>
 
         <script>
-        (function() {
+        $(function() {
             var data = [{ label: 'A', values: [] }],
                 length = 64;
 
@@ -39,13 +42,8 @@
                 data[0].values.push({x: x, y: y});
             }
 
-            $(function() {
-                $('#test-1 .epoch').epoch({
-                    type: 'area',
-                    data: data
-                });
-            });
-        })();
+            $('#test-1 .epoch').epoch({ type: 'area', data: data });
+        });
         </script>
 
 
@@ -57,7 +55,7 @@
         </div>
 
         <script>
-        (function() {
+        $(function() {
             var data = [{ label: 'A', values: [] }],
                 length = 64;
 
@@ -67,13 +65,8 @@
                 data[0].values.push({x: x, y: y});
             }
 
-            $(function() {
-                $('#test-2 .epoch').epoch({
-                    type: 'area',
-                    data: data
-                });
-            });
-        })();
+            $('#test-2 .epoch').epoch({ type: 'area', data: data });
+        });
         </script>
 
 
@@ -93,14 +86,13 @@
         </div>
 
         <script>
-        (function(){
+        $(function(){
             var data = [
-                {label: 'A', values: []},
-                {label: 'B', values: []},
-                {label: 'C', values: []}
-            ];
-
-            var length = 32;
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 32;
 
             for (var i = 0; i < length; i++) {
                 var x = i * 10 / length;
@@ -108,14 +100,9 @@
                 data[1].values.push({x: x, y: 2*x});
                 data[2].values.push({x: x, y: 3*x});
             }
-
-            $(function() {
-                $('#test-3 .epoch').epoch({
-                    type: 'area',
-                    data: data
-                });
-            });
-        })();
+        
+            $('#test-3 .epoch').epoch({ type: 'area', data: data });
+        });
         </script>
 
 
@@ -127,6 +114,7 @@
                 <ul>
                     <li><code>y = |x|</code></li>
                     <li><code>y = x<sup>2</sup></code></li>
+                    <li><code>y = |x<sup>3</sup>|</code></li>
                 </ul>
                 over the range [-1, 1).
             </p>
@@ -134,27 +122,23 @@
         </div>
 
         <script>
-        (function() {
+        $(function() {
             var data = [
-                {label: 'A', values: []},
-                {label: 'B', values: []}
-            ];
-            
-            var length = 64;
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 64;
 
             for (var i = 0; i < length; i++) {
                 var x = (i - length / 2)  / (length / 2);
                 data[0].values.push({x: x, y: Math.abs(x)});
                 data[1].values.push({x: x, y: Math.pow(x, 2)});
+                data[2].values.push({x: x, y: Math.abs(Math.pow(x, 3))});
             }
 
-            $(function() {
-                $('#test-4 .epoch').epoch({
-                    type: 'area',
-                    data: data
-                });
-            });
-        })();
+            $('#test-4 .epoch').epoch({ type: 'area', data: data });
+        });
         </script>
         
 
@@ -162,7 +146,7 @@
         <div id="test-5" class="test">
             <h2>5. Single Series Transition</h2>
             <p>
-                It should correctly transition between the plots <code>y = |x|</code> over the range [-10, 10] and <code>y = x<sup>2</sup></code> over the range [-20, 20]. The transition should be initiated when pressing the buttons below the plot.
+                It should correctly transition between the plots <code>y = |x|</code> over the range [-10, 10) and <code>y = x<sup>2</sup></code> over the range [-20, 20). The transition should be initiated when pressing the buttons below the plot.
             </p>
             <div class="epoch"></div>
             <p>
@@ -172,10 +156,11 @@
         </div>
 
         <script>
-        (function() {
+        $(function() {
             var data1 = [{label: 'A', values: []}],
                 data2 = [{label: 'B', values: []}],
-                length = 20;
+                data = [data1, data2],
+                length = 64;
 
             for (var i = 0; i < length; i++) {
                 var x1 = (i - length / 2) * 10 / (length / 2),
@@ -185,21 +170,17 @@
                 data1[0].values.push({x: x1, y: y1});
                 data2[0].values.push({x: x2, y: y2});
             }
-
-            var data = [data1, data2];
-
-            $(function() {
-                var chart = $('#test-5 .epoch').epoch({
-                    type: 'area',
-                    data: data1
-                });
-
-                $('#test-5 button').on('click', function(e) {
-                    var index = parseInt($(e.target).attr('data-index'));
-                    chart.update(data[index]);
-                });
+        
+            var chart = $('#test-5 .epoch').epoch({
+                type: 'area',
+                data: data1
             });
-        })();
+
+            $('#test-5 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
         </script>
 
         <!-- Test 6 -->
@@ -227,7 +208,7 @@
         </div>
 
         <script>
-        (function() {
+        $(function() {
             var data1 = [
                 {label: 'A', values: []},
                 {label: 'B', values: []},
@@ -255,19 +236,155 @@
                 data2[2].values.push({x: x, y: 3*Math.log(x)});
             }
 
-            $(function() {
-                var chart = $('#test-6 .epoch').epoch({
-                    type: 'area', 
-                    data: data1
-                });
+            var chart = $('#test-6 .epoch').epoch({ type: 'area', data: data1 });
 
-                $('#test-6 button').on('click', function(e) {
-                    var index = parseInt($(e.target).attr('data-index'));
-                    chart.update(data[index]);
-                });
+            $('#test-6 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
             });
-        })();
+        });
         </script>
 
+
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Single Series to Multi Series Transition</h2>
+            <p>
+                It should correctly transition between a single series, plotting the functions:
+                <ul>
+                    <li><code>y = x<sup>2</sup> - 0.5*x</code></li>
+                </ul>
+                To a multi series set, plotting the functions:
+                <ul>
+                    <li><code>y = ln(x)</code></li>
+                    <li><code>y = x</code></li>
+                    <li><code>y = x * ln(x)</code></li>
+                </ul>
+                over the range [1, 4) for all plots. The transition should be initiated when pressing the buttons below the plot.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Single</button>
+                <button data-index="1">Multi</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data1 = [{label: 'A', values: []}],
+                data2 = [
+                    {label: 'A', values: []}, 
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                data = [data1, data2],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                var x = (3*i/length) + 1;
+                data1[0].values.push({x: x, y: x*x - 0.5*x});
+                data2[0].values.push({x: x, y: Math.log(x)});
+                data2[1].values.push({x: x, y: x});
+                data2[2].values.push({x: x, y: x * Math.log(x)});
+            }
+
+            var chart = $('#test-7 .epoch').epoch({ type: 'area', data: data1 });
+
+            $('#test-7 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Layer Color Override</h2>
+            <p>
+                It should display the first layer of the plot as pink, the second layer as green, and the third layer as blue.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <style>
+        #test-8 .epoch .a .area { fill: pink; }
+        #test-8 .epoch .b .area { fill: green; }
+        #test-8 .epoch .c .area { fill: blue;  }
+        </style>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []}, 
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 128;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length + 1,
+                    y = x * Math.log(x);
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({x: x, y: y});
+                }
+            }
+
+            $('#test-8 .epoch').epoch({ type: 'area', data: data });
+        });
+        </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Categorical Color Switching</h3>
+            <p>
+                It should change layer colors automatically when switching between the following categorical color classes on the containing element:
+                <ul>
+                    <li><code>category10</code></li>
+                    <li><code>category20</code></li>
+                    <li><code>category20b</code></li>
+                    <li><code>category20c</code></li>
+                </ul>
+                The colors should change when pressing the buttons for each categorical type below the chart.
+            </p>
+
+            <div class="epoch category10"></div>
+
+            <p>
+                <button data-class="category10">category10</button>
+                <button data-class="category20">category20</button>
+                <button data-class="category20b">category20b</button>
+                <button data-class="category20c">category20c</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []}, 
+                    {label: 'B', values: []},
+                    {label: 'C', values: []},
+                    {label: 'D', values: []},
+                    {label: 'E', values: []},
+                    {label: 'F', values: []},
+                    {label: 'G', values: []}
+                ],
+                length = 128,
+                className = 'category10';
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 1 / length;
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({x: x, y: Math.pow(x, j+1)});
+                }
+            }
+
+            $('#test-9 .epoch').epoch({ type: 'area', data: data });
+
+            $('#test-9 button').on('click', function(e) {
+                $('#test-9 .epoch').removeClass(className);
+                className = $(e.target).attr('data-class');
+                $('#test-9 .epoch').addClass(className);
+            });
+        });
+        </script>
     </body>
 </html>
