@@ -6,3 +6,7 @@ body {
 .test .epoch {
     height: 220px;
 }
+
+.broken {
+    color: red;
+}
