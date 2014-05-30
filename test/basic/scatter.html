@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+    </head>
+    <body>
+        <h1>Basic Scatter Plot Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Scatter</p>
+        <ol>
+            <li><a href="#test-1">Single Series</a></li>
+            <li><a href="#test-2">Multi Series</a></li>
+            <li><a href="#test-3">Single Series Transition</a></li>
+            <li><a href="#test-4">Multi Series Transition</a></li>
+            <li><a href="#test-5">Multi Series Transition II</a></li>
+            <li><a href="#test-6">Color Override</a></li>
+            <li><a href="#test-7">Categorical Colors</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series</h2>
+            <p>Render a single random series scatter plot.</p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [],
+                length = 128;
+
+            for (var j = 0; j < length; j++) {
+                var x = Math.random() * 100,
+                    y = Math.random() * 20;
+                data.push({x: x, y: y});
+            }
+
+            $('#test-1 .epoch').epoch({ type: 'scatter', data: [{label: 'A', values: data}]});
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Multi Series</h2>
+            <p>Render three random scatter series in the same plot.</p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    var x = Math.random() * 100,
+                        y = Math.random() * 20;
+                    data[j].values.push({x: x, y: y});
+                }
+            }
+
+            $('#test-2 .epoch').epoch({type: 'scatter', data: data});
+        });
+        </script>
+        
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Single Series Transition</h2>
+            <p>
+                Transition from one random series to another random series. Use the
+                buttons below the plot to initiate the transition.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Series A</button>
+                <button data-index="1">Series B</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    [
+                        {label: 'A', values: []}
+                    ],
+                    [
+                        {label: 'A', values: []}
+                    ]
+                ],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    for (var k = 0; k < data[j].length; k++) {
+                        var x = Math.random() * 100,
+                            y = Math.random() * 20;
+                        data[j][k].values.push({x: x, y: y});    
+                    }
+                }
+            }
+
+            var chart = $('#test-3 .epoch').epoch({type: 'scatter', data: data[0]});
+            $('#test-3 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+        
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Multi Series Transition</h2>
+            <p>
+                Transition from a set of multiple randoms series random series to another of multiple random series. Use the
+                buttons below the plot to initiate the transition.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Series Set A</button>
+                <button data-index="1">Series Set B</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    [
+                        {label: 'A', values: []},
+                        {label: 'B', values: []},
+                        {label: 'C', values: []}
+                    ],
+                    [
+                        {label: 'A', values: []},
+                        {label: 'B', values: []},
+                        {label: 'C', values: []}
+                    ]
+                ],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    for (var k = 0; k < data[j].length; k++) {
+                        var x = Math.random() * 100,
+                            y = Math.random() * 20;
+                        data[j][k].values.push({x: x, y: y});    
+                    }
+                }
+            }
+
+            var chart = $('#test-4 .epoch').epoch({type: 'scatter', data: data[0]});
+            $('#test-4 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+        
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Multi Series Transition II</h2>
+            <p>
+                Transition from a multi-series set of random data to a single series set of random data.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Series Set A</button>
+                <button data-index="1">Series Set B</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    [
+                        {label: 'A', values: []},
+                        {label: 'B', values: []},
+                        {label: 'C', values: []}
+                    ],
+                    [
+                        {label: 'A', values: []}
+                    ]
+                ],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    for (var k = 0; k < data[j].length; k++) {
+                        var x = Math.random() * 100,
+                            y = Math.random() * 20;
+                        data[j][k].values.push({x: x, y: y});    
+                    }
+                }
+            }
+
+            var chart = $('#test-5 .epoch').epoch({type: 'scatter', data: data[0]});
+            $('#test-5 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+        
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Color Override</h2>
+            <p>The first series should be pink, the second green, and thrid blue.</p>
+            <div class="epoch"></div>
+        </div>
+        <style>
+            #test-6 .a .dot { fill: pink; }
+            #test-6 .b .dot { fill: green; }
+            #test-6 .c .dot { fill: blue; }
+        </style>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    var x = Math.random() * 100,
+                        y = Math.random() * 20;
+                    data[j].values.push({x: x, y: y});
+                }
+            }
+
+            $('#test-6 .epoch').epoch({type: 'scatter', data: data});
+        });
+        </script>
+        
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Categorical Colors</h2>
+            <p>
+                Correctly transition between different categorical color sets.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-class="category10">category10</button>
+                <button data-class="category20">category20</button>
+                <button data-class="category20b">category20b</button>
+                <button data-class="category20c">category20c</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []},
+                    {label: 'E', values: []},
+                    {label: 'F', values: []},
+                    {label: 'G', values: []},
+                    {label: 'H', values: []},
+                    {label: 'I', values: []},
+                    {label: 'J', values: []},
+                    {label: 'K', values: []}
+                ],
+                className = 'category10';
+
+            for (var i = 0; i < data.length; i++) {
+                var x = i * Math.PI * 2 / data.length,
+                    y = Math.sin(x);
+                console.log(x, y);
+                data[i].values.push({x: x, y: y});
+            }
+
+            console.log(data);
+
+            $('#test-7 .epoch').epoch({
+                type: 'scatter',
+                radius: 10,
+                data: data
+            });
+            
+
+            $('#test-7 button').on('click', function(e) {
+                $('#test-7 .epoch').removeClass(className);
+                className = $(e.target).attr('data-class');
+                $('#test-7 .epoch').addClass(className);
+            });
+        });
+        </script>
+    </body>
+</html>
