@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+
+        <script>
+            var nextTime = (function() {
+                var currentTime = parseInt(new Date().getTime() / 1000);
+                return function() { return currentTime++; }
+            })();
+        </script>
+    </head>
+    <body>
+        <h1>Real-time Area Plot Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Area</p>
+        <ol>
+            <li><a href="#test-1">Single Series</a></li>
+            <li><a href="#test-2">Single Series Single Transition</a></li>
+            <li><a href="#test-3">Single Seires Stream</a></li>
+            <li><a href="#test-4">Multi Series</a></li>
+            <li><a href="#test-5">Multi Series Single Transition</a></li>
+            <li><a href="#test-6">Multi Seires Stream</a></li>
+            <li><a href="#test-7">Color Override</a></li>
+            <li><a href="#test-8">Categorical Colors</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series</h2>
+            <p>
+                Correctly render a single series plot of <code>y = cos(x) + 1</code> over the range <code>[0, 2&pi;]</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1,
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+            }
+
+            $('#test-1 .epoch').epoch({ type: 'time.line', data: data });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Single Series Single Transition</h2>
+            <p>
+                Correctly render a single series plot of <code>y = sin(x) + 1</code>. When the button is pressed push a new data point to the chart and correctly animate/render the transiton.
+            </p>
+            <div class="epoch"></div>
+            <p><button>Next</button></p>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 40,
+                nextIndex = length;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.sin(x) + 1,
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+            }
+
+            var chart = $('#test-2 .epoch').epoch({
+                type: 'time.line',
+                data: data
+            });
+
+            $('#test-2 button').on('click', function(e) {
+                var x = nextIndex * 2 * Math.PI / length,
+                    y = Math.sin(x) + 1,
+                    time = nextTime();
+                nextIndex++;
+                chart.push([{ time: time, y: y }]);
+            });
+        });
+        </script>
+
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Single Seires Stream</h2>
+            <p>Correctly play / pause a single series stream of values from the plot <code>y = cos(x) + 1</code>.</p>
+            <div class="epoch"></div>
+            <p><button>Play</button></p>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 40,
+                nextIndex = length,
+                playing = false,
+                interval = null;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1,
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+            }
+
+            var chart = $('#test-3 .epoch').epoch({
+                type: 'time.line',
+                data: data
+            });
+
+            var pushPoint = function() {
+                var x = nextIndex * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1,
+                    time = nextTime();
+                chart.push([{ time: time, y: y}]);
+                nextIndex++;
+            };
+
+            $('#test-3 button').on('click', function(e) {
+                if (playing) {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                }
+                else {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                playing = !playing;
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Multi Series</h2>
+            <p>Correctly render a multi series plot of the following functions:</p>
+            <ul>
+                <li><code>y = log(x+1)</code></li>
+                <li><code>y = 2*log(x+1)</code></li>
+                <li><code>y = 3*log(x+1)</code></li>
+            </ul>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i + 1,
+                    time = nextTime();
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({time: time, y: (j+1) * Math.log(x)});
+                }
+            }
+
+            $('#test-4 .epoch').epoch({
+                type: 'time.line',
+                data: data,
+                axes: ['left', 'right', 'bottom']
+            });
+        });
+        </script>
+
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Multi Series Single Transition</h2>
+            <p>
+                Correctly render a multi series plot of the following functions:
+                <ul>
+                    <li><code>y = x</code></li>
+                    <li><code>y = x<sup>1.25</sup></code></li>
+                    <li><code>y = x<sup>1.5</sup></code></li>
+                </ul>
+                and correctly render/animate the transiton after pressing the "Next" button.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button>Next</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 40,
+                scale = 0.1,
+                nextIndex = length;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * scale,
+                    time = nextTime();
+                data[0].values.push({time: time, y: x});
+                data[1].values.push({time: time, y: Math.pow(x, 1.25)});
+                data[2].values.push({time: time, y: Math.pow(x, 1.5)});
+            }
+
+            var chart = $('#test-5 .epoch').epoch({
+                type: 'time.line',
+                data: data,
+                axes: ['left', 'right', 'bottom']
+            });
+
+            $('#test-5 button').on('click', function(e) {
+                var x = nextIndex * scale,
+                    time = nextTime();
+                nextIndex++;
+                chart.push([
+                    {time: time, y: x},
+                    {time: time, y: Math.pow(x, 1.25)},
+                    {time: time, y: Math.pow(x, 1.5)}
+                ]);
+            });
+        });
+        </script>
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Multi Seires Stream</h2>
+            <p>
+                Correctly play / pause a multi series stream of values over the following plots:
+                <ul>
+                    <li><code>x</code></li>
+                    <li><code>x * log(x)</code></li>
+                    <li><code>x * log<sup>2</sup>(x)</code></li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+            <p><button>Play</button></p>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 40,
+                nextIndex = length,
+                scale = 0.1,
+                playing = false,
+                interval = null;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i+1) * scale,
+                    time = nextTime();
+                data[0].values.push({time: time, y: x});
+                data[1].values.push({time: time, y: x * Math.log(x)});
+                data[2].values.push({time: time, y: x * Math.pow(Math.log(x), 2)});
+            }
+
+            var chart = $('#test-6 .epoch').epoch({
+                type: 'time.line',
+                data: data,
+                axes: ['right', 'bottom']
+            });
+
+            var pushPoint = function() {
+                var x = (nextIndex +1) * scale,
+                    time = nextTime();
+                chart.push([
+                    { time: time, y: x},
+                    { time: time, y: x * Math.log(x)},
+                    { time: time, y: x * Math.pow(Math.log(x), 2)}
+                ]);
+                nextIndex++;
+            };
+
+            $('#test-6 button').on('click', function(e) {
+                if (playing) {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                }
+                else {
+                    $(e.target).text('Pause');
+                    interval = setInterval(pushPoint, 1000);
+                    pushPoint();
+                }
+                playing = !playing;
+            });
+        });
+        </script>
+
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Color Override</h2>
+            <p>The first layer should pink, the second green, and the third blue.</p>
+            <div id="test-7-plot" class="epoch"></div>
+        </div>
+
+        <style>
+        #test-7-plot .a .line { stroke: pink; }
+        #test-7-plot .b .line { stroke: green; }
+        #test-7-plot .c .line { stroke: blue;  }
+        </style>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i + 1,
+                    time = nextTime();
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({time: time, y: (j+1) * Math.log(x)});
+                }
+            }
+
+            $('#test-7 .epoch').epoch({
+                type: 'time.line',
+                data: data
+            });
+        });
+        </script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Categorical Colors</h2>
+            <p>Correctly render and switch between different categorical colors. Unlike with the basic charts this doesn't occur just by switching the class name on the containing element. The CSS query engine must be purge and the plot must be manually redrawn, like so:<code><pre>
+Epoch.QueryCSS.purge();
+chart.draw();
+</pre></code>
+            </p>
+                
+            <div class="epoch category10"></div>
+
+            <p>
+                <button data-class="category10">category10</button>
+                <button data-class="category20">category20</button>
+                <button data-class="category20b">category20b</button>
+                <button data-class="category20c">category20c</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [],
+                length = 41,
+                className = "category10",
+                layers = 8,
+                time = nextTime();
+
+            for (var i = 0; i < layers; i++) {
+                var layer = { label: String.fromCharCode(i+65), values: [] };
+                for (var j = 0; j < length; j++) {
+                    var x = j + 1,
+                        y = Math.pow(x, i * 0.02);
+                    layer.values.push({ time: time + j, y: y });
+                }
+                data.push(layer);
+            }
+
+            var chart = $('#test-8 .epoch').epoch({ type: 'time.line', data: data });
+
+            $('#test-8 button').on('click', function(e) {
+                $('#test-8 .epoch').removeClass(className);
+                className = $(e.target).attr('data-class');
+                $('#test-8 .epoch').addClass(className);
+                Epoch.QueryCSS.purge();
+                chart.draw();
+            });
+        });
+        </script>        
+    </body>
+</html>
