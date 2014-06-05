@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+
+        <script>
+            var nextTime = (function() {
+                var currentTime = parseInt(new Date().getTime() / 1000);
+                return function() { return currentTime++; }
+            })();
+        </script>
+    </head>
+    <body>
+        <h1>Real-time Gauge Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Gauge</p>
+        <ol>
+            <li><a href="#test-1">Single Value Display</a></li>
+            <li><a href="#test-2">Single Transition</a></li>
+            <li><a href="#test-3">Stream Transition</a></li>
+            <li><a href="#test-4">Gauge Sizes</a></li>
+            <li><a href="#test-5">Color Override</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h1>1. Single Value Display</h1>
+            <p>Display a single value of 25%</p>
+            <div class="epoch gauge-small"></div>
+        </div>
+        <script>
+        $(function() {
+            $('#test-1 .epoch').epoch({ type: 'time.gauge', value: 0.25 });
+        });
+        </script>
+
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h1>2. Single Transition</h1>
+            <p>Display value of 0% and transition to a random value when the button is pressed.</p>
+            <div class="epoch gauge-small"></div>
+            <p><button>Transition</button></p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-2 .epoch').epoch({
+                type: 'time.gauge',
+                value: 0.0
+            });
+
+            $('#test-2 button').on('click', function(e) {
+                chart.update(Math.random());
+            });
+        });
+        </script>
+
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h1>3. Stream Transition</h1>
+            <p>Display value of 0% and transition to a random value every second when the button is pressed.</p>
+            <div class="epoch gauge-small"></div>
+            <p><button>Play</button></p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-3 .epoch').epoch({
+                    type: 'time.gauge',
+                    value: 0.0
+                }),
+                playing = false,
+                interval = null;
+
+            $('#test-3 button').on('click', function(e) {
+                if (interval === null) {
+                    interval = setInterval(function() {
+                        chart.update(Math.random());
+                    }, 1000);
+                    chart.update(Math.random());
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');
+                }
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Gauge Sizes</h2>
+            <p>Display the four built-in gauge sizes in this order: tiny, small, medium, large.</p>
+            <div class="epoch gauge-tiny"></div>
+            <div class="epoch gauge-small"></div>
+            <div class="epoch gauge-medium"></div>
+            <div class="epoch gauge-large"></div>
+        </div>
+        <script>
+        $(function() {
+            $('#test-4 .gauge-tiny').epoch({ type: 'time.gauge', value: 0.75 });
+            $('#test-4 .gauge-small').epoch({ type: 'time.gauge', value: 0.75 });
+            $('#test-4 .gauge-medium').epoch({ type: 'time.gauge', value: 0.75 });
+            $('#test-4 .gauge-large').epoch({ type: 'time.gauge', value: 0.75 });
+        });
+        </script>
+        
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Color Override</h2>
+            <p>
+                Override the basic gauge styles with the following
+                <ul>
+                    <li>Outer arc 8px thickness colored green</li>
+                    <li>Inner arc 2px thickness colored orange</li>
+                    <li>Ticks should be 3px in width and red</li>
+                    <li>Needle colored blue.</li>
+                    <li>Needle base colored black</li>
+                </ul>
+            </p>
+            <div id="test-5-plot" class="epoch gauge-medium"></div>
+        </div>
+
+        <style>
+        #test-5-plot .epoch .gauge .arc.outer {
+            stroke-width: 8px;
+            stroke: green;
+        }
+
+        #test-5-plot .epoch .gauge .arc.inner {
+            stroke-width: 2px;
+            stroke: orange;
+        }
+
+        #test-5-plot .epoch .gauge .tick {
+            stroke-width: 3px;
+            stroke: red;
+        }
+
+        #test-5-plot .epoch .gauge .needle {
+            fill: blue;
+        }
+
+        #test-5-plot .epoch .gauge .needle-base {
+            fill: black;
+        }
+        </style>
+
+        <script>
+        $(function() {
+            $('#test-5 .epoch').epoch({ type: 'time.gauge', value: 0.5 });
+        });
+        </script>
+    </body>
+</html>
