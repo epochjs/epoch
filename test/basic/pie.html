@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+        <style>
+        .test .epoch {
+            width: 350px;
+            height: 350px;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Basic Pie Chart Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Pie</p>
+        <ol>
+            <li><a href="#test-1">Basic Pie Test</a></li>
+            <li><a href="#test-2">Basic Donut Test</a></li>
+            <li><a href="#test-3">Pie Tranisition I</a></li>
+            <li><a href="#test-4">Pie Tranisition II</a></li>
+            <li><a href="#test-5">Color Override</a></li>
+            <li><a href="#test-6">Categorical Colors</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>Basic Pie Test</h2>
+            <p>
+                Correctly render a pie chart with three categories:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 45</li>
+                    <li>C - 35</li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            $('#test-1 .epoch').epoch({
+                type: 'pie',
+                data: [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 45},
+                    {label: 'C', value: 35}
+                ]
+            });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Basic Donut Test</h2>
+            <p>
+                Correctly render a donut chart with three categories:
+                <ul>
+                    <li>A - 50</li>
+                    <li>B - 30</li>
+                    <li>C - 20</li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+        </div>
+        
+        <script>
+        $(function() {
+            $('#test-2 .epoch').epoch({
+                type: 'pie',
+                inner: 100,
+                data: [
+                    {label: 'A', value: 50},
+                    {label: 'B', value: 30},
+                    {label: 'C', value: 20}
+                ]
+            });
+        });
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Pie Tranisition I</h2>
+            <p>
+                Correctly transition between set A:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 80</li>
+                </ul>
+                and set B:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 30</li>
+                    <li>C - 50</li>
+                </ul>
+                Use the buttons below the chart to initiate the transitions.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Set A</button>
+                <button data-index="1">Set B</button>
+            </p>
+        </div>
+        
+        <script>
+        $(function() {
+            var data1 = [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 80}
+                ],
+                data2 = [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 30},
+                    {label: 'C', value: 50}
+                ],
+                data = [data1, data2],
+                chart = $('#test-3 .epoch').epoch({ type: 'pie', data: data1 });
+
+            $('#test-3 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Pie Tranisition II (<span class="broken">BROKEN</span> - See <a href="https://github.com/fastly/epoch/issues/22" target="_blank">Issue #22</a>)</h2>
+            <p>
+                Correctly transition between set A:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 80</li>
+                </ul>
+                and set B:
+                <ul>
+                    <li>A - 50</li>
+                    <li>B - 50</li>
+                </ul>
+                Use the buttons below the chart to initiate the transitions.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Set A</button>
+                <button data-index="1">Set B</button>
+            </p>
+        </div>
+        
+        <script>
+        $(function() {
+            var data1 = [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 80}
+                ],
+                data2 = [
+                    {label: 'A', value: 50},
+                    {label: 'B', value: 50}
+                ],
+                data = [data1, data2],
+                chart = $('#test-4 .epoch').epoch({ type: 'pie', data: data1 });
+
+            $('#test-4 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Color Override</h2>
+            <p>
+                Override the colors as such:
+                <ul>
+                    <li>A - Pink</li>
+                    <li>B - Green</li>
+                    <li>C - Blue</li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+        </div>
+        
+        <style>
+            #test-5 .arc.a path { fill: pink; }
+            #test-5 .arc.b path { fill: green; }
+            #test-5 .arc.c path { fill: blue; }
+        </style>
+
+        <script>
+        $(function() {
+            $('#test-5 .epoch').epoch({
+                type: 'pie',
+                data: [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 45},
+                    {label: 'C', value: 35}
+                ]
+            });
+        });
+        </script>
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Categorical Colors</h2>
+            <p>
+                Correctly transition between different categorical colors sets.
+            </p>
+            <div class="epoch category10"></div>
+            <p>
+                <button data-class="category10">category10</button>
+                <button data-class="category20">category20</button>
+                <button data-class="category20b">category20b</button>
+                <button data-class="category20c">category20c</button>
+            </p>
+        </div>
+
+
+        <script>
+        $(function() {
+            var data = [],
+                className = 'category10';
+
+            for (var j = 0; j < 10; j++) {
+                data.push({label: String.fromCharCode(65+j), value: 10});
+            }
+
+            $('#test-6 .epoch').epoch({
+                type: 'pie',
+                inner: 100,
+                data: data
+            });
+
+            $('#test-6 button').on('click', function(e) {
+                $('#test-6 .epoch').removeClass(className);
+                className = $(e.target).attr('data-class');
+                $('#test-6 .epoch').addClass(className);
+            });
+        });
+        </script>
+
+        
+
+    </body>
+</html>

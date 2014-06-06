@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/epoch.css">
+
+        <script>
+        (function() {
+            window.nextTime = (function() {
+                var currentTime = parseInt(new Date().getTime() / 1000);
+                return function() { return currentTime++; }
+            })();
+
+
+            /*
+             * Normal distribution random histogram data generator.
+             */
+            var NormalData = function(layers) {
+                this.layers = layers;
+                this.timestamp = ((new Date()).getTime() / 1000)|0;
+            };
+            
+            var normal = function() {
+                var U = Math.random(),
+                    V = Math.random();
+                return Math.sqrt(-2*Math.log(U)) * Math.cos(2*Math.PI*V);
+            };
+
+            NormalData.prototype.sample = function() {
+                return parseInt(normal() * 12.5 + 50);
+            }
+
+            NormalData.prototype.rand = function() {
+                var histogram = {};
+
+                for (var i = 0; i < 1000; i ++) {
+                    var r = this.sample();
+                    if (!histogram[r]) {
+                        histogram[r] = 1;
+                    }
+                    else {
+                        histogram[r]++;
+                    }
+                }
+
+                return histogram;
+            };
+
+            NormalData.prototype.history = function(entries) {
+                if (typeof(entries) != 'number' || !entries) {
+                    entries = 60;
+                }
+
+                var history = [];
+                for (var k = 0; k < this.layers; k++) {
+                    history.push({ label: String.fromCharCode(65+k), values: [] });
+                }
+
+                for (var i = 0; i < entries; i++) {
+                    for (var j = 0; j < this.layers; j++) {
+                        history[j].values.push({time: this.timestamp, histogram: this.rand()});
+                    }
+                    this.timestamp++;
+                }
+
+                return history;
+            };
+
+            NormalData.prototype.next = function() {
+                var entry = [];
+                for (var i = 0; i < this.layers; i++) {
+                    entry.push({ time: this.timestamp, histogram: this.rand() });
+                }
+                this.timestamp++;
+                return entry;
+            }
+
+            window.NormalData = NormalData;
+
+
+            /*
+             * Beta distribution histogram data generator.
+             */
+            var BetaData = function(alpha, beta, layers) {
+                this.alpha = alpha;
+                this.beta = beta;
+                this.layers = layers;
+                this.timestamp = ((new Date()).getTime() / 1000)|0;
+            };
+
+            BetaData.prototype = new NormalData();
+
+            BetaData.prototype.sample = function() {
+                var X = 0,
+                    Y = 0;
+
+                for (var j = 1; j <= this.alpha; j++)
+                    X += -Math.log(1 - Math.random());
+
+                for (var j = 1; j <= this.beta; j++)
+                    Y += -Math.log(1 - Math.random());
+
+                return parseInt(100 * X / (X + Y));
+            }
+
+            window.BetaData = BetaData;
+
+        })();
+        </script>
+    </head>
+    <body>
+        <h1>Real-time Heatmap Plot Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Heatmap</p>
+        <ol>
+            <li><a href="#test-1">Single Series - Normal</a></li>
+            <li><a href="#test-2">Single Series - Beta</a></li>
+            <li><a href="#test-3">Single Series - Normal, Single Update</a></li>
+            <li><a href="#test-4">Single Series - Beta, Stream Update</a></li>
+            <li><a href="#test-5">Single Series - Color Override</a></li>
+            <li><a href="#test-6">Multi Series - Normal + Beta</a></li>
+            <li><a href="#test-7">Multi Series Color Override</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series - Normal</h2>
+            <p>Select random values from the normal distribution and display them with the heatmap.</p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = new NormalData(1);
+            $('#test-1 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data.history(120),
+                windowSize: 120,
+                buckets: 20
+            });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Single Series - Beta </h2>
+            <p>Select random values from the Beta(2, 5) distribution and display them with the heatmap.</p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = new BetaData(2, 5, 1);
+            $('#test-2 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data.history(120),
+                windowSize: 120,
+                buckets: 20
+            });
+        });
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Single Sieres - Normal, Single Update</h2>
+            <p>
+                Plot the normal distribution and transition a new element when the button is pressed.
+            </p>
+            <div class="epoch"></div>
+            <p><button>Next</button></p>
+        </div>
+        <script>
+        $(function() {
+            var data = new NormalData(1);
+            var chart = $('#test-3 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data.history(120),
+                windowSize: 120,
+                buckets: 20
+            });
+            $('#test-3 button').on('click', function(e) {
+                chart.push(data.next());
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Single Series - Beta, Stream Update</h2>
+            <p>
+                Plot the Beta(2, 5) distribution and begin streaming new elements each second once the
+                button is pressed.
+            </p>
+            <div class="epoch"></div>
+            <button>Play</button>
+        </div>
+
+        <script>
+        $(function() {
+            var data = new BetaData(2, 5, 1),
+                interval = null;
+            var chart = $('#test-4 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data.history(120),
+                windowSize: 120,
+                buckets: 20
+            });
+            $('#test-4 button').on('click', function(e) {
+                if (interval === null) {
+                    chart.push(data.next());
+                    interval = setInterval(function() {
+                        chart.push(data.next());
+                    }, 1000);
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');   
+                }
+            });
+        });
+        </script>
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Single Series - Color Override</h2>
+            <p>Change the bucket base color to orange and plot the Beta(2, 2) distribution.</p>
+            <div id="test-5-plot" class="epoch"></div>
+        </div>
+
+        <style>
+        #test-5-plot .a rect.bucket { fill: darkorange; }
+        </style>
+
+        <script>
+        $(function() {
+            var data = new BetaData(2, 2, 1);
+            $('#test-5 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data.history(120),
+                windowSize: 120,
+                buckets: 20
+            });
+        });
+        </script>
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Multi Series - Normal + Beta</h2>
+            <p>
+                Plot the Beta(2,5) and Normal distributions as two layers in a single heatmap. Stream elements to the plot
+                by pressing the button. The normal distribution layer is in blue and the beta in green.
+            </p>
+            <div class="epoch"></div>
+            <button>Play</button> 
+        </div>
+        <script>
+        $(function() {
+            var normal = new NormalData(1),
+                normalData = normal.history(120)[0],
+                beta = new BetaData(2, 5, 1),
+                betaData = beta.history(120)[0],
+                data = [normalData, betaData],
+                interval = null;
+
+            var chart = $('#test-6 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                windowSize: 120,
+                buckets: 20
+            });
+
+            function pushNext() {
+                chart.push([normal.next()[0], beta.next()[0]]);
+            }
+
+            $('#test-6 button').on('click', function(e) {
+                if (interval == null) {
+                    pushNext();
+                    interval = setInterval(pushNext, 1000);
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');   
+                }
+            });
+        });
+        </script>
+
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Multi Series Color Override</h2>
+            <p>
+                Plot the normal distribution and the Beta(2, 5) distribution overrding normal to be in red, and beta to
+                be in purple.
+            </p>
+            <div id="test-7-plot" class="epoch"></div>
+        </div>
+        
+        <style>
+        #test-7-plot .a rect.bucket { fill: red; }
+        #test-7-plot .b rect.bucket { fill: purple; }
+        </style>
+        
+        <script>
+        $(function() {
+            var normal = new NormalData(1),
+                normalData = normal.history(120)[0],
+                beta = new BetaData(2, 5, 1),
+                betaData = beta.history(120)[0],
+                interval = null;
+
+            normalData.label = 'A';
+            betaData.label = 'B';
+
+            var chart = $('#test-7 .epoch').epoch({
+                type: 'time.heatmap',
+                data: [normalData, betaData],
+                windowSize: 120,
+                buckets: 20
+            });
+        });
+        </script>
+    </body>
+</html>
