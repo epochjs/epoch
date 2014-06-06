@@ -17,6 +17,20 @@ them in your project (note: `X.Y.Z` is a placeholder for the current version of 
 4. Read the examples and documentation below
 5. Code, let cool, and enjoy (serves millions)
 
+
+### Developing Epoch
+
+To work on the epoch charting library itself do the following:
+
+1. Clone the repository
+2. In the clone, `npm install`
+3. then `cake build`.
+4. View `test/index.html`
+5. Scour the source for more detailed information (formal documentation coming soon)
+6. Let cool and enjoy (serves millions).
+7. Keep the documentation up-to-date run `codo` from the command line
+
+
 ### A "quick & dirty" Introduction
 
 Here are the basic steps you need to follow to create a multi-series area chart using Epoch:
@@ -871,15 +885,3 @@ The heatmap is one of the most configurable of all Epoch charts, here's a run do
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
 * `pixelRatio` - Override detected pixel ratio with an explicit value
-
-### Developing Epoch
-
-To work on the epoch charting library itself do the following:
-
-1. Clone the repository
-2. In the clone, `npm install`
-3. then `cake build`.
-4. View `docs/static.html` and `docs/time.html` for a quick overview of the available features
-5. Scour the source for more detailed information (formal documentation coming soon)
-6. Let cool and enjoy (serves millions).
-7. Keep the documentation up-to-date run `codo` from the command line
