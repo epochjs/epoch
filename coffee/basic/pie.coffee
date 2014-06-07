@@ -23,7 +23,7 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
   # Draws the pie chart
   draw: ->
     arcs = @svg.selectAll(".arc")
-      .data(@pie(@data), (d) -> d.data.label)
+      .data(@pie(@data), (d) -> d.data.category)
 
     arcs.enter().append('g')
       .attr('class', (d) -> "arc pie " + d.data.className)
@@ -33,7 +33,7 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
 
     arcs.select('text')
       .attr("transform", (d) => "translate(#{@arc.centroid(d)})")
-      .text((d) -> d.data.label)
+      .text((d) -> d.data.label or d.data.category)
 
     path = arcs.append("path")
       .attr("d", @arc)
@@ -43,6 +43,6 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
       .attr("transform", (d) => "translate(#{@arc.centroid(d)})")
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
-      .text((d) -> d.data.label)
+      .text((d) -> d.data.label or d.data.category)
 
     arcs.exit().remove()

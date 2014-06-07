@@ -23,6 +23,7 @@
             <li><a href="#test-4">Pie Tranisition II</a></li>
             <li><a href="#test-5">Color Override</a></li>
             <li><a href="#test-6">Categorical Colors</a></li>
+            <li><a href="#test-7">Pie Chart Layers without Labels</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -241,6 +242,28 @@
         </script>
 
         
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Pie Chart Layers without Labels</h2>
+            <p>
+                Correctly render a pie chart with three categories:
+                <ul>
+                    <li>30</li>
+                    <li>35</li>
+                    <li>35</li>
+                </ul>
+                when the layers are not provided labels.
+            </p>
+            <div class="epoch"></div>
+        </div>
 
+        <script>
+        $(function() {
+            $('#test-7 .epoch').epoch({
+                type: 'pie',
+                data: [ {value: 30}, {value: 35}, {value: 35} ]
+            });
+        });
+        </script>
     </body>
 </html>
