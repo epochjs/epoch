@@ -15,7 +15,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   # @return [Function] The x scale used to render the bar chart.
   x1: (x0) ->
     d3.scale.ordinal()
-      .domain((layer.label for layer in @data))
+      .domain(((if d.label? then d.label else d._category) for d in @data))
       .rangeRoundBands([0, x0.rangeBand()], .08)
 
   # @return [Function] The y scale used to render the bar chart.
@@ -34,7 +34,8 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       className = 'bar ' + layer.className.replace(/\s*layer\s*/, '')
       for entry in layer.values
         map[entry.x] ?= []
-        map[entry.x].push { label: layer.label, y: entry.y, className: className }
+        label = if layer.label? then layer.label else layer._category
+        map[entry.x].push { label: label, y: entry.y, className: className }
     ({group: k, values: v} for k, v of map)
 
   # Draws the bar char.
