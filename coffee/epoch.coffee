@@ -220,7 +220,7 @@ class Epoch.Chart.Base extends Epoch.Events
     for layer in data
       classes = ['layer']
       classes.push "category#{category}"
-      layer._category = category
+      layer.category = category
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?        
       layer.className = classes.join(' ')
       category++

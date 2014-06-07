@@ -12,7 +12,7 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
 
     # 1) Join
     layer = @svg.selectAll('.layer')
-      .data(@data, (d) -> if d.label? then d.label else d._category)
+      .data(@data, (d) -> d.category)
 
     # 2) Update (only existing)
     layer.select('.line').transition().duration(500)
