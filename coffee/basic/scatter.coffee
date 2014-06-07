@@ -18,7 +18,7 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
     [x, y] = [@x(), @y()]
 
     layer = @svg.selectAll('.layer')
-      .data(@data, (d) -> d.label)
+      .data(@data, (d) -> if d.label? then d.label else d._category)
 
     layer.enter().append('g')
       .attr('class', (d) -> d.className)
