@@ -122,6 +122,7 @@
             <li><a href="#test-5">Single Series - Color Override</a></li>
             <li><a href="#test-6">Multi Series - Normal + Beta</a></li>
             <li><a href="#test-7">Multi Series Color Override</a></li>
+            <li><a href="#test-8">Range Independent Bucketing</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -321,6 +322,41 @@
                 data: [normalData, betaData],
                 windowSize: 120,
                 buckets: 20
+            });
+        });
+        </script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Range Independent Bucketing (<a href="https://github.com/fastly/epoch/issues/41">Issue #41</a>)</h2>
+            <p>
+                Discrete bucketing of sparse histogram values should produce similar looking graphs regardless
+                of numeric relation between the range of the plot and the number of buckets.
+            </p>
+            <h3>Range [0, 100] with 20 buckets</h3>
+            <div class="chart1 epoch"></div>
+
+            <h3>Range [0, 100] with 45 buckets</h3>
+            <div class="chart2 epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var normal = new NormalData(1),
+                data = normal.history(120);
+
+            console.log(data);
+
+            $('#test-8 .chart1').epoch({
+                type: 'time.heatmap',
+                data: data,
+                windowSize: 120,
+                buckets: 20
+            });
+            $('#test-8 .chart2').epoch({
+                type: 'time.heatmap',
+                data: data,
+                windowSize: 120,
+                buckets: 45
             });
         });
         </script>
