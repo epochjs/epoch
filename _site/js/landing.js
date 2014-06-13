@@ -101,9 +101,9 @@
 $(function() {
     $('[data-plot-hover=true]').each(function(i, el) {
         $(el).on('mouseenter', function(e) {
-            $('.plot-hover', el).fadeIn(125);
+            $('.plot-hover', el).fadeIn(125).css('z-index', 20000);
         }).on('mouseleave', function(e) {
-            $('.plot-hover', el).fadeOut(125);
+            $('.plot-hover', el).fadeOut(75);
         });
     });
 });
