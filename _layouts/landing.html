@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+
+        <title>{{ page.title }}</title>
+
+        <link rel="stylesheet" href="{{ site.baseurl }}css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ site.baseurl }}css/syntax.css">
+        <link rel="stylesheet" href="{{ site.baseurl }}css/epoch.css">
+        <link rel="stylesheet" href="{{ site.baseurl }}css/site.css">
+
+        <script src="{{ site.baseurl }}js/jquery.js"></script>
+        <script src="{{ site.baseurl }}js/bootstrap.min.js"></script>
+        <script src="{{ site.baseurl }}js/d3.js"></script>
+        <script src="{{ site.baseurl }}js/epoch.js"></script>
+        <script src="{{ site.baseurl }}js/data.js"></script>
+    </head>
+    <body>
+      {% include header.html %}
+
+      {{ content }}
+
+      <script src="/js/site.js"></script>
+      <script src="/js/landing.js"></script>
+    </body>
+</html>

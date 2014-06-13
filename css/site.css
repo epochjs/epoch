@@ -16,3 +16,42 @@ body.docs #nav li {
 body.docs #nav li.active {
   border-left: 4px solid red;
 }
+
+
+/*-----------------------------------------------------------------------------
+Landing Styles
+-----------------------------------------------------------------------------*/
+
+#overview {
+    height: 320px;
+    padding: 40px 0;
+}
+
+#landing h2, #landing p {
+    text-align: center;
+}
+
+#banner {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(193,39,45,1)), color-stop(100%,rgba(163,17,22,1)));;
+    margin-top: -20px;
+    height: 440px;
+}
+
+
+#line.epoch, #bar.epoch, #area.epoch,
+#rt-area.epoch, #rt-heatmap.epoch, #rt-bar,
+#rt-line.epoch, #pie.epoch, #scatter.epoch {
+    height: 240px;
+}
+
+#pie.epoch {
+    width: 240px;
+    margin: 0 auto;
+}
+
+
+#rt-area.epoch .area {
+    stroke: rgba(0, 0, 0, 0);
+}
+
+
