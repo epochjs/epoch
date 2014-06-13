@@ -95,95 +95,21 @@
     }
 
     window.BetaData = BetaData;
-
-
-    /*
-     * Inverse Beta distribution generator.
-     */
-    var InverseBetaData = function() {
-        this.alpha = 2;
-        this.beta = 5;
-        this.layers = 1;
-        this.timestamp = ((new Date()).getTime() / 1000)|0;
-    };
-
-    InverseBetaData.prototype = new BetaData(2, 5, 1);
-
-    InverseBetaData.prototype.sample = function() {
-        var X = 0,
-            Y = 0;
-
-        for (var j = 1; j <= this.alpha; j++)
-            X += -Math.log(1 - Math.random());
-
-        for (var j = 1; j <= this.beta; j++)
-            Y += -Math.log(1 - Math.random());
-
-        return 100 - parseInt(100 * X / (X + Y));
-    }
-
-    window.InverseBetaData = InverseBetaData;
 })();
 
 
 $(function() {
-
-    /*
-    var beta = new BetaData(2, 3, 1);
-    var bannerHeatmap = $('#banner-heatmap').epoch({
-        type: 'time.heatmap',
-        data: beta.history(140),
-        windowSize: 140,
-        historySize: 200,
-        buckets: 31,
-        axes: []
+    $('[data-plot-hover=true]').each(function(i, el) {
+        $(el).on('mouseenter', function(e) {
+            $('.plot-hover', el).fadeIn(125);
+        }).on('mouseleave', function(e) {
+            $('.plot-hover', el).fadeOut(125);
+        });
     });
-
-    setInterval(function() {
-        bannerHeatmap.push(beta.next());
-    }, 1000);
-
-    bannerHeatmap.push(beta.next());
-    */
+});
 
 
-    /*
-     * Real-time heatmap example
-     */
-     /*
-    var normal = new NormalData(1),
-        normalData = normal.history(120)[0],
-        beta = new BetaData(2, 5, 1),
-        betaData = beta.history(120)[0],
-        inverseBeta = new InverseBetaData(2, 5, 1),
-        inverseData = inverseBeta.history(120)[0],
-        interval = null;
-
-    normalData.label = 'A';
-    betaData.label = 'B';
-    inverseData.label = 'C';
-
-    var heatmap = $('#heatmap-example').epoch({
-        type: 'time.heatmap',
-        data: [normalData, betaData, inverseData],
-        windowSize: 80,
-        buckets: 20,
-        axes: []
-    });
-
-    setInterval(function() {
-        heatmap.push([
-            normal.next()[0],
-            beta.next()[0],
-            inverseBeta.next()[0]
-        ]);
-    }, 1000);
-*/
-    
-
-    /*
-     * Basic Line Chart Examples
-     */
+$(function() {
     var lineData = [],
         areaData = [],
         barData = [],
@@ -220,8 +146,6 @@ $(function() {
         scatterData.push(layer);
     }
 
-    
-
     $('#line.epoch').epoch({ type: 'line', data: lineData, axes: [] });
     $('#area.epoch').epoch({ type: 'area', data: areaData, axes: [] });
     $('#bar.epoch').epoch({ type: 'time.bar', data: barData, axes: [] });
@@ -239,10 +163,6 @@ $(function() {
         axes: [],
         data: scatterData
     });
-
-    /*
-     * Real-time Line Chart Examples
-     */
 
     var rtAreaData = [
             {label: 'A', values: []},
@@ -291,7 +211,7 @@ $(function() {
         data: rtHeatmapData.history(120),
         axes: [],
         bucketPadding: 2,
-        windowSize: 40,
+        windowSize: 30,
         buckets: 20
     })
 
@@ -300,8 +220,6 @@ $(function() {
         data: rtLineData,
         axes: []
     })
-
-
 
     setInterval(function() {
         var next = [
@@ -316,10 +234,4 @@ $(function() {
         rtLine.push(next);
         rtHeatmap.push(rtHeatmapData.next());
     }, 1000);
-
-
-
-
-    //$('#rt-').epoch({ type: 'time.', data: , axes: []})
-    //$('#rt-').epoch({ type: 'time.', data: , axes: []})
 });

@@ -39,7 +39,6 @@ Landing Styles
     height: 440px;
 }
 
-
 #line.epoch, #bar.epoch, #area.epoch,
 #rt-area.epoch, #rt-heatmap.epoch, #rt-bar,
 #rt-line.epoch, #pie.epoch, #scatter.epoch {
@@ -51,9 +50,37 @@ Landing Styles
     margin: 0 auto;
 }
 
-
 #rt-area.epoch .area {
     stroke: rgba(0, 0, 0, 0);
 }
 
+#rt-heatmap.epoch .a .bucket {
+    fill: #ff7f0e;
+}
+
+div[data-plot-hover] {
+    position: relative;
+}
+
+div[data-plot-hover] div.plot-hover {
+    display: none;
+    position: absolute;
+    top: 0;
+}
+
+div[data-plot-hover] div.plot-hover a {
+    display: block;
+    width: 360px;
+    height: 240px;
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 2000;
+    line-height: 240px;
+    text-align: center;
+    font-size: 20pt;
+    color: #333;
+}
+
+div[data-plot-hover] div.plot-hover a:hover {
+    text-decoration: none;
+}
 
