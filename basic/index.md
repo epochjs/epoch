@@ -2,13 +2,11 @@
 layout: docs
 title: Basic Charts
 nav: nav/basic.html
+banner: banner/basic.html
 header-active: basic
 ---
-## Basic Charts 
 
-Epoch's basic charts are implemented using d3 over a thin class hieracrchy. The classes perform common tasks (such as setting up scales, axes, etc.) while the individual charts implement their own specialized drawing routines.
-
-### Using Basic Charts
+### Overview
 
 Every basic chart was built to use the same workflow, here's an overview:
 

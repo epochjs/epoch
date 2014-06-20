@@ -98,15 +98,15 @@
 })();
 
 
-$(function() {
-    $('[data-plot-hover=true]').each(function(i, el) {
-        $(el).on('mouseenter', function(e) {
-            $('.plot-hover', el).fadeIn(125).css('z-index', 20000);
-        }).on('mouseleave', function(e) {
-            $('.plot-hover', el).fadeOut(75);
-        });
-    });
-});
+// $(function() {
+//     $('[data-plot-hover=true]').each(function(i, el) {
+//         $(el).on('mouseenter', function(e) {
+//             $('.plot-hover', el).fadeIn(125).css('z-index', 20000);
+//         }).on('mouseleave', function(e) {
+//             $('.plot-hover', el).fadeOut(75);
+//         });
+//     });
+// });
 
 
 $(function() {
@@ -156,7 +156,7 @@ $(function() {
             {label: 'B', value: 20},
             {label: 'C', value: 10}
         ],
-        inner: 65
+        inner: 45
     })
     $('#scatter.epoch').epoch({
         type: 'scatter',

@@ -6,10 +6,13 @@ title: Epoch by Fastly
   <div id="banner">
     <div class="container">
       <div class="row">
-        <div class="col-md-12">
-          <h1>Epoch <small>by Fastly</small></h1>
-          <a href="#" class="btn btn-primary"><span class="glyphicon glyphicon glyphicon-download"></span> Download v0.5.0</a>
-          <p>A general purpose real-time charting library for application developers and visualization designers.</p>
+        <div class="col-md-6">
+          <h1 class="logo-font">Epoch</h1>
+          <p class="subtitle">A general purpose real-time charting library for building beautiful, smooth, and high performance visualizations.</p>
+          <p><a href="#" class="btn btn-default"><span class="glyphicon glyphicon glyphicon-download"></span> Download v0.5.0</a></p>
+        </div>
+        <div class="col-md-6">
+          <img src="{{ site.baseurl }}img/computer.png">
         </div>
       </div>
     </div>
@@ -20,18 +23,21 @@ title: Epoch by Fastly
     <div class="container">
       <div class="row">
       <div class="col-md-4">
+        <p><img src="{{ site.baseurl }}img/developer.svg"></p>
         <h2>Built for Developers</h2>
         <p>
           Built with developers in mind, making it easy to extend and adapt charts to your particular domain.
         </p>
       </div>
       <div class="col-md-4">
+        <p><img src="{{ site.baseurl }}img/real-time.svg"></p>
         <h2>Real-time Charting</h2>
         <p>
-          Features five beautiful, extensible, and performant real-time charts built using d3 &amp; Canvas.
+          Features five beautiful and high performance real-time charts built using d3 &amp; Canvas.
         </p>
       </div>
       <div class="col-md-4">
+        <p><img src="{{ site.baseurl }}img/style.svg"></p>
         <h2>Unified Styling</h2>
         <p>
           CSS querying engine allows you to style both SVG &amp; Canvas plots with a single stylesheet.
@@ -45,62 +51,104 @@ title: Epoch by Fastly
 
     <div class="row">
       <div class="col-md-12">
-        <h2>Explore</h2>
-        <p>See how to use Epoch to communicate your static and real-time data.</p>
+        <h2 class="explore">Explore</h2>
       </div>
     </div>
 
-    <div class="row" style="margin-bottom: 40px;">
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="area" class="epoch"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}basic/#area">Area</a></div>
+
+    <div class="row plot-display-row" style="margin-bottom: 40px;">
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}basic/#area">
+            <div id="area" class="epoch"></div> Area
+          </a>
+        </div>
       </div>
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="rt-heatmap" class="epoch"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}real-time/#heatmap">Real-time Heatmap</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}real-time/#heatmap">
+            <div id="rt-heatmap" class="epoch"></div> Real-time Heatmap
+          </a>
+        </div>
       </div>
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="line" class="epoch category20c"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}basic/#line">Line</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}basic/#line">
+            <div id="line" class="epoch category20c"></div> Line
+          </a>
+        </div>
       </div>
-      
     </div>
 
-    <div class="row" style="margin-bottom: 40px;">
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="rt-area" class="epoch category20"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}real-time/#area">Real-Time Area</a></div>
+    <div class="row plot-display-row" style="margin-bottom: 40px;">
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}real-time/#area">
+            <div id="rt-area" class="epoch category20"></div> Real-Time Area
+          </a>
+        </div>
       </div>
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="pie" class="epoch category10"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}basic/#pie">Pie</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}basic/#pie">
+            <div id="pie" class="epoch category10"></div> Pie
+          </a>
+        </div>
       </div>
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="rt-bar" class="epoch category20c"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}real-time/#bar">Real-Time Bar</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}real-time/#bar">
+            <div id="rt-bar" class="epoch category20c"></div> Real-Time Bar
+          </a>
+        </div>
       </div>
     </div>
     
-    <div class="row">
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="bar" class="epoch category20b"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}basic/#bar">Bar</a></div>
+    <div class="row plot-display-row">
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}basic/#bar">
+            <div id="bar" class="epoch category20b"></div> Bar
+          </a>
+        </div>
       </div>
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="rt-line" class="epoch category10"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}real-time/#line">Real-Time Line</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}real-time/#line">
+            <div id="rt-line" class="epoch category10"></div> Real-Time Line
+          </a>
+        </div>
       </div>
-      
-      <div class="col-md-4" data-plot-hover="true">
-        <div id="scatter" class="epoch category10"></div>
-        <div class="plot-hover"><a href="{{ site.baseurl }}basic/#scatter">Scatter</a></div>
+      <div class="col-md-4">
+        <div class="plot-display">
+          <a href="{{ site.baseurl }}basic/#scatter">
+            <div id="scatter" class="epoch category10"></div> Scatter
+          </a>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div id="footer" class="row">
-      <div class="col-md-12">
-        <p>Designed and built by <a href="http://github.com/rsandor">@rsandor</a> at Fastly in San Francisco, CA.</p>
-        <p class="text-center"><small>Copyright &copy; <span class="year"></span> Fastly, Inc.</small></p>
+  <div id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="social">
+            <iframe src="http://ghbtns.com/github-btn.html?user=fastly&repo=epoch&type=watch&count=true&size=large"
+                    allowtransparency="true" frameborder="0" scrolling="0" width="150" height="30"></iframe>
+
+            <iframe src="http://ghbtns.com/github-btn.html?user=fastly&repo=epoch&type=fork&count=true&size=large"
+                    allowtransparency="true" frameborder="0" scrolling="0" width="150" height="30"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <p>Designed and built by <a href="http://github.com/rsandor">@rsandor</a> at Fastly in San Francisco, CA with <a href="https://github.com/fastly/epoch/graphs/contributors">the contributers</a>.</p>
+          <p>Software released under the <a href="https://github.com/fastly/epoch/blob/master/LICENSE">MIT License</a>.</p>
+          <p class="text-center"><small>Copyright &copy; <span class="year"></span> Fastly, Inc.</small></p>
+        </div>
       </div>
     </div>
   </div>

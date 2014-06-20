@@ -1,3 +1,178 @@
+@font-face {
+  font-family: 'blenda';
+  src: url('../fonts/blenda_script-webfont.eot');
+  src: url('../fonts/blenda_script-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/blenda_script-webfont.woff') format('woff'),
+       url('../fonts/blenda_script-webfont.ttf') format('truetype'),
+       url('../fonts/blenda_script-webfont.svg#blenda_scriptregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.logo-font, .navbar .navbar-brand {
+  font-family: blenda;
+}
+
+.navbar .navbar-brand {
+  font-size: 32pt;
+  color: red;
+  line-height: 36px;
+}
+
+.navbar {
+  max-height: 72px;
+  height: 72px;
+  background-color: #f3f3f3;
+}
+
+.navbar-fixed-top .navbar-collapse, 
+.navbar-fixed-bottom .navbar-collapse {
+  max-height: 72px;
+  height: 72px;
+}
+
+.navbar .nav.navbar-nav {
+  height: 72px;
+  line-height: 72px;
+  float: right;
+}
+
+.navbar .nav.navbar-nav li a {
+  line-height: 36px;
+  height: 72px;
+}
+
+a { color: #f00;}
+a:hover { color: #d11; }
+
+
+
+/*-----------------------------------------------------------------------------
+Landing Styles
+-----------------------------------------------------------------------------*/
+
+#banner h1 {
+  margin-top: 80px;
+  color: white;
+  font-size: 72px;
+}
+
+body.landing #landing #banner img {
+  margin-top: 55px;
+}
+
+body.landing #landing #banner p {
+  color: #efefef;
+  font-size: 20pt;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+body.landing #landing #banner p .btn {
+  font-size: 16pt;
+  color: rgba(237,28,36,1);
+}
+
+body.landing #overview {
+  /*height: 320px;*/
+  padding: 80px 0;
+  background: #f9f9f9;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+body.landing #overview img {
+  width: 50%;
+}
+
+
+body.landing #landing h2, 
+body.landing #landing p {
+  text-align: center;
+}
+
+body.landing #banner {
+  background: rgb(237,28,36); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(237,28,36,1) 0%, rgba(193,39,32,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(237,28,36,1)), color-stop(100%,rgba(193,39,32,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(237,28,36,1) 0%,rgba(193,39,32,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(237,28,36,1) 0%,rgba(193,39,32,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(237,28,36,1) 0%,rgba(193,39,32,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(237,28,36,1) 0%,rgba(193,39,32,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed1c24', endColorstr='#c12720',GradientType=0 ); /* IE6-9 */
+  margin-top: -20px;
+  height: 440px;
+}
+
+body.landing .explore {
+  font-family: blenda;
+  font-size: 32pt;
+  margin: 40px 0;
+}
+
+body.landing .plot-display .epoch {
+  width: 80%;
+  height: 190px;
+  margin: 20px auto;
+}
+
+body.landing #pie.epoch {
+  width: 190px;
+}
+
+body.landing .plot-display-row .col-md-4 .plot-display a {
+  display: block;
+  margin: 0 0 20px 0;
+  font-size: 18pt;
+}
+
+body.landing #rt-area.epoch .area {
+  stroke: rgba(0, 0, 0, 0);
+}
+
+body.landing #rt-heatmap.epoch .a .bucket {
+  fill: #ff7f0e;
+}
+
+body.landing .plot-display-row .col-md-4 .plot-display {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+body.landing #footer {
+  background-color: #f9f9f9;
+  margin: 60px 0 0 0;
+  padding: 40px 0;
+  border-top: 1px solid #f0f0f0;
+}
+
+body.landing #footer #social {
+  width: 310px;
+  margin: 0 auto 30px auto;
+}
+
+
+/*-----------------------------------------------------------------------------
+Docs Styles
+-----------------------------------------------------------------------------*/
+
+body.docs #banner {
+  margin-top: -20px;
+  height: 220px;
+  margin-bottom: 20px;
+}
+
+body.docs #banner h1 {
+  color: white;
+  font-size: 48pt;
+  margin-top: 35px;
+}
+
+body.docs #banner p {
+  color: #ddd;
+  font-size: 16pt;
+}
+
 body.docs h3 {
   margin-top: 16px;
   margin-bottom: 20px;
@@ -6,80 +181,24 @@ body.docs h3 {
 }
 
 body.docs #nav.affix {
-  right: 9px;
+  width: inherit;
+  top: 20px;
 }
 
 body.docs #nav li {
   border-left: 4px solid transparent;
 }
 
+body.docs #nav.affix li a {
+  width: inherit;
+}
+
 body.docs #nav li.active {
   border-left: 4px solid red;
 }
 
-
-/*-----------------------------------------------------------------------------
-Landing Styles
------------------------------------------------------------------------------*/
-
-#overview {
-    height: 320px;
-    padding: 40px 0;
-    background: #f9f9f9;
-    border-bottom: 1px solid #f0f0f0;
+body.docs #nav-dummy {
+  /*display: none;*/
 }
 
-#landing h2, #landing p {
-    text-align: center;
-}
-
-#banner {
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(193,39,45,1)), color-stop(100%,rgba(163,17,22,1)));;
-    margin-top: -20px;
-    height: 440px;
-}
-
-#line.epoch, #bar.epoch, #area.epoch,
-#rt-area.epoch, #rt-heatmap.epoch, #rt-bar,
-#rt-line.epoch, #pie.epoch, #scatter.epoch {
-    height: 240px;
-}
-
-#pie.epoch {
-    width: 240px;
-    margin: 0 auto;
-}
-
-#rt-area.epoch .area {
-    stroke: rgba(0, 0, 0, 0);
-}
-
-#rt-heatmap.epoch .a .bucket {
-    fill: #ff7f0e;
-}
-
-div[data-plot-hover] {
-    position: relative;
-}
-
-div[data-plot-hover] div.plot-hover {
-    display: none;
-    position: absolute;
-    top: 0;
-}
-
-div[data-plot-hover] div.plot-hover a {
-    display: block;
-    width: 360px;
-    height: 240px;
-    background-color: rgba(255, 255, 255, 0.75);
-    line-height: 240px;
-    text-align: center;
-    font-size: 20pt;
-    color: #333;
-}
-
-div[data-plot-hover] div.plot-hover a:hover {
-    text-decoration: none;
-}
 

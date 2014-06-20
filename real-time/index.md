@@ -2,6 +2,7 @@
 layout: docs
 title: Basic Charts
 nav: nav/realtime.html
+banner: banner/real-time.html
 header-active: real-time
 ---
 ## Real-time

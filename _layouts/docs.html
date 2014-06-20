@@ -20,13 +20,22 @@
     <body class="docs">
       {% include header.html %}
       
+      <div id="banner">
+        <div class="container">
+          <div class="row">
+            {% include {{page.banner}} %}
+          </div>
+        </div>
+      </div>
+
       <div class="container">
         <div class="row">
-          <div id="content" class="col-md-9">
-            {{ content }}
-          </div>
-          <div id="nav" class="col-md-3">
+          <div id="nav" class="col-md-2">
             {% include {{page.nav}} %}
+          </div>
+          <div id="nav-dummy" class="col-md-2"></div>
+          <div id="content" class="col-md-10">
+            {{ content }}
           </div>
         </div>
 
@@ -38,5 +47,6 @@
       </div>
 
       <script src="/js/site.js"></script>
+      <script src="/js/docs.js"></script>
     </body>
 </html>
