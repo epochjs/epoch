@@ -6,7 +6,7 @@
 
     var affix = $('body.docs #nav').affix({
         offset: {
-          top: 240,
+          top: 92,
           left: function() { return offset; },
           bottom: function () {
             return (this.bottom = $('.footer').outerHeight(true))
