@@ -6,43 +6,46 @@ header-active: getting-started
 
 ## Getting Started
 
-1. [d3](https://github.com/mbostock/d3) and [jQuery](https://github.com/jquery/jquery) are required, so make sure you are including
-them in your page.
-2. Locate and download the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files in this repository, and place
-them in your project (note: `X.Y.Z` is a placeholder for the current version of Epoch).
-3. Include all the required JavaScript and CSS files into your source in the usual manner (probably in the head of the HTML document).
-4. Read the examples and documentation below
-5. Code, let cool, and enjoy (serves millions)
+This page will help you get started using Epoch in your projects.
 
-### A "quick & dirty" Introduction
+### Prerequisites
 
-Here are the basic steps you need to follow to create a multi-series area chart using Epoch:
+After [downloading epoch](http://fastly.github.io/download/) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
 
-**1) Include the appropriate scripts and styles**
+1. [jQuery](https://github.com/jquery/jquery)
+2. [d3](https://github.com/mbostock/d3)
+
+These scripts must be loaded before adding Epoch into your page, like so:
 
 ```html
-<head>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/d3.min.js"></script>
-  <script src="js/epoch.X.Y.Z.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/epoch.X.Y.Z.min.css">
-</head>
+<script src="js/jquery.min.js"></script>
+<script src="js/d3.min.js"></script>
+<script src="js/epoch.X.Y.Z.min.js"></script>
 ```
 
-**2) Create the a container div for the chart**
+Finally you'll need to include the Epoch CSS in the page's head section:
 
 ```html
-<div id="area" class="category10" style="width: 700px; height: 200px;"></div>
+<link rel="stylesheet" type="text/css" href="css/epoch.X.Y.Z.min.css">
 ```
 
-* Epoch will size the chart to fix the explicit dimensions of the container
-* The class name "category10" refers to the categorical color scheme to use
-  when rendering the chart. Other options are `category20` (default), 
-  `category20b`, and `category20c`. See the 
-  [d3 categorical color docs](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors)
-  for more information.
+At this point you're ready to start using Epoch to build and place charts in your application.
 
-**3) Setup the chart's data**
+
+### Building a Chart
+
+Building a chart using epoch is a snap and each type of chart follows the same basic workflow. In this section we will run through the steps you'll use when adding charts to your pages.
+
+#### 1. Place a chart container in the page
+
+```html
+<div id="area" class="category10" style="height: 200px;"></div>
+```
+
+Epoch will automatically size the chart to fit the explicit dimensions of the container. This way you can build the basic layout of your site and use CSS to control the size and placement of the charts. The class name `category10` refers to the categorical color scheme to use when rendering the chart. There are three other default options you can use, namely: `category20`, `category20b`, and `category20c`. Categorical colors are based directly on those used by d3, for more information see the [d3 categorical color docs](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors).
+
+
+#### 2. Format your Data
 
 ```javascript
 var data = [
@@ -51,22 +54,18 @@ var data = [
 ];
 ```
 
-* Each chart type expects a certain data format. For the most part they are very similar to
-  the example given above. Some types of charts (e.g. pie, guage, heatmap) require rather
-  different formats. Make sure to read the chart-by-chart documentation below to see exactly
-  what each type expects.
+Each chart type expects a certain data format. For the most part they are very similar to the example given above. Some types of charts (e.g. pie, guage, heatmap) require rather different formats. Make sure to read the chart-by-chart documentation below to see exactly what each chart expects.
 
-**4) Initialize, place, and draw the chart**
+#### 3. Initialize, Place, and Draw
 
 ```javascript
 var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
 ```
 
-* We use custom jQuery method `.epoch` to create the chart. It will automatically place it as child
-  of the our container div and size it to fill the div completely.
-* The `.epoch` function returns a programming interface with with to interact with the chart
-  (in this example it is assigned to the `areaChartInstance` variable). For basic charts such as
-  this it is used to update the chart's data, for example: `areaChartInstance.update(myNewData);`.
+Use the custom jQuery method `.epoch` to create the chart. The method will automatically insert the chart as a direct child of the selected container (in this case the `div` with an id of `area`). After the elements have been placed the method will resize the chart to completely fill the container and draw the chart based on the data it was given.
+
+The `.epoch` function returns a chart class instance that can be used to interact with the chart post initialization. In the example above we keep a reference to the chart instance in the `areaChartInstance` variable. For basic charts, such at the area chart we created, this instance can be used to update the chart's data via the `update` method.
+
 
 ### Visual Styles
 
@@ -129,7 +128,7 @@ In the future we will be creating SCSS and LESS plugins with mixins you can use 
 
 #### Specific Overrides
 
-For multi-series charts, the data format requires that you supply a `label` for each series. We create a "dasherized"
+For multi-series charts, the data format lets your supply an optional `label` for each series. We create a "dasherized"
 class name from this label and associate it with the rendered output of the chart. For instance, take the following
 data for an area chart:
 
