@@ -34,7 +34,7 @@
     }
     .category#{$i} {
       .line { stroke: nth($list, $i); }
-      .area, .dot { fill: nth($list, $i); }
+      .area, .dot { fill: nth($list, $i); stroke: rgba(0,0,0,0); }
     }
     .arc.category#{$i} path {
       fill: nth($list, $i);
