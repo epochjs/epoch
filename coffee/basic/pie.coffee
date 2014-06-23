@@ -22,6 +22,8 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
 
   # Draws the pie chart
   draw: ->
+    @svg.selectAll('.arc').remove()
+
     arcs = @svg.selectAll(".arc")
       .data(@pie(@data), (d) -> d.data.category)
 
@@ -45,4 +47,3 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
       .style("text-anchor", "middle")
       .text((d) -> d.data.label or d.data.category)
 
-    arcs.exit().remove()

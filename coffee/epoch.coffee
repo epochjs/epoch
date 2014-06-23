@@ -315,6 +315,10 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
 # This allows canvas based visualizations to use the same styles as their
 # SVG counterparts.
 class QueryCSS
+  # Handles automatic container id generation
+  containerCount = 0
+  nextContainerId = -> "epoch-container-#{containerCount++}"
+
   # Key-Value cache for computed styles that we found using this class.
   @cache = {}
 
@@ -338,20 +342,11 @@ class QueryCSS
   # @param [String] selector Selector from which to derive the styles
   # @param container The containing element for a chart.
   @hash: (selector, container) ->
-    id = container.attr('id')
-    if (klass = container.attr('class'))?
-      klass = klass.split(/\s+/).join('.') 
-
-    pre = if id? and klass?
-      "\##{id}.#{klass}"
-    else if id?
-      "\##{id}"
-    else if klass?
-      ".#{klass}"
-    else
-      ""
-
-    return "#{pre}__#{selector}"
+    containerId = $(container).data('epoch-container-id')
+    unless containerId?
+      containerId = nextContainerId()
+      $(container).data('epoch-container-id', containerId)
+    return "#{containerId}__#{selector}"
 
   # @return The computed styles for the given selector in the given container element.
   # @param [String] selector Selector from which to derive the styles.
@@ -362,33 +357,45 @@ class QueryCSS
     cache = QueryCSS.cache[cacheKey]
     return cache if cache?
 
-    # 1) Create Reference SVG
-    clone = $(container).clone().html('<svg></svg>')
-    clone.removeAttr('style')
+    # 1) Build a full reference tree (parents, container, and selector elements)
+    parents = []
+    for element in $(container).parents()
+      break if element.tagName.toLowerCase() == 'body'
+      parents.unshift(element)
+    parents.push $(container).get(0)
 
-  
-    QueryCSS.getContainer().append(clone)
-    svg = $('svg', clone)
+    selectorList = []
+    for element in parents
+      sel = element.tagName.toLowerCase()
+      if element.id? and element.id.length > 0
+        sel += '#' + element.id
+      if element.className? and element.className.length > 0
+        sel += '.' + $.trim(element.className).replace(/\s+/g, '.')
+      selectorList.push sel
 
-    # 2) Create Reference Element
-    levels = selector.split(/\s+/)
-    parent = root = put(levels.shift())
-    while levels.length
-      el = put(levels.shift())
+    selectorList.push('svg')
+
+    for subSelector in $.trim(selector).split(/\s+/)
+      selectorList.push(subSelector)
+
+    parent = root = put(selectorList.shift())
+    while selectorList.length
+      el = put(selectorList.shift())
       parent.appendChild el
       parent = el
-    svg.html(root)
-    ref = $(selector, svg)
 
-    # 3) Collect & Cache Styles
+    # 2) Place the reference tree and fetch styles given the selector
+    QueryCSS.getContainer().append(root)
+    ref = $(selector, root)
     styles = {}
     for name in QueryCSS.styleList
       styles[name] = ref.css(name)
     QueryCSS.cache[cacheKey] = styles
 
-    # 4) Cleanup and return the styles
-    $(clone, QueryCSS.getContainer()).remove()
+    # 3) Cleanup and return the styles
+    QueryCSS.getContainer().html('')
     return styles
+
 
 Epoch.QueryCSS = QueryCSS
 
