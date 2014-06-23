@@ -7,7 +7,12 @@ class Epoch.Time.Line extends Epoch.Time.Plot
     styles = @getStyles "g.#{className.replace(/\s/g,'.')} path.line"
     @ctx.fillStyle = styles.fill
     @ctx.strokeStyle = styles.stroke
-    @ctx.lineWidth = styles['stroke-width'].replace('px', '')
+    @ctx.lineWidth = @pixelRatio * styles['stroke-width'].replace('px', '')
+
+  y: ->
+    d3.scale.linear()
+      .domain(@extent((d) -> d.y))
+      .range([@innerHeight() - @pixelRatio/2, @pixelRatio])
 
   # Draws the line chart.
   draw: (delta=0) ->
