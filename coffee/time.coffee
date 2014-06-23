@@ -392,7 +392,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('dy', 19)
         .text(@options.tickFormats.bottom(tick.time))
 
-      tick.bottomEl = $(g[0])
+      tick.bottomEl = jQuery(g[0])
 
     if @hasAxis('top')
       g = @topAxis.append('g')
@@ -408,7 +408,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('dy', -10)
         .text(@options.tickFormats.top(tick.time))
 
-      tick.topEl = $(g[0])
+      tick.topEl = jQuery(g[0])
 
     if reverse
       @_ticks.unshift tick

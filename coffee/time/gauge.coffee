@@ -30,7 +30,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       .attr('height', @height)
       .attr('class', 'gauge-labels')
 
-    $(@svg[0]).css
+    jQuery(@svg[0]).css
       'position': 'absolute'
       'z-index': '1'
 

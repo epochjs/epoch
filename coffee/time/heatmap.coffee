@@ -107,7 +107,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @paintHeight = @height * @pixelRatio
 
     # Create the "memory only" canvas and nab the drawing context
-    @paint = $("<canvas width='#{@paintWidth}' height='#{@paintHeight}'>").get(0)
+    @paint = jQuery("<canvas width='#{@paintWidth}' height='#{@paintHeight}'>").get(0)
     @p = @paint.getContext('2d')
 
     # Paint the initial data (rendering backwards from just before the fixed paint position)
