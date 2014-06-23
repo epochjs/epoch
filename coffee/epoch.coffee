@@ -6,19 +6,19 @@ window.Epoch.Formats ?= {}
 
 # @return [Boolean] <code>true</code> if the given value is an array, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isArray = (v) -> $.type(v) == 'array'
+Epoch.isArray = (v) -> jQuery.type(v) == 'array'
 
 # @return [Boolean] <code>true</code> if the given value is an object, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isObject = (v) -> $.type(v) == 'object'
+Epoch.isObject = (v) -> jQuery.type(v) == 'object'
 
 # @return [Boolean] <code>true</code> if the given value is a string, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isString = (v) -> $.type(v) == 'string'
+Epoch.isString = (v) -> jQuery.type(v) == 'string'
 
 # @return [Boolean] <code>true</code> if the given value is a function, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isFunction = (v) -> $.type(v) == 'function'
+Epoch.isFunction = (v) -> jQuery.type(v) == 'function'
 
 # Sends a warning to the developer console with the given message.
 # @param [String] msg Message for the warning.
@@ -193,14 +193,14 @@ class Epoch.Chart.Base extends Epoch.Events
 
     @setData(@options.data or [])
 
-    @el = $(@options.el) if @options.el?
+    @el = jQuery(@options.el) if @options.el?
 
     @width = @options.width
     @height = @options.height
 
     if @el?
-      @width = $(@el).width() unless @width?
-      @height = $(@el).height() unless @height?
+      @width = jQuery(@el).width() unless @width?
+      @height = jQuery(@el).height() unless @height?
     else
       @width = defaults.dimensions.width unless @width?
       @height = defaults.dimensions.height unless @height?
@@ -278,7 +278,7 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
   # @option options [Array] data Layered data used to render the chart.
   constructor: (@options={}) ->
     super(@options)
-    @canvas = $("<canvas></canvas>")
+    @canvas = jQuery("<canvas></canvas>")
 
     if @options.pixelRatio?
       @pixelRatio = @options.pixelRatio
@@ -335,17 +335,17 @@ class QueryCSS
   # Gets the reference element container.
   @getContainer: ->
     return QueryCSS.container if QueryCSS.container?
-    $('body').append('<div id="_canvas_css_reference"></div>')
-    QueryCSS.container = $('#_canvas_css_reference', 'body')
+    jQuery('body').append('<div id="_canvas_css_reference"></div>')
+    QueryCSS.container = jQuery('#_canvas_css_reference', 'body')
 
   # @return [String] A unique identifier for the given container and selector.
   # @param [String] selector Selector from which to derive the styles
   # @param container The containing element for a chart.
   @hash: (selector, container) ->
-    containerId = $(container).data('epoch-container-id')
+    containerId = jQuery(container).data('epoch-container-id')
     unless containerId?
       containerId = nextContainerId()
-      $(container).data('epoch-container-id', containerId)
+      jQuery(container).data('epoch-container-id', containerId)
     return "#{containerId}__#{selector}"
 
   # @return The computed styles for the given selector in the given container element.
@@ -359,10 +359,10 @@ class QueryCSS
 
     # 1) Build a full reference tree (parents, container, and selector elements)
     parents = []
-    for element in $(container).parents()
+    for element in jQuery(container).parents()
       break if element.tagName.toLowerCase() == 'body'
       parents.unshift(element)
-    parents.push $(container).get(0)
+    parents.push jQuery(container).get(0)
 
     selectorList = []
     for element in parents
@@ -370,12 +370,12 @@ class QueryCSS
       if element.id? and element.id.length > 0
         sel += '#' + element.id
       if element.className? and element.className.length > 0
-        sel += '.' + $.trim(element.className).replace(/\s+/g, '.')
+        sel += '.' + jQuery.trim(element.className).replace(/\s+/g, '.')
       selectorList.push sel
 
     selectorList.push('svg')
 
-    for subSelector in $.trim(selector).split(/\s+/)
+    for subSelector in jQuery.trim(selector).split(/\s+/)
       selectorList.push(subSelector)
 
     parent = root = put(selectorList.shift())
@@ -386,7 +386,7 @@ class QueryCSS
 
     # 2) Place the reference tree and fetch styles given the selector
     QueryCSS.getContainer().append(root)
-    ref = $(selector, root)
+    ref = jQuery(selector, root)
     styles = {}
     for name in QueryCSS.styleList
       styles[name] = ref.css(name)
