@@ -31,7 +31,7 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
     @svg.selectAll('.layer').remove()
 
     layer = @svg.selectAll('.layer')
-      .data(@data, (d) -> d.label)
+      .data(@data, (d) -> d.category)
 
     layer.select('.area')
       .attr('d', (d) -> area(d.values))

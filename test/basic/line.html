@@ -20,6 +20,7 @@
             <li><a href="#test-6">Single to Multi Series Transition</a></li>
             <li><a href="#test-7">Color Override</a></li>
             <li><a href="#test-8">Categorical Colors</a></li>
+            <li><a href="#test-9">Multi Series without Labels</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -344,5 +345,35 @@
             });
         });
         </script>
+
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Multi Series without Labels</h2>
+            <p>
+                Correctly render a multi-series plot of:
+                <ul>
+                    <li><code>y = sin(x)</code></li>
+                    <li><code>y = cos(x)</code></li>
+                </ul>
+                where the layers are given without labels.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [{values: []}, {values: []}],
+                length = 128;
+
+            for (var i = 0; i <= length; i++) {
+                var x = i * 4 * Math.PI / length;
+                data[0].values.push({x: x, y: Math.sin(x)});
+                data[1].values.push({x: x, y: Math.cos(x)});
+            }
+
+            $('#test-9 .epoch').epoch({ type: 'line', data: data });
+        });
+        </script>
+
     </body>
 </html>

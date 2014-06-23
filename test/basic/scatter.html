@@ -18,6 +18,7 @@
             <li><a href="#test-5">Multi Series Transition II</a></li>
             <li><a href="#test-6">Color Override</a></li>
             <li><a href="#test-7">Categorical Colors</a></li>
+            <li><a href="#test-8">Multi Series without Labels</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -267,11 +268,8 @@
             for (var i = 0; i < data.length; i++) {
                 var x = i * Math.PI * 2 / data.length,
                     y = Math.sin(x);
-                console.log(x, y);
                 data[i].values.push({x: x, y: y});
             }
-
-            console.log(data);
 
             $('#test-7 .epoch').epoch({
                 type: 'scatter',
@@ -287,5 +285,30 @@
             });
         });
         </script>
+
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Multi Series without Labels</h2>
+            <p>Correctly render two random scatter plots when labels are not specified for the layers.</p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [{values: []}, {values: []}],
+                length = 64;
+
+            for (var i = 0; i < length; i++) {
+                for (var j = 0; j < data.length; j++) {
+                    var x = Math.random() * 100,
+                        y = Math.random() * 20;
+                    data[j].values.push({x: x, y: y});
+                }
+            }
+
+            $('#test-8 .epoch').epoch({type: 'scatter', data: data});
+        });
+        </script>
+
     </body>
 </html>
