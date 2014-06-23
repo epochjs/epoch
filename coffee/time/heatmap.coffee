@@ -6,6 +6,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     bucketRange: [0, 100]
     opacity: 'linear'
     bucketPadding: 2
+    paintZeroValues: false
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -159,7 +160,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       max = 0
       for entry in entries
         max += (entry.buckets[bucket] / sum) * maxTotal
-      if sum > 0
+      if sum > 0 or @options.paintZeroValues
         @p.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
         @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
       j--
