@@ -6,6 +6,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     bucketRange: [0, 100]
     opacity: 'linear'
     bucketPadding: 2
+    paintZeroValues: false
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -126,6 +127,13 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     while (--entryIndex >= 0) and (--drawColumn >= 0)
       @_paintEntry(entryIndex, drawColumn)
 
+  # Computes the correct color for a given bucket.
+  # @param [Integer] value Normalized value at the bucket.
+  # @param [Integer] max Normalized maximum for the column.
+  # @param [String] color Computed base color for the bucket.
+  _computeColor: (value, max, color) ->
+    Epoch.toRGBA(color, @_colorFn(value, max))
+
   # Paints a single entry column on the paint canvas at the given column.
   # @param [Integer] entryIndex Index of the entry to paint.
   # @param [Integer] drawColumn Column on the paint canvas to place the visualized entry.
@@ -159,8 +167,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       max = 0
       for entry in entries
         max += (entry.buckets[bucket] / sum) * maxTotal
-      if sum > 0
-        @p.fillStyle = Epoch.toRGBA(color, @_colorFn(sum, max))
+      if sum > 0 or @options.paintZeroValues
+        @p.fillStyle = @_computeColor(sum, max, color)
         @p.fillRect xPos, (j-1) * h, w-@options.bucketPadding, h-@options.bucketPadding
       j--
 
