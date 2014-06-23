@@ -50,22 +50,27 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # for the visualization.
   # @param [Object] entry Entry to prepare for visualization.
   _prepareEntry: (entry) ->
-    prepared = { time: entry.time, max: 0, buckets: {} }
-    [min, max] = @options.bucketRange
-    size = (max - min) / @options.buckets
+    prepared =
+      time: entry.time
+      max: 0
+      buckets: (0 for i in [0...@options.buckets])
 
-    for i in [0...@options.buckets]
-      prepared.buckets[min + size * (i+1)] = 0
+    # Bucket size = (Range[1] - Range[0]) / number of buckets
+    bucketSize = (@options.bucketRange[1] - @options.bucketRange[0]) / @options.buckets
 
     for value, count of entry.histogram
-      for i in [0...@options.buckets]
-        bucketMax = min + size * (i+1)
-        if value < bucketMax or i == (@options.buckets - 1)
-          prepared.buckets[bucketMax] += count
-          break
+      index = parseInt(value / bucketSize)
 
-    for max, count of prepared.buckets
-      prepared.max = Math.max(prepared.max, count)
+      # Bound the histogram to the range (aka, handle out of bounds values)
+      if index < 0
+        index = 0
+      else if index >= @options.buckets
+        index = @options.buckets - 1
+
+      prepared.buckets[index] += count
+
+    for i in [0...prepared.buckets.length]
+      prepared.max = Math.max(prepared.max, prepared.buckets[i])
 
     return prepared
 
@@ -131,13 +136,12 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     drawColumn ?= @options.windowSize
 
     entries = []
-    bucketTotals = {}
+    bucketTotals = (0 for i in [0...@options.buckets])
     maxTotal = 0
 
     for layer in @data
       entry = layer.values[entryIndex]
       for bucket, count of entry.buckets
-        bucketTotals[bucket] ?= 0
         bucketTotals[bucket] += count
       maxTotal += entry.max
       styles = @getStyles ".#{layer.className.split(' ').join('.')} rect.bucket"
@@ -149,6 +153,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @p.clearRect xPos, 0, w, @paintHeight
 
     j = @options.buckets
+
     for bucket, sum of bucketTotals
       color = @_avgLab(entries, bucket)
       max = 0
