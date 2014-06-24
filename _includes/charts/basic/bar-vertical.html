@@ -1,0 +1,16 @@
+<div id="bar-vertical-example" class="epoch" style="height: 240px"></div>
+
+<script>
+$(function() {
+    var data = [{ values: [] }];
+
+    for (var i = 0; i < 8; i++) {
+        data[0].values.push({ x: String.fromCharCode(65 + i), y: i + 1});
+    }
+    $('#bar-vertical-example').epoch({
+        type: 'bar',
+        orientation: 'vertical',
+        data: data
+    });
+});
+</script>
