@@ -22,6 +22,8 @@
             <li><a href="#test-8">Layer Color Override</a></li>
             <li><a href="#test-9">Categorical Color Switching</a></li>
             <li><a href="#test-10">Multi Series without Labels</a></li>
+            <li><a href="#test-11">Vertically Oriented Single Series</a></li>
+            <li><a href="#test-11">Vertically Oriented Multi Series</a></li>
         </ol>
 
 
@@ -449,6 +451,36 @@
                 tickFormats: {
                     bottom: function(d) { return d.toFixed(1); }
                 }
+            });
+        });
+        </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>11. Vertically Oriented Single Series</h2>
+            <p>
+                Correctly render the single series plot of:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 30</li>
+                    <li>C - 60</li>
+                </ul>
+                using a vertical orientation.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [{values: [
+                {x: 'A', y: 20},
+                {x: 'B', y: 30},
+                {x: 'C', y: 60}
+            ]}];
+
+            $('#test-11 .epoch').epoch({
+                type: 'bar',
+                orientation: 'vertical',
+                data: data
             });
         });
         </script>
