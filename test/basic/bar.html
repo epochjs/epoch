@@ -23,7 +23,8 @@
             <li><a href="#test-9">Categorical Color Switching</a></li>
             <li><a href="#test-10">Multi Series without Labels</a></li>
             <li><a href="#test-11">Vertically Oriented Single Series</a></li>
-            <li><a href="#test-11">Vertically Oriented Multi Series</a></li>
+            <li><a href="#test-12">Vertically Oriented Multi Series</a></li>
+            <li><a href="#test-13">Vertically Oriented Multi Series Transition</a></li>
         </ol>
 
 
@@ -481,6 +482,82 @@
                 type: 'bar',
                 orientation: 'vertical',
                 data: data
+            });
+        });
+        </script>
+
+        <!-- Test 12 -->
+        <div id="test-12" class="test">
+            <h2>12. Vertically Oriented Multi Series</h2>
+            <p>
+                Correctly render the multi series plot of:
+                <ul>
+                    <li>A - 10, 30</li>
+                    <li>B - 20, 50</li>
+                    <li>C - 60, 10</li>
+                </ul>
+                using a vertical orientation.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 60}] },
+                    { values: [{x: 'A', y: 30}, {x: 'B', y: 50}, {x: 'C', y: 10}] }
+                ];
+
+            $('#test-12 .epoch').epoch({
+                type: 'bar',
+                orientation: 'vertical',
+                data: data
+            });
+        });
+        </script>
+
+        <!-- Test 13 -->
+        <div id="test-13" class="test">
+            <h2>13. Vertically Oriented Multi Series Transition</h2>
+            <p>
+                Correctly render the vertically oriented multi series plot of:
+                <ul>
+                    <li>A - 10, 10</li>
+                    <li>B - 20, 20</li>
+                    <li>C - 30, 30</li>
+                </ul>
+                and transition to the single series plot:
+                <ul>
+                    <li>A - 5</li>
+                    <li>B - 10</li>
+                    <li>C - 40</li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Multi</button>
+                <button data-index="1">Single</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data1 = [
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+                ],
+                data2 = [
+                    { values: [{x: 'A', y: 5}, {x: 'B', y: 10}, {x: 'C', y: 40}] }
+                ],
+                data = [data1, data2];
+
+            var chart = $('#test-13 .epoch').epoch({
+                type: 'bar',
+                orientation: 'vertical',
+                data: data1
+            });
+
+            $('#test-13 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
             });
         });
         </script>
