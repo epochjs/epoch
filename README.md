@@ -20,7 +20,27 @@ Epoch has two external library requirements:
 
 Developing Epoch is a reasonably straight forward process. In this section we'll cover the basic on how to develop Epoch by detailing common build task, exploring how the source is arranged, and finally show how to use rendering tests to aid development.
 
-#### Source Layout
+#### Build Tasks
+
+Epoch uses cake for its builds. The file defines the following tasks:
+```
+cake build                # Builds javascript from the coffeescript source (also packages).
+cake package              # Packages the js and libraries into a single file.
+cake compile              # Compiles the packaged source via the Google Closure Compiler
+cake watch
+cake sass                 # Compile sass source into css
+cake release              # Releases a new version of the library
+
+  -v, --version      Sets the version number for release
+```
+
+For the most part you'll only need to use the following tasks:
+
+1. `cake build` / `cake watch` - These will compile the CoffeeScript into JavaScript and compile SCSS to css.
+2. `cake --version X.Y.Z release` - This is used to create minified release versions of the library.
+
+
+#### Source Structure
 
 The directory structure for the Epoch project follows some basic guidelines, here's an overview of how it is structured:
 
