@@ -20,6 +20,25 @@ Epoch has two external library requirements:
 
 Developing Epoch is a reasonably straight forward process. In this section we'll cover the basic on how to develop Epoch by detailing common build task, exploring how the source is arranged, and finally show how to use rendering tests to aid development.
 
+#### Basic Development Process
+
+After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
+
+1. Change to the source directory for the project
+2. Run `cake build` to build the JavaScript and CSS from Source
+3. In a web browser open the `test/index.html` and browse the rendering tests
+4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
+5. Use the rendering tests to see if your changes had the desired result
+
+Keeping the rendering tests up-to-date is important! When developing use the following guidelines:
+
+* When adding new features make sure to add new rendering tests
+* When changing existing functionality, ensure that the appropriate rendering tests still pass
+* If you want to make a new type of chart, add a whole new test suite for that chart!
+
+Keeping the tests current makes it easier for others to review your code and spot issues. Also, pull requests without appropriate testing will not be merged... period.
+
+
 #### Build Tasks
 
 Epoch uses cake for its builds. The file defines the following tasks:
