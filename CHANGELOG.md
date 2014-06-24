@@ -1,5 +1,12 @@
 # Epoch Changelog
 
+## 0.5.2 - June 24th, 2014
+
+### Enhancements / Features
+
+* #36 - Fixed the readme to focus on development
+* #54 - Added vertical orientation option to the basic bar chart
+
 ## 0.5.1 - June 23rd, 2014
 
 ### Bug Fixes
