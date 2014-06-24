@@ -146,6 +146,13 @@ Next, let's take a look at the markup and scripting required to display our bar 
 </script>
 ```
 
+#### Vertically Oriented Bar Charts
+
+The bar chart also provides the option for vertcial rendering by setting the `orientation` option to `'vertical'`. Charts that are vertically oriented will display the bars stacked atop one another, like so:
+
+{% include charts/basic/bar-vertical.html %}
+
+
 The following options are available for bar charts:
 
 * `axes` - Which axes to display.
@@ -160,6 +167,8 @@ The following options are available for bar charts:
   - Example: `width: 320`
 * `height` - Override automatic height with an explicit pixel value
   - Example: `height: 240`
+* `orientation` - Sets the orientation for the chart. Can be either `'horizontal'` (default), or `'vertical'`.
+  - Example: `orientation: 'vertical'`
 
 
 {% include charts/basic/line.html %}
