@@ -336,6 +336,10 @@ The heatmap is one of the most configurable of all Epoch charts, here's a run do
     bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
     memory bloating).
   - Example: `queueSize: 120`
+* `paintZeroValues` - Tells the chart whether or not to skip rendering entirely for buckets that have a value of 0.
+  - Useful for overrding the default behavior of the chart for different coloring functions.
+  - Defaults to `false`
+  - Example: `paintZeroValues: true`
 * `margins` - Explicit margin overrides for the chart.
   - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `width` - Override automatic width with an explicit pixel value
