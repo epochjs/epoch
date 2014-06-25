@@ -9,6 +9,7 @@
             .removeClass('col-md-6')
             .addClass('col-md-12')
         $('#banner .container .row .col-md-6:last-child').remove()
+        $('#social').css('width', '80px')
     }
 })();
 

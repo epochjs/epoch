@@ -162,6 +162,7 @@ body.landing #footer #social {
 
 body.landing #footer #social iframe {
   float: left;
+  margin-bottom: 12px;
 }
 
 
