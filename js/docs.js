@@ -1,5 +1,11 @@
 // Affix for the docs page navigation
 (function() {
+
+    if ($(window).width() < 1000) {
+      $('body.docs #nav').remove()
+      return;
+    }
+
     var el = $('body.docs #nav'),
         dummy = $('body.docs #nav-dummy'),
         offset = null;

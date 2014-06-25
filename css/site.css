@@ -14,32 +14,19 @@
 }
 
 .navbar .navbar-brand {
-  font-size: 32pt;
+  font-size: 24pt;
   color: red;
-  line-height: 36px;
 }
 
 .navbar {
-  max-height: 72px;
-  height: 72px;
   background-color: #f3f3f3;
 }
 
-.navbar-fixed-top .navbar-collapse, 
-.navbar-fixed-bottom .navbar-collapse {
-  max-height: 72px;
-  height: 72px;
-}
-
 .navbar .nav.navbar-nav {
-  height: 72px;
-  line-height: 72px;
   float: right;
 }
 
 .navbar .nav.navbar-nav li a {
-  line-height: 36px;
-  height: 72px;
 }
 
 a { color: #f00;}
@@ -66,14 +53,21 @@ h4 { margin-top: 24px; }
 Landing Styles
 -----------------------------------------------------------------------------*/
 
+body.landing #banner {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 #banner h1 {
-  margin-top: 80px;
   color: white;
   font-size: 72px;
 }
 
 body.landing #landing #banner img {
-  margin-top: 55px;
+  display: block;
+  margin: 10px auto;
 }
 
 body.landing #landing #banner p {
@@ -115,7 +109,7 @@ body.landing #banner {
   background: linear-gradient(to bottom,  rgba(237,28,36,1) 0%,rgba(193,39,32,1) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed1c24', endColorstr='#c12720',GradientType=0 ); /* IE6-9 */
   margin-top: -20px;
-  height: 440px;
+  /*min-height: 440px;*/
 }
 
 body.landing .explore {
@@ -177,7 +171,7 @@ Docs Styles
 
 body.docs #banner {
   margin-top: -20px;
-  height: 220px;
+  min-height: 220px;
   margin-bottom: 20px;
 }
 

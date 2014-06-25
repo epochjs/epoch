@@ -2,6 +2,17 @@
  * Epoch - Landing Page Scripting
  */
 
+
+(function() {
+    if ($(window).width() < 1000) {
+        $('#banner .container .row .col-md-6:first-child')
+            .removeClass('col-md-6')
+            .addClass('col-md-12')
+        $('#banner .container .row .col-md-6:last-child').remove()
+    }
+})();
+
+
 (function() {
     /*
      * Normal distribution random histogram data generator.
