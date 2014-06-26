@@ -88,7 +88,7 @@ In the `<script>` portion of the example above you'll notice that we are passing
 options are available for area charts:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ time: 10, right: 5, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -164,7 +164,7 @@ In the `<script>` portion of the example above you'll notice that we are passing
 options are available for real-time bar charts:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ time: 10, right: 5, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -318,7 +318,7 @@ The heatmap is one of the most configurable of all Epoch charts, here's a run do
   - You can define your own custom function, see the example below.
   - Example: `opacity: function(value, max) { return Math.pow(value/max, 0.384); }`
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ time: 10, right: 5, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -398,7 +398,7 @@ In the `<script>` portion of the example above you'll notice that we are passing
 options are available for real-time bar charts:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ time: 10, right: 5, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.

@@ -85,7 +85,7 @@ In the `<script>` portion of the example above  notice that we are passing optio
 options are available for area charts:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -156,7 +156,7 @@ The bar chart also provides the option for vertcial rendering by setting the `or
 The following options are available for bar charts:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -212,7 +212,7 @@ Next let's take a look at how you would implement the chart with markup and scri
 The line charts supports the following options:
 
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
@@ -314,7 +314,7 @@ Scatter plots accept the following optional parameters:
 * `margins` - Explicit margin overrides for the chart.
   - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
 * `axes` - Which axes to display.
-  - Example: `axes: ['top', right', 'bottom', 'left']`
+  - Example: `axes: ['top', 'right', 'bottom', 'left']`
 * `ticks` - Number of ticks to display on each axis.
   - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
 * `tickFormats` - What formatting function to use when displaying tick labels.
