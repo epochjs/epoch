@@ -1,0 +1,26 @@
+{
+  "name": "epoch",
+  "description": "A general purpose, real-time visualization library.",
+  "license": "MIT",
+  "ignore": [
+    "/coffee",
+    "/css",
+    "/doc",
+    "/lib",
+    "/sass",
+    "/test",
+    "/.codoopts",
+    "/.gitignore",
+    "/Cakefile",
+    "/CHANGELOG.md",
+    "/package.json"
+  ],
+  "authors": [
+    "Ryan Sandor Richards <sandor.richards@gmail.com>"
+  ],
+  "homepage": "http://fastly.github.io/epoch/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fastly/epoch.git"
+  }
+}
