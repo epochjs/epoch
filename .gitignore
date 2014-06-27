@@ -1,4 +1,5 @@
 .stamp*
+css/
 js/
 sass/.sass-cache
 npm-debug.log

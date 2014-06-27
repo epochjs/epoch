@@ -4,7 +4,6 @@
   "license": "MIT",
   "ignore": [
     "/coffee",
-    "/css",
     "/doc",
     "/lib",
     "/sass",
