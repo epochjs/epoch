@@ -9,7 +9,7 @@ header-active: real-time
 
 Epoch's **real-time** charts have been fine tuned for displaying frequently updating *timeseries* data. To make them performant (aka not crash the browser) we've implemented the charts using a hybrid approach of d3 SVG with custom HTML5 Canvas rendering.
 
-### Using Real-time Charts
+### Overview
 
 Every real-time chart has a name prefixed with `time.` and was built to use the same workflow, here's an overview:
 
@@ -25,7 +25,7 @@ Every real-time chart has a name prefixed with `time.` and was built to use the 
   - `myChart.push(nextDataPoint);`
 
 
-### Device Pixel Ratio
+#### Device Pixel Ratio
 
 Epoch supports high resolution displays by automatically detecting and setting the appropriate pixel ratio for the canvas based real-time charts. You can override this behavior by explicitly setting the pixel ratio for any chart described below. Here's an example of how to do this:
 
@@ -38,6 +38,83 @@ $('#my-chart').epoch({
 
 Note that the `pixelRatio` option must be an integer >= 1.
 
+
+#### Common Options
+
+Unless otherwise stated, Epoch's real-time charts have the following common options:
+
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>axes</code></td>
+    <td>
+      Which axes to display.<br>
+      <i>Example:</i> <code>axes: ['top', 'right', 'bottom', 'left']</code></td>
+  </tr>
+  <tr>
+    <td><code>ticks</code></td>
+    <td>
+      Number of ticks to display on each axis.<br>
+      <i>Example:</i> <code>{ time: 10, right: 5, left: 5 }</code></td>
+  </tr>
+  <tr>
+    <td><code>tickFormats</code></td>
+    <td>
+      What formatting function to use when displaying tick labels.<br>
+      <i>Example:</i> <code>tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }</code></td>
+  </tr>
+  <tr>
+    <td><code>fps</code></td>
+    <td>
+      Number of frames per second that transitions animations should use. For most people, frame rates in excess of 60fps inpeceptible and can cause a big performance hit. The default value of <code>24</code> tends to work very well, but you can increase it to get smoother animations.<br>
+      <i>Example:</i> <code>fps: 60</code></td>
+  </tr>
+  <tr>
+    <td><code>windowSize</code></td>
+    <td>
+      Number of entries to display in the graph.<br>
+      <i>Example:</i> <code>windowSize: 60</code></td>
+  </tr>
+  <tr>
+    <td><code>historySize</code></td>
+    <td>
+      Maximum number of historical entries to track in the chart.<br>
+      <i>Example:</i> <code>historySize: 240</code></td>
+  </tr>
+  <tr>
+    <td><code>queueSize</code></td>
+    <td>
+      Number of entries to keep in working memory while the chart is not animating transitions. Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to bound the number of entries that have been recieved via the `.push` in this case (so as to reduce memory bloating).<br>
+      <i>Example:</i> <code>queueSize: 120</code></td>
+  </tr>
+  <tr>
+    <td><code>margins</code></td>
+    <td>
+      Explicit margin overrides for the chart.<br>
+      <i>Example:</i> <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code></td>
+  </tr>
+  <tr>
+    <td><code>width</code></td>
+    <td>
+      Override automatic width with an explicit pixel value.<br>
+      <i>Example:</i> <code>width: 320</code></td>
+  </tr>
+  <tr>
+    <td><code>height</code></td>
+    <td>
+      Override automatic height with an explicit pixel value.<br>
+      <i>Example:</i> <code>height: 240</code></td>
+  </tr>
+  <tr>
+    <td><code>pixelRatio</code></td>
+    <td>
+      Override detected pixel ratio with an explicit value.<br>
+      <i>Example:</i> <code>pixelRatio: 1</code></td>
+  </tr>
+</table>
 
 
 {% include charts/realtime/area.html %}
@@ -84,39 +161,6 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 </script>
 ```
 
-In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
-options are available for area charts:
-
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ time: 10, right: 5, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
-* `fps` - Number of frames per second that transitions animations should use.
-  - High values for this number are basically inpeceptible and can cause a big performance hit.
-  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
-  - Example: `fps: 60`
-* `windowSize` - Number of entries to display in the graph.
-  - Example: `windowSize: 60` (shows a minute of by second data)
-* `historySize` - Number of historical entries to hold at any time.
-  - Example: `historySize: 240`
-* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
-  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
-    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
-    memory bloating).
-  - Example: `queueSize: 120`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `pixelRatio` - Override detected pixel ratio with an explicit value
-
-
-
-
 {% include charts/realtime/bar.html %}
 
 The real-time bar chart is used to show relative sizes of multi-series data in the form of *stacked bars* as it evolves over time.
@@ -160,38 +204,6 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 </script>
 ```
 
-In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
-options are available for real-time bar charts:
-
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ time: 10, right: 5, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
-* `fps` - Number of frames per second that transitions animations should use.
-  - High values for this number are basically inpeceptible and can cause a big performance hit.
-  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
-  - Example: `fps: 60`
-* `windowSize` - Number of entries to display in the graph.
-  - Example: `windowSize: 60` (shows a minute of by second data)
-* `historySize` - Number of historical entries to hold at any time.
-  - Example: `historySize: 240`
-* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
-  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
-    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
-    memory bloating).
-  - Example: `queueSize: 120`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `pixelRatio` - Override detected pixel ratio with an explicit value
-
-
-
 {% include charts/realtime/gauge.html %}
 
 The gauge chart is used to monitor values over a particular range as they change over time. The chart displays a gauge that is similar to
@@ -221,26 +233,51 @@ for the chart to render correctly. Let's take a look at how one might create a n
 </script>
 ```
 
-The gauge chart can be configured for your particular use case using the following optional parameters:
+#### Options
 
-* `domain` - The input domain when setting the value for the gauge chart.
-  - Essentially this is an array with the first element representing the minimum value to expect
-    and the second element representing the maximum value to expect.
-  - Example: `domain: [0, 1]` (the chart should expect data between 0 and 1)
-* `ticks` - Number of tick marks to display on the chart.
-  - Example: `ticks: 10`
-* `tickSize` - Size in pixels for each tick.
-  - Example: `tickSize: 5`
-* `tickOffset` - Number of pixels to offset ticks by from the outter arc of the gauge.
-  - Example: `tickOffset: 10`
-* `format` - The number formatter to use for the gauge's internal display label
-  - Example: `format: function(v) { return (v*100).toFixed(2) + '%'; }`
-* `fps` - Number of frames per second that transitions animations should use.
-  - High values for this number are basically inpeceptible and can cause a big performance hit.
-  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
-  - Example: `fps: 60`
-* `pixelRatio` - Override detected pixel ratio with an explicit value
+The guage chart implements the following common options:
 
+* `fps` - Animation frames per second.
+* `pixelRatio` - Explicit pixel ratio override.
+
+And has follow custom options:
+
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>domain</code></td>
+    <td>
+      The input domain when setting the value for the gauge chart. Essentially this is an array with the first element representing the minimum value to expect and the second element representing the maximum.<br>
+      <i>Example:</i> <code>domain: [0, 1]</code></td>
+  </tr>
+  <tr>
+    <td><code>ticks</code></td>
+    <td>
+      Number of tick marks to display on the chart.<br>
+      <i>Example:</i> <code>ticks: 10</code></td>
+  </tr>
+  <tr>
+    <td><code>tickSize</code></td>
+    <td>
+      Size in pixels for each tick.<br>
+      <i>Example:</i> <code>tickSize: 5</code></td>
+  </tr>
+  <tr>
+    <td><code>tickOffset</code></td>
+    <td>
+      Number of pixels to offset ticks by from the outter arc of the gauge.<br>
+      <i>Example:</i> <code>tickOffset: 10</code></td>
+  </tr>
+  <tr>
+    <td><code>format</code></td>
+    <td>
+      The number formatter to use for the gauge's internal display label.<br>
+      <i>Example:</i> <code>format: function(v) { return (v*100).toFixed(2) + '%'; }</code></td>
+  </tr>
+</table>
 
 
 {% include charts/realtime/heatmap.html %}
@@ -301,53 +338,53 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 </script>
 ```
 
-The heatmap is one of the most configurable of all Epoch charts, here's a run down of the available options:
+#### Options
 
-* `buckets` - Number of buckets to display in each column of the visible chart window.
-  - Example: `buckets: 20`
-* `bucketRange` - The range covered by the buckets.
-  - Note: values that fall above the range will be placed in the top most bucket, and
-    values that fall below the range will be placed in the bottom must bucker.
-  - Example: `bucketRange: [0, 1000]`
-* `bucketPadding` - Amount of padding to place around buckets in the display
-  - Example: `bucketPadding: 0`
-* `opacity` - The opacity function to use when rendering buckets
-  - Each bucket will be rendered using a specific opacity. More saturated colors represent higher values in
-    histogram and more transparent colors represent lower values.
-  - There are many built-in opacity functions: `root`, `linear`, `quadratic`, `cubic`, `quartic`, and `quintic`.
-  - You can define your own custom function, see the example below.
-  - Example: `opacity: function(value, max) { return Math.pow(value/max, 0.384); }`
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ time: 10, right: 5, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
-* `fps` - Number of frames per second that transitions animations should use.
-  - High values for this number are basically inpeceptible and can cause a big performance hit.
-  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
-  - Example: `fps: 60`
-* `windowSize` - Number of entries to display in the graph.
-  - Example: `windowSize: 60` (shows a minute of by second data)
-* `historySize` - Number of historical entries to hold at any time.
-  - Example: `historySize: 240`
-* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
-  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
-    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
-    memory bloating).
-  - Example: `queueSize: 120`
-* `paintZeroValues` - Tells the chart whether or not to skip rendering entirely for buckets that have a value of 0.
-  - Useful for overrding the default behavior of the chart for different coloring functions.
-  - Defaults to `false`
-  - Example: `paintZeroValues: true`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `pixelRatio` - Override detected pixel ratio with an explicit value
+In addition to the common options listed in the overview section, the heatmap has the following custom options:
 
+
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>buckets</code></td>
+    <td>
+      Number of buckets to display in each column of the visible chart window.<br>
+      <i>Example:</i> <code>buckets: 20</code></td>
+  </tr>
+  <tr>
+    <td><code>bucketRange</code></td>
+    <td>
+      The range covered by the buckets. Note: values that fall above the range will be placed in the top most bucket, and values that fall below the range will be placed in the bottom must bucket.<br>
+      <i>Example:</i> <code>bucketRange: [0, 1000]</code></td>
+  </tr>
+  <tr>
+    <td><code>bucketPadding</code></td>
+    <td>
+      Amount of padding to place around buckets in the display.<br>
+      <i>Example:</i> <code>bucketPadding: 0</code></td>
+  </tr>
+  <tr>
+    <td><code>opacity</code></td>
+    <td>
+      The opacity function to use when rendering buckets.
+      <ul>
+        <li>Each bucket will be rendered using a specific opacity. More saturated colors represent higher values in
+    histogram and more transparent colors represent lower values.</li>
+        <li>There are many built-in opacity functions: `root`, `linear`, `quadratic`, `cubic`, `quartic`, and `quintic`.</li>
+        <li>You can define your own custom function, see the example below.</li>
+      </ul>
+      <i>Example:</i> <code>opacity: function(value, max) { return Math.pow(value/max, 0.384); }</code></td>
+  </tr>
+  <tr>
+    <td><code>paintZeroValues</code></td>
+    <td>
+      Tells the chart whether or not to skip rendering entirely for buckets that have a value of 0, defaults to <code>false</code>. This is useful for overrding the default behavior of the chart when implementing different custom <a href="http://en.wikipedia.org/wiki/Choropleth_map#Color_progression" target="_blank">color progressions</a>.<br>
+      <i>Example:</i> <code>paintZeroValues: true</code></td>
+  </tr>
+</table>
 
 
 {% include charts/realtime/line.html %}
@@ -393,37 +430,3 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
   });
 </script>
 ```
-
-In the `<script>` portion of the example above you'll notice that we are passing options to the `.epoch` method. The following
-options are available for real-time bar charts:
-
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ time: 10, right: 5, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { time: function(d) { return new Date(time*1000).toString(); } }`
-* `fps` - Number of frames per second that transitions animations should use.
-  - High values for this number are basically inpeceptible and can cause a big performance hit.
-  - The default of `24` tends to work very well, but you can increase it to get smoother animations.
-  - Example: `fps: 60`
-* `windowSize` - Number of entries to display in the graph.
-  - Example: `windowSize: 60` (shows a minute of by second data)
-* `historySize` - Number of historical entries to hold at any time.
-  - Example: `historySize: 240`
-* `queueSize` - Number of entries to keep in working memory while the chart is not animating transitions.
-  - Some browsers will not run animation intervals if a tab is inactive. This parameter allows you to
-    bound the number of entries that have been recieved via the `.push` in this case (so as to reduce
-    memory bloating).
-  - Example: `queueSize: 120`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `pixelRatio` - Override detected pixel ratio with an explicit value
-
-
-
-
