@@ -60,8 +60,8 @@ all = (list, callback) ->
   count = list.length
   for task in list
     after task, -> callback() unless (--count) or !callback?
-    invoke task 
-    
+    invoke task
+
 done = (name) ->
   return unless events[name]?
   fn() for fn in events[name]
@@ -81,7 +81,7 @@ watch = (dir, ext, fn) ->
       continue unless file.match ext
       fs.watch file, ((file) -> (event) -> fn(event, file))(file)
     exec "touch #{stampName}"
-  
+
   fs.watch dir, -> exec "find #{stripSlash(dir)} -newer #{stampName}", watchFiles
   exec "find #{stripSlash(dir)}", watchFiles
 
@@ -99,7 +99,7 @@ task 'package', 'Packages the js and libraries into a single file.', ->
   console.log "Packaging..."
   libraries = ("#{dirs.lib}#{library}" for library in library_order).join(' ')
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
-  exec "cat #{libraries} #{sources} > #{target.package}", (err, stdout, stderr) -> 
+  exec "cat #{libraries} #{sources} > #{target.package}", (err, stdout, stderr) ->
     error('package', stdout + stderr) if err?
     console.log "Complete!"
     done 'package'
@@ -155,9 +155,4 @@ task 'release', 'Releases a new version of the library', (options) ->
     console.log "Building release #{version}..."
     all ['sass', 'compile'], ->
       exec "cp css/epoch.css ./epoch.#{version}.min.css", (err, o, e) ->
-        error('release', o+e) if err? 
-
-
-
-
-
+        error('release', o+e) if err?
