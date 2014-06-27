@@ -9,7 +9,7 @@ Epoch is a general purpose charting library for application developers and visua
 
 To get started using Epoch, please refer to the [Epoch Project Site](http://fastly.github.io/epoch). There you can find full documentation and guides to help you start using Epoch right away.
 
-#### Installing Epoch 
+#### Installing Epoch
 
 There are two easy options you can use to install epoch. The first is to use [bower](http://bower.io/) from the command-line, like so:
 
@@ -35,7 +35,7 @@ Developing Epoch is a reasonably straight forward process. In this section we'll
 After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
 
 1. Change to the source directory for the project
-2. Run `cake build` to build the JavaScript and CSS from Source
+2. Run `cake build` to build the JavaScript and CSS from source
 3. In a web browser open the `test/index.html` and browse the rendering tests
 4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
 5. Use the rendering tests to see if your changes had the desired result
@@ -94,7 +94,7 @@ test/                  - Rendering tests
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Fastly, Inc. 
+Copyright (c) 2014 Fastly, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -113,5 +113,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-
