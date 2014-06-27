@@ -340,7 +340,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   ySvg: ->
     d3.scale.linear()
       .domain(@extent((d) -> d.y))
-      .range([@innerHeight() / @pixelRatio, 0])    
+      .range([@innerHeight() / @pixelRatio, 0])
 
   # @return [Number] The width of a single section of the graph pertaining to a data point
   w: ->

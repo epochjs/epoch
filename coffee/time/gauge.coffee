@@ -104,12 +104,12 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   # Draws the gauge.
   draw: ->
     return unless @isVisible()
-    
+
     [cx, cy, r] = [@centerX(), @centerY(), @radius()]
     [tickOffset, tickSize] = [@options.tickOffset, @options.tickSize]
 
     @clear()
-    
+
     # Draw Ticks
     t = d3.scale.linear()
       .domain([0, @options.ticks])

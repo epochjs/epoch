@@ -44,4 +44,3 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
       .attr('d', (d) -> area(d.values))
 
     super()
-

@@ -15,7 +15,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     quadratic: (value, max) -> Math.pow(value/max, 2)
     cubic: (value, max) -> Math.pow(value/max, 3)
     quartic: (value, max) -> Math.pow(value/max, 4)
-    quintic: (value, max) -> Math.pow(value/max, 5) 
+    quintic: (value, max) -> Math.pow(value/max, 5)
 
   # Creates a new heatmap.
   # @param [Object] options Options for the heatmap.

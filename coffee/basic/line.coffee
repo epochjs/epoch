@@ -16,7 +16,7 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
 
     # 2) Update (only existing)
     layer.select('.line').transition().duration(500)
-      .attr('d', (l) -> line(l.values))      
+      .attr('d', (l) -> line(l.values))
 
     # 3) Enter (Create)
     layer.enter().append('g')
@@ -31,6 +31,6 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
     # 5) Exit (Remove)
     layer.exit().transition().duration(750)
       .style('opacity', '0')
-      .remove()  
+      .remove()
 
     super()
