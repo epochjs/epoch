@@ -27,6 +27,7 @@ dirs =
   lib: 'lib/'
   src: 'coffee/'
   build: 'js/epoch/'
+  doc: 'doc/'
 
 
 target =
@@ -124,6 +125,10 @@ task 'watch', ->
   watch 'coffee/', '.coffee', (event, filename) ->
     invoke 'build'
 
+task 'documentation', 'Compiles API documentation', ->
+  console.log 'Compiling documentation'
+  exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
+    error('documentation', stdout + stderr) if err?
 
 #
 # Release Tasks
