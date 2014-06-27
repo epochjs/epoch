@@ -6,6 +6,9 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     padding:
       bar: 0.08
       group: 0.1
+    outerPadding:
+      bar: 0.08
+      group: 0.1
 
   vertical_specific =
     tickFormats:
@@ -28,7 +31,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     if @options.orientation == 'horizontal'
       d3.scale.ordinal()
         .domain(Epoch.Util.domain(@data))
-        .rangeRoundBands([0, @innerWidth()], @options.padding.group)
+        .rangeRoundBands([0, @innerWidth()], @options.padding.group, @options.outerPadding.group)
     else
       extent = @extent((d) -> d.y)
       extent[0] = Math.min(0, extent[0])
@@ -40,7 +43,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   x1: (x0) ->
     d3.scale.ordinal()
       .domain((layer.category for layer in @data))
-      .rangeRoundBands([0, x0.rangeBand()], @options.padding.bar)
+      .rangeRoundBands([0, x0.rangeBand()], @options.padding.bar, @options.outerPadding.bar)
 
   # @return [Function] The y scale used to render the bar chart.
   y: ->
@@ -53,13 +56,13 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     else
       d3.scale.ordinal()
         .domain(Epoch.Util.domain(@data))
-        .rangeRoundBands([0, @innerHeight()], @options.padding.group)
+        .rangeRoundBands([0, @innerHeight()], @options.padding.group, @options.outerPadding.group)
 
   # @return [Function] The x scale used to render the vertical bar chart.
   y1: (y0) ->
     d3.scale.ordinal()
       .domain((layer.category for layer in @data))
-      .rangeRoundBands([0, y0.rangeBand()], @options.padding.bar)
+      .rangeRoundBands([0, y0.rangeBand()], @options.padding.bar, @options.outerPadding.bar)
 
   # Remaps the bar chart data into a form that is easier to display.
   # @return [Array] The reorganized data.
