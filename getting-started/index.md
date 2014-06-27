@@ -10,7 +10,7 @@ This page will help you get started using Epoch in your projects.
 
 ### Prerequisites
 
-After [downloading epoch](http://fastly.github.io/download/) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
+After [downloading epoch](http://fastly.github.io/download/epoch.0.5.2.zip) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
 
 1. [jQuery](https://github.com/jquery/jquery)
 2. [d3](https://github.com/mbostock/d3)
@@ -39,7 +39,7 @@ Building a chart using epoch is a snap and each type of chart follows the same b
 #### 1. Place a chart container in the page
 
 ```html
-<div id="area" class="category10" style="height: 200px;"></div>
+<div id="area" class="epoch category10" style="height: 200px;"></div>
 ```
 
 Epoch will automatically size the chart to fit the explicit dimensions of the container. This way you can build the basic layout of your site and use CSS to control the size and placement of the charts. The class name `category10` refers to the categorical color scheme to use when rendering the chart. There are three other default options you can use, namely: `category20`, `category20b`, and `category20c`. Categorical colors are based directly on those used by d3, for more information see the [d3 categorical color docs](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors).
