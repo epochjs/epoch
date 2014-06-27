@@ -224,4 +224,7 @@ body.docs #nav-dummy {
   /*display: none;*/
 }
 
+#basic-pie-example, #basic-donut-example {
+  display: inline-block;
+}
 

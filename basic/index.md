@@ -37,6 +37,65 @@ When data changes, simply use the `update` method on the chart instance:
 myChart.update(myNewData);
 
 
+### Common Options
+
+Unless otherwise stated each of the charts below have the following common options:
+
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td><code>axes</code></td>
+    <td>
+      Which axes to display.<br>
+      <i>Example:</i> <code>axes: ['top', 'right', 'bottom', 'left']</code></td>
+  </tr>
+
+  <tr>
+    <td><code>ticks</code></td>
+    <td>
+      Number of ticks to display on each axis.<br>
+      <i>Example:</i> <code>{ top: 10, right: 5, bottom: 20, left: 5 }</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>tickFormats</code></td>
+    <td>
+      What formatting function to use when displaying tick labels.<br>
+      <i>Example:</i> <code>tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>margins</code></td>
+    <td>
+      Explicit margin overrides for the chart.<br>
+      <i>Example:</i> <code>margins: { top: 50, right: 30, bottom: 100, left: 40 }</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>width</code></td>
+    <td>
+      Override automatic width with an explicit pixel value.<br>
+      <i>Example:</i> <code>width: 320</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>height</code></td>
+    <td>
+      Override automatic height with an explicit pixel value.<br>
+      <i>Example:</i> <code>height: 240</code>
+    </td>
+  </tr>
+</table>
+
+
 {% include charts/basic/area.html %}
 
 The basic area chart is used to plot multiple data series atop one another. The chart expects data as an array of layers
@@ -80,23 +139,6 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
   });
 </script>
 ```
-
-In the `<script>` portion of the example above  notice that we are passing options to the `.epoch` method. The following
-options are available for area charts:
-
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-
 
 {% include charts/basic/bar.html %}
 
@@ -153,22 +195,24 @@ The bar chart also provides the option for vertcial rendering by setting the `or
 {% include charts/basic/bar-vertical.html %}
 
 
-The following options are available for bar charts:
+#### Options
 
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-* `orientation` - Sets the orientation for the chart. Can be either `'horizontal'` (default), or `'vertical'`.
-  - Example: `orientation: 'vertical'`
+The bar chart has the following set of additional options:
+
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td><code>orientation</code></td>
+    <td>
+      Sets the orientation for the chart. Can be either <code>'horizontal'</code> (default), or <code>'vertical'</code>.<br>
+      <i>Example:</i> <code>orientation: 'vertical'</code>
+    </td>
+  </tr>
+</table>
 
 
 {% include charts/basic/line.html %}
@@ -209,23 +253,6 @@ Next let's take a look at how you would implement the chart with markup and scri
 </script>
 ```
 
-The line charts supports the following options:
-
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
-
-
-
 {% include charts/basic/pie.html %}
 
 Pie charts are useful for displaying the relative sizes of various data points. To begin, let's take a look at the data format
@@ -257,17 +284,48 @@ Once you have your data formatted correctly you can easly add a chart to your pa
 </script>
 ```
 
-The pie chart accepts the following parameters during initialization:
+#### Options
 
-* `margin` - Surrounds the chart with a defined pixel margin
-  - Example: `margin: 30`
-* `inner` - Inner radius for the pie chart (for making Donut charts)
-  - Example: `inner: 100`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
+The pie chart is the only basic chart that **does not** accept all of the common options. Here is the complete list of options one can use when initializing a pie chart:
 
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td><code>margin</code></td>
+    <td>
+      Surrounds the chart with a defined pixel margin.<br>
+      <i>Example:</i> <code>margin: 30</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>inner</code></td>
+    <td>
+      Inner radius for the pie chart (for making Donut charts).<br>
+      <i>Example:</i> <code>inner: 100</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>width</code></td>
+    <td>
+      Override automatic width with an explicit pixel value.<br>
+      <i>Example:</i> <code>width: 320</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>height</code></td>
+    <td>
+      Override automatic height with an explicit pixel value.<br>
+      <i>Example:</i> <code>height: 240</code>
+    </td>
+  </tr>
+</table>
 
 
 {% include charts/basic/scatter.html %}
@@ -307,21 +365,19 @@ Next, let's see the markup and scripting needed to add the plot to your page:
 </script>
 ```
 
-Scatter plots accept the following optional parameters:
+#### Options
 
-* `radius` - How large the "dots" should be in the plot (in pixels)
-  - Example: `radius: 4.5`
-* `margins` - Explicit margin overrides for the chart.
-  - Example: `margins: { top: 50, right: 30, bottom: 100, left: 40 }`
-* `axes` - Which axes to display.
-  - Example: `axes: ['top', 'right', 'bottom', 'left']`
-* `ticks` - Number of ticks to display on each axis.
-  - Example: `{ top: 10, right: 5, bottom: 20, left: 5 }`
-* `tickFormats` - What formatting function to use when displaying tick labels.
-  - Example: `tickFormats: { bottom: function(d) { return '$' + d.toFixed(2); } }`
-* `width` - Override automatic width with an explicit pixel value
-  - Example: `width: 320`
-* `height` - Override automatic height with an explicit pixel value
-  - Example: `height: 240`
+<table class="table table-bordered table-striped">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
 
-
+  <tr>
+    <td><code>radius</code></td>
+    <td>
+      How large the "dots" should be in the plot (in pixels).<br>
+      <i>Example:</i> <code>radius: 4.5</code>
+    </td>
+  </tr>
+</table>
