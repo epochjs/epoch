@@ -392,7 +392,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('dy', 19)
         .text(@options.tickFormats.bottom(tick.time))
 
-      tick.bottomEl = jQuery(g[0])
+      tick.bottomEl = g
 
     if @hasAxis('top')
       g = @topAxis.append('g')
@@ -408,7 +408,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('dy', -10)
         .text(@options.tickFormats.top(tick.time))
 
-      tick.topEl = jQuery(g[0])
+      tick.topEl = g
 
     if reverse
       @_ticks.unshift tick
@@ -441,8 +441,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         tick.opacity -= dop
 
       if tick.enter or tick.exit
-        tick.bottomEl.css('opacity', tick.opacity) if @hasAxis('bottom')
-        tick.topEl.css('opacity', tick.opacity) if @hasAxis('top')
+        tick.bottomEl.style('opacity', tick.opacity) if @hasAxis('bottom')
+        tick.topEl.style('opacity', tick.opacity) if @hasAxis('top')
 
   # Draws the visualization in the plot's canvas.
   # @param delta The current x offset to apply to all elements when rendering. This number
