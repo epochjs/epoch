@@ -46,6 +46,7 @@ After cloning the repository, the best way to get started developing against Epo
 
 1. Change to the source directory for the project
 2. Run `cake build` to build the JavaScript and CSS from source
+    1. Optionally run `cake documentation` to compile the API documentation into HTML
 3. In a web browser open the `test/index.html` and browse the rendering tests
 4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
 5. Use the rendering tests to see if your changes had the desired result
@@ -67,6 +68,7 @@ cake build                # Builds javascript from the coffeescript source (also
 cake package              # Packages the js and libraries into a single file.
 cake compile              # Compiles the packaged source via the Google Closure Compiler
 cake watch
+cake documentation        # Compiles API documentation
 cake sass                 # Compile sass source into css
 cake release              # Releases a new version of the library
 
