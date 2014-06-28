@@ -30,6 +30,16 @@ Epoch has two external library requirements:
 
 Developing Epoch is a reasonably straight forward process. In this section we'll cover the basic on how to develop Epoch by detailing common build task, exploring how the source is arranged, and finally show how to use rendering tests to aid development.
 
+#### Configuring Development Environment
+
+Epoch uses several tools in its development:
+
+- [CoffeeScript](http://coffeescript.org/) (required)
+- [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
+- [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
+
+All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The following sections assume you have properly installed these requirements and have configured your `PATH` to run `npm`-installed executables.
+
 #### Basic Development Process
 
 After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
