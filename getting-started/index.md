@@ -10,7 +10,7 @@ This page will help you get started using Epoch in your projects.
 
 ### Prerequisites
 
-After [downloading epoch]({{ site.baseurl }}download/epoch.0.5.2.zip) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
+After [downloading epoch]({{ site.baseurl }}download/epoch.{{ site.version }}.zip) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
 
 1. [jQuery](https://github.com/jquery/jquery)
 2. [d3](https://github.com/mbostock/d3)
