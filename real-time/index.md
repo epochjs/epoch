@@ -381,7 +381,7 @@ In addition to the common options listed in the overview section, the heatmap ha
   <tr>
     <td><code>paintZeroValues</code></td>
     <td>
-      Tells the chart whether or not to skip rendering entirely for buckets that have a value of 0, defaults to <code>false</code>. This is useful for overrding the default behavior of the chart when implementing different custom <a href="http://en.wikipedia.org/wiki/Choropleth_map#Color_progression" target="_blank">color progressions</a>.<br>
+      Tells the chart whether or not to skip rendering entirely for buckets that have a value of 0, defaults to <code>false</code>. This is useful for overrding the default behavior of the chart when implementing different custom <a href="https://en.wikipedia.org/wiki/Choropleth_map#Color_progression" target="_blank">color progressions</a>.<br>
       <i>Example:</i> <code>paintZeroValues: true</code></td>
   </tr>
 </table>

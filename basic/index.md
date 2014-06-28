@@ -34,7 +34,9 @@ var myChart = $('#myChart').epoch({ type: 'line', data: myData });
 **4. Update the Plot as Needed**
 
 When data changes, simply use the `update` method on the chart instance:
+```
 myChart.update(myNewData);
+```
 
 
 ### Common Options
