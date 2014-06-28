@@ -90,13 +90,13 @@ watch = (dir, ext, fn) ->
 # Tasks
 #
 
-task 'build', 'Builds javascript from the coffeescript source (also packages).', ->
+task 'build', 'Builds javascript from the coffeescript source (also packages)', ->
   console.log "Building..."
   exec "coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
     error('build', stdout + stderr) if err?
     invoke 'package'
 
-task 'package', 'Packages the js and libraries into a single file.', ->
+task 'package', 'Packages the js and libraries into a single file', ->
   console.log "Packaging..."
   libraries = ("#{dirs.lib}#{library}" for library in library_order).join(' ')
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
@@ -126,7 +126,7 @@ task 'watch', ->
     invoke 'build'
 
 task 'documentation', 'Compiles API documentation', ->
-  console.log 'Compiling documentation'
+  console.log 'Compiling documentation...'
   exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
     error('documentation', stdout + stderr) if err?
 

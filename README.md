@@ -38,7 +38,7 @@ Epoch uses several tools in its development:
 - [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
 - [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
 
-All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The following sections assume you have properly installed these requirements and have configured your `PATH` to run `npm`-installed executables.
+All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
 
 #### Basic Development Process
 
@@ -64,8 +64,8 @@ Keeping the tests current makes it easier for others to review your code and spo
 
 Epoch uses cake for its builds. The file defines the following tasks:
 ```
-cake build                # Builds javascript from the coffeescript source (also packages).
-cake package              # Packages the js and libraries into a single file.
+cake build                # Builds javascript from the coffeescript source (also packages)
+cake package              # Packages the js and libraries into a single file
 cake compile              # Compiles the packaged source via the Google Closure Compiler
 cake watch
 cake documentation        # Compiles API documentation
@@ -77,7 +77,7 @@ cake release              # Releases a new version of the library
 
 For the most part you'll only need to use the following tasks:
 
-1. `cake build` / `cake watch` - These will compile the CoffeeScript into JavaScript and compile SCSS to css.
+1. `cake build` / `cake watch` - These will compile the CoffeeScript into JavaScript and compile SCSS to CSS.
 2. `cake --version X.Y.Z release` - This is used to create minified release versions of the library.
 
 
@@ -94,7 +94,6 @@ coffee/                - Main source directory
   basic.coffee         - Base Classes for Basic Charts
   epoch.coffee         - Main source file, defines name spaces, etc.
   time.coffee          - Base Classes for Real-Time Charts
-doc/                   - Codo generated documentation
 lib/                   - "Baked in" libraries
 sass/                  - Scss source for the default epoch stylesheet
 test/                  - Rendering tests
