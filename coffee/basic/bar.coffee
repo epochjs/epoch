@@ -1,6 +1,6 @@
 # Static bar chart implementation (using d3).
 class Epoch.Chart.Bar extends Epoch.Chart.Plot
-  defaults = 
+  defaults =
     style: 'grouped'
     orientation: 'horizontal'
 
@@ -119,7 +119,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .remove()
 
     # 4) Update new and existing
-    
+
     # 5) Exit / Remove
     layer.exit()
       .transition()
@@ -169,7 +169,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .remove()
 
     # 4) Update new and existing
-    
+
     # 5) Exit / Remove
     layer.exit()
       .transition()

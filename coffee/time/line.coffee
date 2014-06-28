@@ -25,7 +25,7 @@ class Epoch.Time.Line extends Epoch.Time.Plot
       @ctx.beginPath()
 
       [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
-      
+
       while (--i >= -2) and (--k >= 0)
         entry = layer.values[k]
         args = [(i+1)*w+delta, y(entry.y)]

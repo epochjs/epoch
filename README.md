@@ -9,7 +9,7 @@ Epoch is a general purpose charting library for application developers and visua
 
 To get started using Epoch, please refer to the [Epoch Project Site](http://fastly.github.io/epoch). There you can find full documentation and guides to help you start using Epoch right away.
 
-#### Installing Epoch 
+#### Installing Epoch
 
 There are two easy options you can use to install epoch. The first is to use [bower](http://bower.io/) from the command-line, like so:
 
@@ -30,12 +30,23 @@ Epoch has two external library requirements:
 
 Developing Epoch is a reasonably straight forward process. In this section we'll cover the basic on how to develop Epoch by detailing common build task, exploring how the source is arranged, and finally show how to use rendering tests to aid development.
 
+#### Configuring Development Environment
+
+Epoch uses several tools in its development:
+
+- [CoffeeScript](http://coffeescript.org/) (required)
+- [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
+- [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
+
+All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
+
 #### Basic Development Process
 
 After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
 
 1. Change to the source directory for the project
-2. Run `cake build` to build the JavaScript and CSS from Source
+2. Run `cake build` to build the JavaScript and CSS from source
+    1. Optionally run `cake documentation` to compile the API documentation into HTML
 3. In a web browser open the `test/index.html` and browse the rendering tests
 4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
 5. Use the rendering tests to see if your changes had the desired result
@@ -53,10 +64,11 @@ Keeping the tests current makes it easier for others to review your code and spo
 
 Epoch uses cake for its builds. The file defines the following tasks:
 ```
-cake build                # Builds javascript from the coffeescript source (also packages).
-cake package              # Packages the js and libraries into a single file.
+cake build                # Builds javascript from the coffeescript source (also packages)
+cake package              # Packages the js and libraries into a single file
 cake compile              # Compiles the packaged source via the Google Closure Compiler
 cake watch
+cake documentation        # Compiles API documentation
 cake sass                 # Compile sass source into css
 cake release              # Releases a new version of the library
 
@@ -65,7 +77,7 @@ cake release              # Releases a new version of the library
 
 For the most part you'll only need to use the following tasks:
 
-1. `cake build` / `cake watch` - These will compile the CoffeeScript into JavaScript and compile SCSS to css.
+1. `cake build` / `cake watch` - These will compile the CoffeeScript into JavaScript and compile SCSS to CSS.
 2. `cake --version X.Y.Z release` - This is used to create minified release versions of the library.
 
 
@@ -82,7 +94,6 @@ coffee/                - Main source directory
   basic.coffee         - Base Classes for Basic Charts
   epoch.coffee         - Main source file, defines name spaces, etc.
   time.coffee          - Base Classes for Real-Time Charts
-doc/                   - Codo generated documentation
 lib/                   - "Baked in" libraries
 sass/                  - Scss source for the default epoch stylesheet
 test/                  - Rendering tests
@@ -94,7 +105,7 @@ test/                  - Rendering tests
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Fastly, Inc. 
+Copyright (c) 2014 Fastly, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -113,5 +124,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-

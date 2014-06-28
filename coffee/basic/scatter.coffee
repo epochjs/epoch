@@ -35,7 +35,7 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
       .attr("r", @options.radius)
       .attr("cx", (d) -> x(d.x))
       .attr("cy", (d) -> y(d.y))
-    
+
     dots.exit().transition()
       .duration(750)
       .style('opacity', 0)

@@ -1,4 +1,5 @@
 .stamp*
+doc/
 css/
 js/
 sass/.sass-cache

@@ -1,5 +1,5 @@
 
-# Base class for all two-dimensional basic d3 charts. This class handles axes and 
+# Base class for all two-dimensional basic d3 charts. This class handles axes and
 # margins so that subclasses can focus on the construction of particular chart
 # types.
 class Epoch.Chart.Plot extends Epoch.Chart.SVG
@@ -23,7 +23,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
 
   # Creates a new plot chart.
   # @param [Object] options Options to use when constructing the plot.
-  # @option options [Object] margins For setting explicit values for the top, 
+  # @option options [Object] margins For setting explicit values for the top,
   #   right, bottom, and left margins in the visualization. Normally these can
   #   be omitted and the class will set appropriately sized margins given which
   #   axes are specified.
@@ -44,7 +44,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
     for pos in ['top', 'right', 'bottom', 'left']
       @margins[pos] = @options.margins[pos]
       @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
-    
+
     # Add a translation for the top and left margins
     @svg = @svg.append("g")
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
@@ -103,7 +103,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
     d3.svg.axis().scale(@y()).orient('right')
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
-  
+
   # Renders the axes for the visualization (subclasses must implement specific
   # drawing routines).
   draw: ->

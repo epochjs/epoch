@@ -73,4 +73,3 @@ class Epoch.Time.Area extends Epoch.Time.Stack
     @clear()
     @_drawAreas(delta)
     @_drawStrokes(delta)
-    

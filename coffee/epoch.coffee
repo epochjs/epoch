@@ -105,7 +105,7 @@ Epoch.Util.domain = (layers, key='x') ->
     for entry in layer.values
       continue if set[entry[key]]?
       domain.push(entry[key])
-      set[entry[key]] = true 
+      set[entry[key]] = true
   return domain
 
 # Converts a CSS color string into an RGBA string with the given opacity
@@ -221,7 +221,7 @@ class Epoch.Chart.Base extends Epoch.Events
       classes = ['layer']
       classes.push "category#{category}"
       layer.category = category
-      classes.push(Epoch.Util.dasherize layer.label) if layer.label?        
+      classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       layer.className = classes.join(' ')
       category++
 
