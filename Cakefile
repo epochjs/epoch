@@ -98,6 +98,13 @@ task 'build', 'Builds javascript from the coffeescript source (also packages)', 
     error('build', stdout + stderr) if err?
     invoke 'package'
 
+task 'sass', 'Compile SASS source into CSS', ->
+  console.log "Compiling SCSS into CSS..."
+  fs.mkdir 'css/', ->
+    exec 'node-sass --output-style compressed sass/epoch.scss css/epoch.css', (err, o, e) ->
+      error('sass', o+e) if err?
+      done 'sass'
+
 task 'package', 'Packages the js into a single file', ->
   console.log "Packaging..."
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
@@ -150,12 +157,6 @@ setVersion = (options, callback) ->
       version = stdout.replace(/^\s+|\s+$/, '')
       callback()
 
-task 'sass', 'Compile sass source into css', ->
-  console.log "Compiling scss into css..."
-  exec 'compass compile sass/', (err, o, e) ->
-    error('sass', o+e) if err?
-    done 'sass'
-
 task 'release', 'Releases a new version of the library', (options) ->
   setVersion options, ->
     console.log "Building release #{version}..."
@@ -166,4 +167,3 @@ task 'release', 'Releases a new version of the library', (options) ->
 task 'clean', 'Removes build files completely', ->
   console.log "Removing #{dirs.js} #{dirs.css} #{dirs.doc}"
   exec "rm -r #{dirs.js} #{dirs.css} #{dirs.doc}"
-

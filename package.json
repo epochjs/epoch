@@ -5,6 +5,7 @@
   "dependencies": {
     "coffee-script": ">=1.6.3",
     "node-minify": ">=0.7.5",
-    "codo": ">=2.0.8"
+    "codo": ">=2.0.8",
+    "node-sass": ">=0.9.3"
   }
 }

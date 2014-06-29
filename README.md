@@ -35,8 +35,9 @@ Developing Epoch is a reasonably straight forward process. In this section we'll
 Epoch uses several tools in its development:
 
 1. [CoffeeScript](http://coffeescript.org/) (required)
-2. [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
-3. [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
+2. [node-sass](https://github.com/sass/node-sass) (required, needed for compiling SCSS to CSS)
+3. [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
+4. [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
 
 All of the above tools can be installed via [npm](https://www.npmjs.org/). After cloning the repository, run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
 
