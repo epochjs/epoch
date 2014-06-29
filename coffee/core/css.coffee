@@ -12,6 +12,35 @@ class QueryCSS
   containerCount = 0
   nextContainerId = -> "epoch-container-#{containerCount++}"
 
+  # Expression used to derive tag name, id, and class names from
+  # selectors given the the put method.
+  PUT_EXPR = /^([^#. ]+)?(#[^. ]+)?(\.[^# ]+)?$/
+
+  # Whether or not to log full selector lists
+  logging = false
+
+  # Converts selectors into actual dom elements (replaces put.js)
+  # Limited the functionality to what Epoch actually needs to
+  # operate correctly. We detect class names, ids, and element
+  # tag names.
+  put = (selector) ->
+    match = selector.match(PUT_EXPR)
+    return Epoch.error('Query CSS cannot match given selector: ' + selector) unless match?
+    [whole, tag, id, classNames] = match
+    tag = (tag ? 'div').toUpperCase()
+
+    element = document.createElement(tag)
+    element.id = id.substr(1) if id?
+    if classNames?
+      element.className = classNames.substr(1).replace(/\./g, ' ')
+
+    return element
+
+  # Lets the user set whether or not to log selector lists and resulting DOM trees. 
+  # Useful for debugging QueryCSS itself.
+  @log: (b) ->
+    logging = b
+
   # Key-Value cache for computed styles that we found using this class.
   @cache = {}
 
@@ -75,14 +104,19 @@ class QueryCSS
     for subSelector in Epoch.Util.trim(selector).split(/\s+/)
       selectorList.push(subSelector)
 
+    console.log(selectorList) if logging
+
     parent = root = put(selectorList.shift())
     while selectorList.length
       el = put(selectorList.shift())
       parent.appendChild el
       parent = el
 
+    console.log(root) if logging
+
     # 2) Place the reference tree and fetch styles given the selector
     QueryCSS.getContainer().node().appendChild(root)
+
     ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector)
     styles = {}
     for name in QueryCSS.styleList

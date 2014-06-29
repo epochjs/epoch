@@ -71,8 +71,9 @@ cake watch
 cake documentation        # Compiles API documentation
 cake sass                 # Compile sass source into css
 cake release              # Releases a new version of the library
+cake clean                # Removes build files completely
 
-  -v, --version      Sets the version number for release
+  -v, --version      Sets the version number for the release task
 ```
 
 For the most part you'll only need to use the following tasks:
@@ -87,6 +88,12 @@ The directory structure for the Epoch project follows some basic guidelines, her
 
 ```
 coffee/                - Main source directory
+  core/                - Core Epoch Library Files
+    util.coffee        - Library Utility Routines
+    d3.coffee          - d3 Extensions
+    format.coffee      - Data formatters
+    chart.coffee       - Base Chart Classes
+    css.coffee         - CSS Querying Engine
   adapters/            - 3rd Party Library Adapters (currently only jQuery)
   basic/               - Basic Chart Classes
   time/                - Real-time Chart Classes

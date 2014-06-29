@@ -9,10 +9,6 @@ util = require 'util'
 
 version = 'X.Y.Z'
 
-library_order = [
-  '*.js'
-]
-
 package_order = [
   'epoch.js',
   'core/util.js',
@@ -29,10 +25,11 @@ package_order = [
 ]
 
 dirs =
-  lib: 'lib/'
   src: 'coffee/'
   build: 'js/epoch/'
   doc: 'doc/'
+  css: 'css/'
+  js: 'js/'
 
 
 target =
@@ -101,11 +98,10 @@ task 'build', 'Builds javascript from the coffeescript source (also packages)', 
     error('build', stdout + stderr) if err?
     invoke 'package'
 
-task 'package', 'Packages the js and libraries into a single file', ->
+task 'package', 'Packages the js into a single file', ->
   console.log "Packaging..."
-  libraries = ("#{dirs.lib}#{library}" for library in library_order).join(' ')
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
-  exec "cat #{libraries} #{sources} > #{target.package}", (err, stdout, stderr) ->
+  exec "cat #{sources} > #{target.package}", (err, stdout, stderr) ->
     error('package', stdout + stderr) if err?
     console.log "Complete!"
     done 'package'
@@ -139,7 +135,7 @@ task 'documentation', 'Compiles API documentation', ->
 # Release Tasks
 #
 
-option '-v', '--version [VERSION_NUMBER]', 'Sets the version number for release'
+option '-v', '--version [VERSION_NUMBER]', 'Sets the version number for the release task'
 
 setVersion = (options, callback) ->
   cmd = 'git tag | grep -E "^[0-9]"  | sort -b -t . -k1,1 -k2,2n -k3,3n | tail -1 | awk \'BEGIN{FS=OFS="."}{++$3; print $0}\''
@@ -166,3 +162,8 @@ task 'release', 'Releases a new version of the library', (options) ->
     all ['sass', 'compile'], ->
       exec "cp css/epoch.css ./epoch.#{version}.min.css", (err, o, e) ->
         error('release', o+e) if err?
+
+task 'clean', 'Removes build files completely', ->
+  console.log "Removing #{dirs.js} #{dirs.css} #{dirs.doc}"
+  exec "rm -r #{dirs.js} #{dirs.css} #{dirs.doc}"
+
