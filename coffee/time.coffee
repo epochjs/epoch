@@ -69,18 +69,20 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
 
     # SVG Overlay
-    @svg = d3.select(@el.get(0)).insert('svg', ':first-child')
+    @svg = @el.insert('svg', ':first-child')
       .attr('width', @width)
       .attr('height', @height)
       .style('z-index', '1000')
 
     # Position the canvas "under" the SVG element
-    if @el.css('position') != 'absolute' and @el.css('position') != 'relative'
-      @el.css('position', 'relative')
+    if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
+      @el.style('position', 'relative')
 
-    @canvas.attr('width', @innerWidth())
-    @canvas.attr('height', @innerHeight())
-    @canvas.css
+    @canvas.attr
+      width: @innerWidth()
+      height: @innerHeight()
+
+    @canvas.style
       position: 'absolute'
       width: "#{@innerWidth() / @pixelRatio}px"
       height: "#{@innerHeight() / @pixelRatio}px"

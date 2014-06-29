@@ -22,15 +22,15 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @value = @options.value or 0
 
     # SVG Labels Overlay
-    if @el.css('position') != 'absolute' and @el.css('position') != 'relative'
-      @el.css('position', 'relative')
+    if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
+      @el.style('position', 'relative')
 
-    @svg = d3.select(@el.get(0)).insert('svg', ':first-child')
+    @svg = @el.insert('svg', ':first-child')
       .attr('width', @width)
       .attr('height', @height)
       .attr('class', 'gauge-labels')
 
-    Epoch.Query(@svg[0]).css
+    @svg.style
       'position': 'absolute'
       'z-index': '1'
 
