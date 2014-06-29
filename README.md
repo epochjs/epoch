@@ -40,6 +40,11 @@ Epoch uses several tools in its development:
 
 All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
 
+##### Styles
+
+To compile the Epoch stylesheet you will need to install [compass](http://compass-style.org/). If you have bundler (`gem install bundler`) you can simply run `bundle install` from the command-line to install Compass.
+
+
 #### Basic Development Process
 
 After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
