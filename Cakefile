@@ -135,7 +135,7 @@ task 'watch', ->
 
 task 'documentation', 'Compiles API documentation', ->
   console.log 'Compiling documentation...'
-  exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
+  exec "codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
     error('documentation', stdout + stderr) if err?
 
 #
