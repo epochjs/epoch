@@ -4,21 +4,39 @@ window.Epoch.Time ?= {}
 window.Epoch.Util ?= {}
 window.Epoch.Formats ?= {}
 
+typeFunction = (objectName) -> (v) ->
+  Object::toString.call(v) == "[object #{objectName}]"
+
 # @return [Boolean] <code>true</code> if the given value is an array, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isArray = (v) -> jQuery.type(v) == 'array'
+Epoch.isArray = Array.isArray ? typeFunction('Array')
 
 # @return [Boolean] <code>true</code> if the given value is an object, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isObject = (v) -> jQuery.type(v) == 'object'
+Epoch.isObject = typeFunction('Object')
 
 # @return [Boolean] <code>true</code> if the given value is a string, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isString = (v) -> jQuery.type(v) == 'string'
+Epoch.isString = typeFunction('String')
 
 # @return [Boolean] <code>true</code> if the given value is a function, <code>false</code> otherwise.
 # @param v Value to test.
-Epoch.isFunction = (v) -> jQuery.type(v) == 'function'
+Epoch.isFunction = typeFunction('Function')
+
+# @return [Boolean] <code>true</code> if the given value is a number, <code>false</code> otherwise.
+# @param v Value to test.
+Epoch.isNumber = typeFunction('Number')
+
+# Attempts to determine if a given value represents a DOM element. The result is always correct if the
+# browser implements DOM Level 2, but one can fool it on certain versions of IE. Adapted from:
+# <a href="http://goo.gl/yaD9hV">Stack Overflow #384286</a>.
+# @return [Boolean] <code>true</code> if the given value is a DOM element, <code>false</code> otherwise.
+# @param v Value to test.
+Epoch.isElement = (v) ->
+  if HTMLElement?
+    v instanceof HTMLElement
+  else
+    v? and Epoch.isObject(v) and v.nodeType == 1 and Epoch.isString(v.nodeName)
 
 # Sends a warning to the developer console with the given message.
 # @param [String] msg Message for the warning.
@@ -30,6 +48,7 @@ Epoch.warn = (msg) ->
 Epoch.exception = (msg) ->
   throw "Epoch Error: #{msg}"
 
+# Generates shallow copy of an object.
 # @return A shallow copy of the given object.
 # @param [Object] original Object for which to make the shallow copy.
 Epoch.Util.copy = (original) ->
@@ -44,15 +63,20 @@ Epoch.Util.copy = (original) ->
 Epoch.Util.defaults = (options, defaults) ->
   result = Epoch.Util.copy(options)
   for k, v of defaults
-    if options[k]? and defaults[k]?
-      if !Epoch.isArray(options[k]) and Epoch.isObject(options[k]) and Epoch.isObject(defaults[k])
-        result[k] = Epoch.Util.defaults(options[k], defaults[k])
+    opt = options[k]
+    def = defaults[k]
+    bothAreObjects = Epoch.isObject(opt) and Epoch.isObject(def)
+
+    if opt? and def?
+      if bothAreObjects and not Epoch.isArray(opt)
+        result[k] = Epoch.Util.defaults(opt, def)
       else
-        result[k] = options[k]
-    else if options[k]?
-      result[k] = options[k]
+        result[k] = opt
+    else if opt?
+      result[k] = opt
     else
-      result[k] = defaults[k]
+      result[k] = def
+
   return result
 
 # Formats numbers with standard postfixes (e.g. K, M, G)
@@ -108,6 +132,50 @@ Epoch.Util.domain = (layers, key='x') ->
       set[entry[key]] = true
   return domain
 
+# Strips whitespace from the beginning and end of a string.
+# @param [String] string String to trim.
+# @return [String] The string without leading or trailing whitespace.
+#   Returns null if the given parameter was not a string.
+Epoch.Util.trim = (string) ->
+  return null unless Epoch.isString(string)
+  string.replace(/^\s+/g, '').replace(/\s+$/g, '')
+
+# Returns the computed styles of an element in the document
+# @param [HTMLElement] Element for which to fetch the styles.
+# @param [String] pseudoElement Pseudo selectors on which to search for the element.
+# @return [Object] The styles for the given element.
+Epoch.Util.getComputedStyle = (element, pseudoElement) ->
+  if Epoch.isFunction(window.getComputedStyle)
+    window.getComputedStyle(element, pseudoElement)
+  else if element.currentStyle?
+    element.currentStyle
+
+# Gets the width of the first node, or sets the width of all the nodes
+# in a d3 selection.
+# @param value (optional) Width to set for all the nodes in the selection.
+# @return The selection if setting the width of the nodes, or the width
+#   in pixels of the first node in the selection.
+d3.selection::width = (value) ->
+  if value? and Epoch.isString(value)
+    @style('width', value)
+  else if value? and Epoch.isNumber(value)
+    @style('width', "#{value}px")
+  else
+    +Epoch.Util.getComputedStyle(@node(), null).width.replace('px', '')
+
+# Gets the height of the first node, or sets the height of all the nodes
+# in a d3 selection.
+# @param value (optional) Height to set for all the nodes in the selection.
+# @return The selection if setting the height of the nodes, or the height
+#   in pixels of the first node in the selection.
+d3.selection::height = (value) ->
+  if value? and Epoch.isString(value)
+    @style('height', value)
+  else if value? and Epoch.isNumber(value)
+    @style('height', "#{value}px")
+  else
+    +Epoch.Util.getComputedStyle(@node(), null).height.replace('px', '')
+
 # Converts a CSS color string into an RGBA string with the given opacity
 # @param [String] color Color string to convert into an rgba
 # @param [Number] opacity Opacity to use for the resulting color.
@@ -134,7 +202,6 @@ d3Seconds = d3.time.format('%I:%M:%S %p')
 
 # Tick formatter for bytes
 Epoch.Formats.bytes = (d) -> Epoch.Util.formatBytes(d)
-
 
 # Basic eventing base class for all Epoch classes.
 class Epoch.Events
@@ -192,24 +259,23 @@ class Epoch.Chart.Base extends Epoch.Events
     super()
 
     @setData(@options.data or [])
-
-    @el = jQuery(@options.el) if @options.el?
-
+    @el = d3.select(@options.el) if @options.el?
     @width = @options.width
     @height = @options.height
 
     if @el?
-      @width = jQuery(@el).width() unless @width?
-      @height = jQuery(@el).height() unless @height?
+      @width = @el.width() unless @width?
+      @height = @el.height() unless @height?
     else
-      @width = defaults.dimensions.width unless @width?
-      @height = defaults.dimensions.height unless @height?
+      @width = defaults.width unless @width?
+      @height = defaults.height unless @height?
 
   # Determines if the chart is currently visible in a document.
   # @return [Boolean] True if the chart is visible, false otherwise.
   isVisible: ->
-    return false unless @el?
-    @el.is(':visible')
+    return true
+    #return false unless @el?
+    #@el.is('*:visible')
 
   # Set the initial data for the chart.
   # @param data Data to initially set for the given chart. The data format can vary
@@ -261,7 +327,7 @@ class Epoch.Chart.SVG extends Epoch.Chart.Base
   constructor: (@options={}) ->
     super(@options)
     if @el?
-      @svg = d3.select(@el.get(0)).append('svg')
+      @svg = @el.append('svg')
     else
       @svg = d3.select(document.createElement('svg'))
     @svg.attr
@@ -278,7 +344,6 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
   # @option options [Array] data Layered data used to render the chart.
   constructor: (@options={}) ->
     super(@options)
-    @canvas = jQuery("<canvas></canvas>")
 
     if @options.pixelRatio?
       @pixelRatio = @options.pixelRatio
@@ -287,13 +352,17 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
     else
       @pixelRatio = 1
 
-    @canvas.css
+    @canvas = d3.select( document.createElement('CANVAS') )
+    @canvas.style
       'width': "#{@width}px"
       'height': "#{@height}px"
 
-    @canvas.attr('width', @width * @pixelRatio).attr('height', @height * @pixelRatio)
-    @el.append(@canvas) if @el?
-    @ctx = @canvas.get(0).getContext('2d')
+    @canvas.attr
+      width: @width * @pixelRatio
+      height: @height * @pixelRatio
+
+    @el.node().appendChild @canvas.node() if @el?
+    @ctx = @canvas.node().getContext('2d')
 
   # @return [Number] width of the canvas with respect to the pixel ratio of the display
   getWidth: -> @width * @pixelRatio
@@ -315,6 +384,12 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
 # This allows canvas based visualizations to use the same styles as their
 # SVG counterparts.
 class QueryCSS
+  # Reference container id
+  REFERENCE_CONTAINER_ID = '_canvas_css_reference'
+
+  # Container Hash Attribute
+  CONTAINER_HASH_ATTR = 'data-epoch-container-id'
+
   # Handles automatic container id generation
   containerCount = 0
   nextContainerId = -> "epoch-container-#{containerCount++}"
@@ -335,17 +410,19 @@ class QueryCSS
   # Gets the reference element container.
   @getContainer: ->
     return QueryCSS.container if QueryCSS.container?
-    jQuery('body').append('<div id="_canvas_css_reference"></div>')
-    QueryCSS.container = jQuery('#_canvas_css_reference', 'body')
+    container = document.createElement('DIV')
+    container.id = REFERENCE_CONTAINER_ID
+    document.body.appendChild(container)
+    QueryCSS.container = d3.select(container)
 
   # @return [String] A unique identifier for the given container and selector.
   # @param [String] selector Selector from which to derive the styles
   # @param container The containing element for a chart.
   @hash: (selector, container) ->
-    containerId = jQuery(container).data('epoch-container-id')
+    containerId = container.attr(CONTAINER_HASH_ATTR)
     unless containerId?
       containerId = nextContainerId()
-      jQuery(container).data('epoch-container-id', containerId)
+      container.attr(CONTAINER_HASH_ATTR, containerId)
     return "#{containerId}__#{selector}"
 
   # @return The computed styles for the given selector in the given container element.
@@ -359,23 +436,25 @@ class QueryCSS
 
     # 1) Build a full reference tree (parents, container, and selector elements)
     parents = []
-    for element in jQuery(container).parents()
-      break if element.tagName.toLowerCase() == 'body'
-      parents.unshift(element)
-    parents.push jQuery(container).get(0)
+    parentNode = container.node().parentNode
+
+    while parentNode? and parentNode.nodeName.toLowerCase() != 'body'
+      parents.unshift parentNode
+      parentNode = parentNode.parentNode
+    parents.push container.node()
 
     selectorList = []
     for element in parents
-      sel = element.tagName.toLowerCase()
+      sel = element.nodeName.toLowerCase()
       if element.id? and element.id.length > 0
         sel += '#' + element.id
       if element.className? and element.className.length > 0
-        sel += '.' + jQuery.trim(element.className).replace(/\s+/g, '.')
+        sel += '.' + Epoch.Util.trim(element.className).replace(/\s+/g, '.')
       selectorList.push sel
 
     selectorList.push('svg')
 
-    for subSelector in jQuery.trim(selector).split(/\s+/)
+    for subSelector in Epoch.Util.trim(selector).split(/\s+/)
       selectorList.push(subSelector)
 
     parent = root = put(selectorList.shift())
@@ -385,11 +464,11 @@ class QueryCSS
       parent = el
 
     # 2) Place the reference tree and fetch styles given the selector
-    QueryCSS.getContainer().append(root)
-    ref = jQuery(selector, root)
+    QueryCSS.getContainer().node().appendChild(root)
+    ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector)
     styles = {}
     for name in QueryCSS.styleList
-      styles[name] = ref.css(name)
+      styles[name] = ref.style(name)
     QueryCSS.cache[cacheKey] = styles
 
     # 3) Cleanup and return the styles
