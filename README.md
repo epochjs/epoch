@@ -34,15 +34,15 @@ Developing Epoch is a reasonably straight forward process. In this section we'll
 
 Epoch uses several tools in its development:
 
-- [CoffeeScript](http://coffeescript.org/) (required)
-- [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
-- [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
+1. [CoffeeScript](http://coffeescript.org/) (required)
+2. [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
+3. [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
 
-All of the above tools can be installed via [npm](https://www.npmjs.org/). Run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
+All of the above tools can be installed via [npm](https://www.npmjs.org/). After cloning the repository, run `npm install` in the project directory to install the above requirements. The remainder of this section assumes you have properly installed the requirements and have configured your `PATH` to run `npm`-installed executables.
 
 #### Basic Development Process
 
-After cloning the repository, the best way to get started developing against Epoch is to follow the following steps:
+The best way to start helping improve to Epoch is to follow these steps:
 
 1. Change to the source directory for the project
 2. Run `cake build` to build the JavaScript and CSS from source
