@@ -19,6 +19,7 @@
             <li><a href="#test-6">Color Override</a></li>
             <li><a href="#test-7">Categorical Colors</a></li>
             <li><a href="#test-8">Multi Series without Labels</a></li>
+            <li><a href="#test-9">Single Series with Radius</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -286,7 +287,6 @@
         });
         </script>
 
-
         <!-- Test 8 -->
         <div id="test-8" class="test">
             <h2>8. Multi Series without Labels</h2>
@@ -310,5 +310,36 @@
         });
         </script>
 
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Single Series with Radius</h2>
+            <p>Render a single random series scatter plot with different radii.</p>
+            <div class="epoch"></div>
+            <p>
+                <button>Regenerate</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var length = 128;
+
+            var generateData = function(length) {
+                var data = [];
+                for (var j = 0; j < length; j++) {
+                    var x = Math.random() * 100,
+                        y = Math.random() * 20,
+                        r = Math.random() * 6 + 2;
+                    data.push({x: x, y: y, r: r});
+                }
+                return [{label: 'A', values: data}];
+            };
+
+            var chart = $('#test-9 .epoch').epoch({ type: 'scatter', data: generateData(length)});
+
+            $("#test-9 p button:eq(0)").click(function() {
+                chart.update(generateData(length));
+            });
+        });
+        </script>
     </body>
 </html>

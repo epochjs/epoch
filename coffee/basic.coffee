@@ -157,4 +157,3 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
         .attr('transform', "translate(#{@innerWidth()}, 0)")
         .call(@rightAxis())
     @_axesDrawn = true
-
