@@ -43,7 +43,7 @@ All of the above tools can be installed via [npm](https://www.npmjs.org/). After
 
 #### Basic Development Process
 
-The best way to start helping improve to Epoch is to follow these steps:
+The best way to start contributing to Epoch is to follow these steps:
 
 1. Change to the source directory for the project
 2. Run `cake build` and `cake sass` to build the JavaScript and CSS from source
