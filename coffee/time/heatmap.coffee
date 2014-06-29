@@ -134,7 +134,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # @param [Integer] max Normalized maximum for the column.
   # @param [String] color Computed base color for the bucket.
   _computeColor: (value, max, color) ->
-    Epoch.toRGBA(color, @_colorFn(value, max))
+    Epoch.Util.toRGBA(color, @_colorFn(value, max))
 
   # Paints a single entry column on the paint canvas at the given column.
   # @param [Integer] entryIndex Index of the entry to paint.

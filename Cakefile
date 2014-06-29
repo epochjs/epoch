@@ -15,6 +15,11 @@ library_order = [
 
 package_order = [
   'epoch.js',
+  'core/util.js',
+  'core/d3.js',
+  'core/format.js',
+  'core/chart.js',
+  'core/css.js',
   'basic.js',
   'basic/*.js',
   'time.js',
