@@ -94,14 +94,14 @@ watch = (dir, ext, fn) ->
 
 task 'build', 'Builds javascript from the coffeescript source (also packages)', ->
   console.log "Building..."
-  exec "coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
+  exec "./node_modules/.bin/coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
     error('build', stdout + stderr) if err?
     invoke 'package'
 
 task 'sass', 'Compile SASS source into CSS', ->
   console.log "Compiling SCSS into CSS..."
   fs.mkdir 'css/', ->
-    exec 'node-sass --output-style compressed sass/epoch.scss css/epoch.css', (err, o, e) ->
+    exec './node_modules/.bin/node-sass --output-style compressed sass/epoch.scss css/epoch.css', (err, o, e) ->
       error('sass', o+e) if err?
       done 'sass'
 
@@ -135,7 +135,7 @@ task 'watch', ->
 
 task 'documentation', 'Compiles API documentation', ->
   console.log 'Compiling documentation...'
-  exec "codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
+  exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
     error('documentation', stdout + stderr) if err?
 
 #
