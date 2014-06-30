@@ -92,18 +92,18 @@ watch = (dir, ext, fn) ->
 # Tasks
 #
 
-task 'build', 'Build JavaScript and CSS from source (also packages)', ->
+task 'build', 'Builds JavaScript and CSS from source (also packages)', ->
   console.log "Building..."
   chain ['coffee', 'sass', 'package'], ->
     done 'build'
 
-task 'coffee', 'Compile JavaScript from CoffeeScript source', ->
+task 'coffee', 'Compiles JavaScript from CoffeeScript source', ->
   console.log "Compiling CoffeeScript into JavaScript..."
   exec "./node_modules/.bin/coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
     error('coffee', stdout + stderr) if err?
     done 'coffee'
 
-task 'sass', 'Compile SASS source into CSS', ->
+task 'sass', 'Compiles SASS source into CSS', ->
   console.log "Compiling SCSS into CSS..."
   fs.mkdir 'css/', ->
     exec './node_modules/.bin/node-sass --output-style compressed sass/epoch.scss css/epoch.css', (err, o, e) ->
