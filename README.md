@@ -92,7 +92,7 @@ For the most part you'll only need to use the following tasks:
 The directory structure for the Epoch project follows some basic guidelines, here's an overview of how it is structured:
 
 ```
-coffee/                - Main source directory
+src/                   - Main source directory
   core/                - Core Epoch Library Files
     util.coffee        - Library Utility Routines
     d3.coffee          - d3 Extensions
