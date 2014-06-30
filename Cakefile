@@ -92,22 +92,33 @@ watch = (dir, ext, fn) ->
 # Tasks
 #
 
-task 'build', 'Builds javascript from the coffeescript source (also packages)', ->
+task 'build', 'Builds JavaScript and CSS from source (also packages)', ->
   console.log "Building..."
-  exec "coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
-    error('build', stdout + stderr) if err?
-    invoke 'package'
+  chain ['coffee', 'sass', 'package'], ->
+    done 'build'
 
-task 'package', 'Packages the js into a single file', ->
+task 'coffee', 'Compiles JavaScript from CoffeeScript source', ->
+  console.log "Compiling CoffeeScript into JavaScript..."
+  exec "./node_modules/.bin/coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
+    error('coffee', stdout + stderr) if err?
+    done 'coffee'
+
+task 'sass', 'Compiles SASS source into CSS', ->
+  console.log "Compiling SCSS into CSS..."
+  fs.mkdir 'css/', ->
+    exec './node_modules/.bin/node-sass --output-style compressed sass/epoch.scss css/epoch.css', (err, o, e) ->
+      error('sass', o+e) if err?
+      done 'sass'
+
+task 'package', 'Packages the JavaScript into a single file', ->
   console.log "Packaging..."
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
   exec "cat #{sources} > #{target.package}", (err, stdout, stderr) ->
     error('package', stdout + stderr) if err?
-    console.log "Complete!"
     done 'package'
 
 task 'compile', 'Compiles the packaged source via the Google Closure Compiler', ->
-  after 'package', ->
+  chain ['coffee', 'package'], ->
     console.log "Google Closure Compiling..."
     new compressor.minify
       type: 'gcc'
@@ -117,10 +128,7 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
       callback: (err) ->
         if err?
           error 'compile', err if err?
-        else
-          console.log "Compilation complete."
         done 'compile'
-  invoke 'build'
 
 task 'watch', ->
   watch 'coffee/', '.coffee', (event, filename) ->
@@ -150,12 +158,6 @@ setVersion = (options, callback) ->
       version = stdout.replace(/^\s+|\s+$/, '')
       callback()
 
-task 'sass', 'Compile sass source into css', ->
-  console.log "Compiling scss into css..."
-  exec 'compass compile sass/', (err, o, e) ->
-    error('sass', o+e) if err?
-    done 'sass'
-
 task 'release', 'Releases a new version of the library', (options) ->
   setVersion options, ->
     console.log "Building release #{version}..."
@@ -166,4 +168,3 @@ task 'release', 'Releases a new version of the library', (options) ->
 task 'clean', 'Removes build files completely', ->
   console.log "Removing #{dirs.js} #{dirs.css} #{dirs.doc}"
   exec "rm -r #{dirs.js} #{dirs.css} #{dirs.doc}"
-

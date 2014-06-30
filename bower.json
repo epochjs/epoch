@@ -4,8 +4,6 @@
   "license": "MIT",
   "ignore": [
     "/coffee",
-    "/doc",
-    "/lib",
     "/sass",
     "/test",
     "/.codoopts",
