@@ -2,7 +2,7 @@
 class Epoch.Chart.Bar extends Epoch.Chart.Plot
   defaults =
     style: 'grouped'
-    orientation: 'horizontal'
+    orientation: 'vertical'
     padding:
       bar: 0.08
       group: 0.1
@@ -10,25 +10,25 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       bar: 0.08
       group: 0.1
 
-  vertical_specific =
+  horizontal_specific =
     tickFormats:
       top: Epoch.Formats.si
       bottom: Epoch.Formats.si
       left: Epoch.Formats.regular
       right: Epoch.Formats.regular
 
-  vertical_defaults = Epoch.Util.defaults(vertical_specific, defaults)
+  horizontal_defaults = Epoch.Util.defaults(horizontal_specific, defaults)
 
   constructor: (@options={}) ->
-    if @options.orientation == 'vertical'
-      @options = Epoch.Util.defaults(@options, vertical_defaults)
+    if @options.orientation == 'horizontal'
+      @options = Epoch.Util.defaults(@options, horizontal_defaults)
     else
       @options = Epoch.Util.defaults(@options, defaults)
     super(@options)
 
   # @return [Function] The scale used to generate the chart's x scale.
   x: ->
-    if @options.orientation == 'horizontal'
+    if @options.orientation == 'vertical'
       d3.scale.ordinal()
         .domain(Epoch.Util.domain(@data))
         .rangeRoundBands([0, @innerWidth()], @options.padding.group, @options.outerPadding.group)
@@ -47,7 +47,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   # @return [Function] The y scale used to render the bar chart.
   y: ->
-    if @options.orientation == 'horizontal'
+    if @options.orientation == 'vertical'
       extent = @extent((d) -> d.y)
       extent[0] = Math.min(0, extent[0])
       d3.scale.linear()
@@ -83,8 +83,8 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       @_drawVertical()
     super()
 
-  # Draws the bar chart with a horizontal orientation
-  _drawHorizontal: ->
+  # Draws the bar chart with a vertical orientation
+  _drawVertical: ->
     [x0, y] = [@x(), @y()]
     x1 = @x1(x0)
     height = @height - @margins.top - @margins.bottom
@@ -134,7 +134,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .remove()
 
   # Draws the bar chart with a horizontal orientation
-  _drawVertical: ->
+  _drawHorizontal: ->
     [x, y0] = [@x(), @y()]
     y1 = @y1(y0)
     width = @width - @margins.left - @margins.right
