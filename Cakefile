@@ -25,7 +25,7 @@ package_order = [
 ]
 
 dirs =
-  src: 'coffee/'
+  src: 'src/'
   build: 'js/epoch/'
   doc: 'doc/'
   css: 'css/'
@@ -131,7 +131,7 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
         done 'compile'
 
 task 'watch', ->
-  watch 'coffee/', '.coffee', (event, filename) ->
+  watch 'src/', '.coffee', (event, filename) ->
     invoke 'build'
 
 task 'documentation', 'Compiles API documentation', ->
