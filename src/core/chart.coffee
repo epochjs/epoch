@@ -46,6 +46,13 @@ class Epoch.Chart.Base extends Epoch.Events
     width: 320
     height: 240
 
+  trigger_options = (instance, scope, prefix) ->
+    for key, value of scope
+      if Epoch.isObject(value)
+        trigger_options(instance, value, prefix + '.' + key) 
+      else
+        instance.trigger "option:#{prefix.substr(1)}.#{key}"
+
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
   # @option options [Integer] width Sets an explicit width for the visualization (optional).
@@ -64,6 +71,45 @@ class Epoch.Chart.Base extends Epoch.Events
     else
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
+
+  # Gets and sets chart options after initialization. When using this as a setter, if an
+  # option actually changes value then an event <code>option:NAME</code> will be triggered
+  # where NAME is the name of the option.
+  #
+  # This method can be called in four different ways:
+  # <ol>
+  #   <li>chart.option() - Returns a an object containing all of the options for the chart.</li>
+  #   <li>chart.option(key) - Returns a specific option. Use <code>.</code> to access nested options.</li>
+  #   <li>chart.option(key, value) - Sets an option and triggers the associated event.</li>
+  #   <li>chart.option(object) - Allows for the setting of multiple options at once.</li>
+  # </ol>
+  option: (key, value) ->
+    return Epoch.Util.defaults({}, @options) if arguments.length == 0
+
+    if Epoch.isObject(key)
+      @options = Epoch.Util.defaults(key, @options)
+      trigger_options @, key, ''
+
+    if key? and value?
+      parts = key.split('.')
+      scope = @options
+      while parts.length and scope?
+        subkey = parts.shift()
+        if parts.length == 0
+          scope[subkey] = value
+          @trigger "option:#{key}"
+          return
+        scope = scope[subkey]
+
+    if key?
+      parts = key.split('.')
+      scope = @options
+      while parts.length and scope?
+        subkey = parts.shift()
+        scope = scope[subkey]
+      return scope
+
+
 
   # Determines if the chart is currently visible in a document.
   # @return [Boolean] True if the chart is visible, false otherwise.
