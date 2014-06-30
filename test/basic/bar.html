@@ -22,9 +22,9 @@
             <li><a href="#test-8">Layer Color Override</a></li>
             <li><a href="#test-9">Categorical Color Switching</a></li>
             <li><a href="#test-10">Multi Series without Labels</a></li>
-            <li><a href="#test-11">Vertically Oriented Single Series</a></li>
-            <li><a href="#test-12">Vertically Oriented Multi Series</a></li>
-            <li><a href="#test-13">Vertically Oriented Multi Series Transition</a></li>
+            <li><a href="#test-11">Horizontally Oriented Single Series</a></li>
+            <li><a href="#test-12">Horizontally Oriented Multi Series</a></li>
+            <li><a href="#test-13">Horizontally Oriented Multi Series Transition</a></li>
         </ol>
 
 
@@ -46,11 +46,11 @@
                 data[0].values.push({x: x, y: y});
             }
 
-            $('#test-1 .epoch').epoch({ 
+            $('#test-1 .epoch').epoch({
                 type: 'bar',
                 data: data,
                 tickFormats: {
-                    bottom: function(d) { 
+                    bottom: function(d) {
                         return parseFloat(d).toFixed(1);
                     }
                 }
@@ -77,11 +77,11 @@
                 data[0].values.push({x: x, y: y});
             }
 
-            $('#test-2 .epoch').epoch({ 
-                type: 'bar', 
+            $('#test-2 .epoch').epoch({
+                type: 'bar',
                 data: data,
                 tickFormats: {
-                    bottom: function(d) { 
+                    bottom: function(d) {
                         return parseFloat(d).toFixed(1);
                     }
                 }
@@ -120,9 +120,9 @@
                 data[1].values.push({x: x, y: 2*x});
                 data[2].values.push({x: x, y: 3*x});
             }
-        
-            $('#test-3 .epoch').epoch({ 
-                type: 'bar', 
+
+            $('#test-3 .epoch').epoch({
+                type: 'bar',
                 data: data
             });
         });
@@ -163,7 +163,7 @@
             $('#test-4 .epoch').epoch({ type: 'bar', data: data });
         });
         </script>
-        
+
 
         <!-- Test 5 -->
         <div id="test-5" class="test">
@@ -193,7 +193,7 @@
                 data1[0].values.push({x: x1, y: y1});
                 data2[0].values.push({x: x2, y: y2});
             }
-        
+
             var chart = $('#test-5 .epoch').epoch({
                 type: 'bar',
                 data: data1
@@ -296,7 +296,7 @@
         $(function() {
             var data1 = [{label: 'A', values: []}],
                 data2 = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []}
                 ],
@@ -311,8 +311,8 @@
                 data2[2].values.push({x: x, y: x * Math.log(x)});
             }
 
-            var chart = $('#test-7 .epoch').epoch({ 
-                type: 'bar', 
+            var chart = $('#test-7 .epoch').epoch({
+                type: 'bar',
                 data: data1,
                 tickFormats: {
                     bottom: function(d) { return d.toFixed(1); }
@@ -344,7 +344,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []}
                 ],
@@ -388,7 +388,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []},
                     {label: 'D', values: []},
@@ -407,7 +407,7 @@
             }
 
             $('#test-9 .epoch').epoch({
-                type: 'bar', 
+                type: 'bar',
                 data: data,
                 tickFormats: {
                     bottom: function(d) { return d.toFixed(1); }
@@ -458,7 +458,7 @@
 
         <!-- Test 11 -->
         <div id="test-11" class="test">
-            <h2>11. Vertically Oriented Single Series</h2>
+            <h2>11. Horizontally Oriented Single Series</h2>
             <p>
                 Correctly render the single series plot of:
                 <ul>
@@ -466,7 +466,7 @@
                     <li>B - 30</li>
                     <li>C - 60</li>
                 </ul>
-                using a vertical orientation.
+                using a horizontal orientation.
             </p>
             <div class="epoch"></div>
         </div>
@@ -480,7 +480,7 @@
 
             $('#test-11 .epoch').epoch({
                 type: 'bar',
-                orientation: 'vertical',
+                orientation: 'horizontal',
                 data: data
             });
         });
@@ -488,7 +488,7 @@
 
         <!-- Test 12 -->
         <div id="test-12" class="test">
-            <h2>12. Vertically Oriented Multi Series</h2>
+            <h2>12. Horizontally Oriented Multi Series</h2>
             <p>
                 Correctly render the multi series plot of:
                 <ul>
@@ -496,7 +496,7 @@
                     <li>B - 20, 50</li>
                     <li>C - 60, 10</li>
                 </ul>
-                using a vertical orientation.
+                using a horizontal orientation.
             </p>
             <div class="epoch"></div>
         </div>
@@ -509,7 +509,7 @@
 
             $('#test-12 .epoch').epoch({
                 type: 'bar',
-                orientation: 'vertical',
+                orientation: 'horizontal',
                 data: data
             });
         });
@@ -517,9 +517,9 @@
 
         <!-- Test 13 -->
         <div id="test-13" class="test">
-            <h2>13. Vertically Oriented Multi Series Transition</h2>
+            <h2>13. Horizontally Oriented Multi Series Transition</h2>
             <p>
-                Correctly render the vertically oriented multi series plot of:
+                Correctly render the Horizontally oriented multi series plot of:
                 <ul>
                     <li>A - 10, 10</li>
                     <li>B - 20, 20</li>
@@ -551,7 +551,7 @@
 
             var chart = $('#test-13 .epoch').epoch({
                 type: 'bar',
-                orientation: 'vertical',
+                orientation: 'horizontal',
                 data: data1
             });
 
