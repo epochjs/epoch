@@ -65,12 +65,13 @@ Keeping the tests current makes it easier for others to review your code and spo
 
 Epoch uses cake for its builds. The file defines the following tasks:
 ```
-cake build                # Builds javascript from the coffeescript source (also packages)
-cake package              # Packages the js and libraries into a single file
+cake build                # Build JavaScript and CSS from source (also packages)
+cake coffee               # Compile JavaScript from CoffeeScript source
+cake sass                 # Compile SASS source into CSS
+cake package              # Packages the JavaScript into a single file
 cake compile              # Compiles the packaged source via the Google Closure Compiler
 cake watch
 cake documentation        # Compiles API documentation
-cake sass                 # Compile sass source into css
 cake release              # Releases a new version of the library
 cake clean                # Removes build files completely
 
