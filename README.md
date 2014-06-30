@@ -46,7 +46,7 @@ All of the above tools can be installed via [npm](https://www.npmjs.org/). After
 The best way to start contributing to Epoch is to follow these steps:
 
 1. Change to the source directory for the project
-2. Run `cake build` and `cake sass` to build the JavaScript and CSS from source
+2. Run `cake build` to build the JavaScript and CSS from source
     1. Optionally run `cake documentation` to compile the API documentation into HTML
 3. In a web browser open the `test/index.html` and browse the rendering tests
 4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled

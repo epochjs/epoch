@@ -92,11 +92,16 @@ watch = (dir, ext, fn) ->
 # Tasks
 #
 
-task 'build', 'Builds javascript from the coffeescript source (also packages)', ->
+task 'build', 'Build JavaScript and CSS from source (also packages)', ->
   console.log "Building..."
+  chain ['coffee', 'sass', 'package'], ->
+    done 'build'
+
+task 'coffee', 'Compile JavaScript from CoffeeScript source', ->
+  console.log "Compiling CoffeeScript into JavaScript..."
   exec "./node_modules/.bin/coffee --output #{dirs.build} --compile #{dirs.src}", (err, stdout, stderr) ->
-    error('build', stdout + stderr) if err?
-    invoke 'package'
+    error('coffee', stdout + stderr) if err?
+    done 'coffee'
 
 task 'sass', 'Compile SASS source into CSS', ->
   console.log "Compiling SCSS into CSS..."
@@ -105,16 +110,15 @@ task 'sass', 'Compile SASS source into CSS', ->
       error('sass', o+e) if err?
       done 'sass'
 
-task 'package', 'Packages the js into a single file', ->
+task 'package', 'Packages the JavaScript into a single file', ->
   console.log "Packaging..."
   sources = ("#{dirs.build}#{source}" for source in package_order).join(' ')
   exec "cat #{sources} > #{target.package}", (err, stdout, stderr) ->
     error('package', stdout + stderr) if err?
-    console.log "Complete!"
     done 'package'
 
 task 'compile', 'Compiles the packaged source via the Google Closure Compiler', ->
-  after 'package', ->
+  chain ['coffee', 'package'], ->
     console.log "Google Closure Compiling..."
     new compressor.minify
       type: 'gcc'
@@ -124,10 +128,7 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
       callback: (err) ->
         if err?
           error 'compile', err if err?
-        else
-          console.log "Compilation complete."
         done 'compile'
-  invoke 'build'
 
 task 'watch', ->
   watch 'coffee/', '.coffee', (event, filename) ->
