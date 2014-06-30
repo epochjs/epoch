@@ -3,7 +3,7 @@
   "description": "A general purpose, real-time visualization library.",
   "license": "MIT",
   "ignore": [
-    "/coffee",
+    "/src",
     "/sass",
     "/test",
     "/.codoopts",
