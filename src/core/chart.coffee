@@ -50,8 +50,11 @@ class Epoch.Chart.Base extends Epoch.Events
     for key, value of scope
       if Epoch.isObject(value)
         trigger_options(instance, value, prefix + '.' + key) 
-      else
+      else if prefix.length > 0
         instance.trigger "option:#{prefix.substr(1)}.#{key}"
+      else
+        instance.trigger "option:#{key}"
+        
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
@@ -83,33 +86,39 @@ class Epoch.Chart.Base extends Epoch.Events
   #   <li>chart.option(key, value) - Sets an option and triggers the associated event.</li>
   #   <li>chart.option(object) - Allows for the setting of multiple options at once.</li>
   # </ol>
-  option: (key, value) ->
-    return Epoch.Util.defaults({}, @options) if arguments.length == 0
+  option: ->
+    # No Arguments: Return a copy of this chart's options
+    if arguments.length == 0
+      return Epoch.Util.defaults({}, @options) 
 
-    if Epoch.isObject(key)
-      @options = Epoch.Util.defaults(key, @options)
-      trigger_options @, key, ''
+    # Get the option with the given key
+    if arguments.length == 1 and Epoch.isString(arguments[0])
+      parts = arguments[0].split('.')
+      console.log parts
+      scope = @options
+      while parts.length and scope?
+        subkey = parts.shift()
+        scope = scope[subkey]
+        console.log subkey, scope
+      return scope
 
-    if key? and value?
-      parts = key.split('.')
+    # Set an option with the specified key to a specified value
+    if arguments.length == 2 and Epoch.isString(arguments[0])
+      parts = arguments[0].split('.')
       scope = @options
       while parts.length and scope?
         subkey = parts.shift()
         if parts.length == 0
-          scope[subkey] = value
-          @trigger "option:#{key}"
+          scope[subkey] = arguments[1]
+          @trigger "option:#{arguments[0]}"
           return
         scope = scope[subkey]
 
-    if key?
-      parts = key.split('.')
-      scope = @options
-      while parts.length and scope?
-        subkey = parts.shift()
-        scope = scope[subkey]
-      return scope
-
-
+    # Set new options given an object
+    if arguments.length == 1 and Epoch.isObject(arguments[0])
+      @options = Epoch.Util.defaults(arguments[0], @options)
+      trigger_options @, arguments[0], ''
+      return
 
   # Determines if the chart is currently visible in a document.
   # @return [Boolean] True if the chart is visible, false otherwise.
