@@ -86,6 +86,9 @@ class Epoch.Chart.Base extends Epoch.Events
   #   <li>chart.option(key, value) - Sets an option and triggers the associated event.</li>
   #   <li>chart.option(object) - Allows for the setting of multiple options at once.</li>
   # </ol>
+  #
+  # Warning: This method is currently experimental, and is not used by any core part of the library.
+  #   I'd feel much safer with real unit tests in place before proceeding to build around it.
   option: ->
     # No Arguments: Return a copy of this chart's options
     if arguments.length == 0
