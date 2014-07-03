@@ -1,21 +1,6 @@
-jsdom = require('jsdom')
 assert = require('assert')
 
 describe 'Epoch.Util', ->
-  Epoch = null
-  HTMLElement = null
-  document = null
-  
-  before (done) ->
-    jsdom.env
-      html: "<html><body></body></html>"
-      scripts: ["http://d3js.org/d3.v3.min.js", "../js/epoch.js"]
-      done: (errors, window) ->
-        Epoch = window.Epoch
-        HTMLElement = window.HTMLElement
-        document = window.document
-        done()
-
   describe 'isArray', ->
     it 'should return true if given an array', ->
       assert.equal Epoch.isArray([]), true

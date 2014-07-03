@@ -140,7 +140,7 @@ task 'documentation', 'Compiles API documentation', ->
     error('documentation', stdout + stderr) if err?
 
 task 'test', 'Runs unit tests', ->
-  exec "./node_modules/.bin/mocha --compilers coffee:coffee-script/register", (err, stdout, stderr) ->
+  exec "./node_modules/.bin/mocha  --recursive --compilers coffee:coffee-script/register", (err, stdout, stderr) ->
     console.log stderr + stdout
 
 #
