@@ -1,4 +1,5 @@
 jsdom = require('jsdom')
+global.assert = require('chai').assert
 
 [Epoch, document] = [null, null]
   

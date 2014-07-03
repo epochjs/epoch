@@ -1,75 +1,73 @@
-assert = require('assert')
-
 describe 'Epoch.Util', ->
   describe 'isArray', ->
     it 'should return true if given an array', ->
-      assert.equal Epoch.isArray([]), true
-      assert.equal Epoch.isArray([1, 2, 3]), true
+      assert.ok Epoch.isArray([])
+      assert.ok Epoch.isArray([1, 2, 3])
 
     it 'should return false if not given an array', ->
-      assert.equal Epoch.isArray(2), false
-      assert.equal Epoch.isArray("hello"), false
-      assert.equal Epoch.isArray({}), false
+      assert.notOk Epoch.isArray(2)
+      assert.notOk Epoch.isArray("hello")
+      assert.notOk Epoch.isArray({})
 
   describe 'isObject', ->
     it 'should return true if given an flat object', ->
-      assert.equal Epoch.isObject({}), true
+      assert.ok Epoch.isObject({})
 
     it 'should return false if given a number object', ->
-      assert.equal Epoch.isObject(new Number()), false
+      assert.notOk Epoch.isObject(new Number())
 
     it 'should return false if given a non-object', ->
-      assert.equal Epoch.isObject([]), false
-      assert.equal Epoch.isObject(2), false
-      assert.equal Epoch.isObject("string"), false
+      assert.notOk Epoch.isObject([])
+      assert.notOk Epoch.isObject(2)
+      assert.notOk Epoch.isObject("string")
 
   describe 'isString', ->
     it 'should return true if given a string', ->
-      assert.equal Epoch.isString("example"), true
-      assert.equal Epoch.isString(new String()), true
+      assert.ok Epoch.isString("example")
+      assert.ok Epoch.isString(new String())
 
     it 'should return false if given a non-string', ->
-      assert.equal Epoch.isString(2), false
-      assert.equal Epoch.isString([]), false
-      assert.equal Epoch.isString({}), false
+      assert.notOk Epoch.isString(2)
+      assert.notOk Epoch.isString([])
+      assert.notOk Epoch.isString({})
 
   describe 'isFunction', ->
     it 'should return true if given a function', ->
-      assert.equal Epoch.isFunction(->), true
+      assert.ok Epoch.isFunction(->)
 
     it 'should return false if given a non-function', ->
-      assert.equal Epoch.isFunction([]), false
-      assert.equal Epoch.isFunction({}), false
-      assert.equal Epoch.isFunction(42), false
-      assert.equal Epoch.isFunction("cool"), false
+      assert.notOk Epoch.isFunction([])
+      assert.notOk Epoch.isFunction({})
+      assert.notOk Epoch.isFunction(42)
+      assert.notOk Epoch.isFunction("cool")
 
   describe 'isNumber', ->
     it 'should return true if given a number', ->
-      assert.equal Epoch.isNumber(new Number()), true
+      assert.ok Epoch.isNumber(new Number())
 
     it 'should return true if given an integer literal', ->
-      assert.equal Epoch.isNumber(1983), true
+      assert.ok Epoch.isNumber(1983)
 
     it 'should return true if given a floating point literal', ->
-      assert.equal Epoch.isNumber(3.1415), true
+      assert.ok Epoch.isNumber(3.1415)
 
     it 'should return false if given a non-number', ->
-      assert.equal Epoch.isNumber(->), false
-      assert.equal Epoch.isNumber([]), false
-      assert.equal Epoch.isNumber({}), false
-      assert.equal Epoch.isNumber("nan"), false
+      assert.notOk Epoch.isNumber(->)
+      assert.notOk Epoch.isNumber([])
+      assert.notOk Epoch.isNumber({})
+      assert.notOk Epoch.isNumber("nan")
 
   describe 'isElement', ->
     it 'should return true given an html element', ->
       p = document.createElement('P')
-      assert.equal Epoch.isElement(p), true
+      assert.ok Epoch.isElement(p)
 
     it 'should return false given a non-element', ->
-      assert.equal Epoch.isElement(1), false
-      assert.equal Epoch.isElement("1"), false
-      assert.equal Epoch.isElement({}), false
-      assert.equal Epoch.isElement([]), false
-      assert.equal Epoch.isElement(->), false
+      assert.notOk Epoch.isElement(1)
+      assert.notOk Epoch.isElement("1")
+      assert.notOk Epoch.isElement({})
+      assert.notOk Epoch.isElement([])
+      assert.notOk Epoch.isElement(->)
 
 
 
