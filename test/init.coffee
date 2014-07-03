@@ -1,7 +1,8 @@
 jsdom = require('jsdom')
 global.assert = require('chai').assert
-
 [Epoch, document] = [null, null]
+
+process.env.TZ = "America/Los_Angeles"
   
 before (done) ->
   jsdom.env

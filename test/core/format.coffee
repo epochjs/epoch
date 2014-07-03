@@ -49,3 +49,21 @@ describe 'Epoch.Util', ->
         regexp = new RegExp(" #{postfix}$")
         assert.isNotNull Epoch.Util.formatBytes(number).match(regexp)
 
+
+describe 'Epoch.Formats', ->
+  describe 'regular', ->
+    it 'should return what it was given', ->
+      assert.equal Epoch.Formats.regular(10), 10
+      assert.equal Epoch.Formats.regular("hello"), "hello"
+
+  describe 'percent', ->
+    it 'should return a percent given a number', ->
+      assert.equal Epoch.Formats.percent(0.1), '10.0%'
+      assert.equal Epoch.Formats.percent(0.5), '50.0%'
+      assert.equal Epoch.Formats.percent(1), '100.0%'
+      assert.equal Epoch.Formats.percent(23.245), '2324.5%'
+
+  describe 'seconds', ->
+    it 'should return a well formatted date given a timestamp', ->
+      assert.equal Epoch.Formats.seconds(1404385979), '04:12:59 AM'
+
