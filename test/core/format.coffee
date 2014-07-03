@@ -22,7 +22,7 @@ describe 'Epoch.Util', ->
         assert.isString match
         assert.equal match.length, i
 
-    it 'should set the appropriate postfix based on the numbers order of magnitude', ->
+    it 'should set the appropriate postfix based on the number\'s order of magnitude', ->
       orderMap =
         'K': 3
         'M': 6
@@ -41,6 +41,32 @@ describe 'Epoch.Util', ->
         assert.equal result.indexOf(postfix), result.length - 1
 
 
+  describe 'formatBytes', ->
+    it 'should postfix numbers < 1024 with "B"', ->
+      number = 512
+      match = Epoch.Util.formatBytes(number).match(/B$/)
+      assert.isNotNull match
+      assert.equal match.length, 1
+      assert.equal match[0], 'B'
 
-    #it 'should append a K for numbers greater than 1K but less than 1M',
+    it 'should only set a fixed decimal for integers when instructed', ->
+      number = 128
+      match = Epoch.Util.formatBytes(number, 1, true).match('.0')
+      assert.isNotNull match
+      assert.equal match[0], '.0'
+
+    it 'should set the appropriate number of fixed digits', ->
+      number = 3.1415
+      for i in [1..5]
+        fixed = Epoch.Util.formatBytes(number, i).replace(/\sB$/, '')
+        assert.isString fixed
+        match = fixed.split('.')[1]
+        assert.isNotNull match
+        assert.equal match.length, i
+
+    it 'should set the appropriate postfix based on the number\'s order of magnitude', ->
+      for i, postfix of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        number = Math.pow(1024, (i|0)+1)
+        regexp = new RegExp(" #{postfix}$")
+        assert.isNotNull Epoch.Util.formatBytes(number).match(regexp)
 

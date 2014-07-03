@@ -79,7 +79,7 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
     base = Math.pow(10, ((i|0)+1)*3)
     if v >= base and v < Math.pow(10, ((i|0)+2)*3)
       q = v/base
-      q = q.toFixed(fixed) unless (q|0) == q and !fixIntegers
+      q = q.toFixed(fixed) unless (q % 1) == 0 and !fixIntegers
       return "#{q} #{label}"
 
 # Formats large bandwidth and disk space usage numbers with byte postfixes (e.g. KB, MB, GB, etc.)
@@ -94,7 +94,7 @@ Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
     base = Math.pow(1024, (i|0)+1)
     if v >= base and v < Math.pow(1024, (i|0)+2)
       q = v/base
-      q = q.toFixed(fixed) unless (q|0) == q and !fix_integers
+      q = q.toFixed(fixed) unless (q % 1) == 0 and !fix_integers
       return "#{q} #{label}"
 
 # @return a "dasherized" css class names from a given string
