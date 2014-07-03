@@ -89,7 +89,11 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
 # @example Formatting a large number of bytes
 #   Epoch.Util.formatBytes(5.21 * Math.pow(2, 20)) == "5.2 MB"
 Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
-  return "#{v} B" if v < 1024
+  if v < 1024
+    q = v
+    q = q.toFixed(fixed) unless (q % 1) == 0 and !fix_integers
+    return "#{q} B"
+    
   for i, label of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     base = Math.pow(1024, (i|0)+1)
     if v >= base and v < Math.pow(1024, (i|0)+2)
