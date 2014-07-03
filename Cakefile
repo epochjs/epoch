@@ -139,6 +139,10 @@ task 'documentation', 'Compiles API documentation', ->
   exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
     error('documentation', stdout + stderr) if err?
 
+task 'test', 'Runs unit tests', ->
+  exec "./node_modules/.bin/mocha --compilers coffee:coffee-script/register", (err, stdout, stderr) ->
+    console.log stderr + stdout
+
 #
 # Release Tasks
 #
