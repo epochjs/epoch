@@ -77,7 +77,3 @@ describe 'Epoch.Util', ->
       styles = Epoch.Util.getComputedStyle(div)
       for k, v of overrideStyles
         assert.equal styles[k], v, "ComputedStyles['#{k}'] should be '#{v}'"
-
-      
-
-
