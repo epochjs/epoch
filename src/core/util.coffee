@@ -105,7 +105,7 @@ Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
 # @example Using dasherize
 #   Epoch.Util.dasherize('My Awesome Name') == 'my-awesome-name'
 Epoch.Util.dasherize = (str) ->
-  str.replace("\n", '').replace(/\s+/, '-').toLowerCase()
+  Epoch.Util.trim(str).replace("\n", '').replace(/\s+/g, '-').toLowerCase()
 
 # @return the full domain of a given variable from an array of layers
 # @param [Array] layers Layered plot data.
