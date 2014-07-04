@@ -143,7 +143,8 @@ Epoch.Util.getComputedStyle = (element, pseudoElement) ->
 # @param [Number] opacity Opacity to use for the resulting color.
 # @return the resulting rgba color string.
 Epoch.Util.toRGBA = (color, opacity) ->
-  if (parts = color.match /^rgba\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)/)
+  if (parts = color.match /^rgba\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*[0-9\.]+\)/)
+    [all, r, g, b] = parts
     result = "rgba(#{r},#{g},#{b},#{opacity})"
   else if (v = d3.rgb color)
     result = "rgba(#{v.r},#{v.g},#{v.b},#{opacity})"

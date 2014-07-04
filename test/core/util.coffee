@@ -38,3 +38,12 @@ describe 'Epoch.Util', ->
       assert.sameMembers xDomain, ['A', 'B', 'C', 'D', 'E', 'F']
       yDomain = Epoch.Util.domain(testLayers2, 'y')
       assert.sameMembers yDomain, [10, 20, 40, 15, 30, 90]
+
+  describe 'toRGBA', ->
+    it 'should produce the correct rgba style when given an rgba color style', ->
+      assert.equal Epoch.Util.toRGBA('rgba(1, 2, 3, 0.4)', 0.1), 'rgba(1,2,3,0.1)'
+
+    it 'should produce the correct rgba style when given any color style', ->
+      assert.equal Epoch.Util.toRGBA('black', 0.25), 'rgba(0,0,0,0.25)'
+      assert.equal Epoch.Util.toRGBA('#FF0000', 0.9), 'rgba(255,0,0,0.9)'
+      assert.equal Epoch.Util.toRGBA('rgb(10, 20, 40)', 0.99), 'rgba(10,20,40,0.99)'
