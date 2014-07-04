@@ -59,7 +59,7 @@ describe 'Epoch.Util', ->
 
   describe 'isElement', ->
     it 'should return true given an html element', ->
-      p = document.createElement('P')
+      p = doc.createElement('P')
       assert.ok Epoch.isElement(p)
 
     it 'should return false given a non-element', ->

@@ -1,14 +1,27 @@
+process.env.TZ = "America/Los_Angeles"
+
 jsdom = require('jsdom')
 global.assert = require('chai').assert
-[Epoch, document] = [null, null]
+url = require('url')
 
-process.env.TZ = "America/Los_Angeles"
-  
+html = "<html><head></head><body></body></html>"
+
 before (done) ->
   jsdom.env
-    html: "<html><body></body></html>"
+    html: html
     scripts: ["http://d3js.org/d3.v3.min.js", "../js/epoch.js"]
     done: (errors, window) ->
       global.Epoch = window.Epoch
-      global.document = window.document
+      global.d3 = window.d3
+      global.doc = window.document
       done()
+
+
+global.addStyleSheet = (css) ->
+  head = doc.head
+  style = doc.createElement('style')
+  style.type = 'text/css'
+  style.appendChild(doc.createTextNode(css))
+  head.appendChild(style)
+  style
+
