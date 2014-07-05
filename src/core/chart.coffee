@@ -17,7 +17,7 @@ class Epoch.Events
   # @param [Function, String] callback (Optional) Callback to remove from the listener list.
   #   If this parameter is not provided then all listeners will be removed for the event.
   off: (name, callback) ->
-    return unless Epoch.isObject(@_events[name])
+    return unless Epoch.isArray(@_events[name])
     return delete(@_events[name]) unless callback?
     while (i = @_events[name].indexOf(callback)) >= 0
       @_events[name].splice(i, 1)
