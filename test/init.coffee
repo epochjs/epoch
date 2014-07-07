@@ -14,6 +14,10 @@ before (done) ->
       global.Epoch = window.Epoch
       global.d3 = window.d3
       global.doc = window.document
+
+      # Set this to "retina" so we can test canvas based charts
+      window.devicePixelRatio = 2
+      
       done()
 
 
