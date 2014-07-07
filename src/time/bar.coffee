@@ -41,3 +41,5 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
 
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
+        
+    super()

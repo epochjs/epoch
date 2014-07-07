@@ -46,3 +46,5 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text((d) -> d.data.label or d.data.category)
+
+    super()

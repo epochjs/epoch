@@ -79,7 +79,7 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
     base = Math.pow(10, ((i|0)+1)*3)
     if v >= base and v < Math.pow(10, ((i|0)+2)*3)
       q = v/base
-      q = q.toFixed(fixed) unless (q|0) == q and !fixIntegers
+      q = q.toFixed(fixed) unless (q % 1) == 0 and !fixIntegers
       return "#{q} #{label}"
 
 # Formats large bandwidth and disk space usage numbers with byte postfixes (e.g. KB, MB, GB, etc.)
@@ -89,19 +89,23 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
 # @example Formatting a large number of bytes
 #   Epoch.Util.formatBytes(5.21 * Math.pow(2, 20)) == "5.2 MB"
 Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
-  return "#{v} B" if v < 1024
+  if v < 1024
+    q = v
+    q = q.toFixed(fixed) unless (q % 1) == 0 and !fix_integers
+    return "#{q} B"
+    
   for i, label of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     base = Math.pow(1024, (i|0)+1)
     if v >= base and v < Math.pow(1024, (i|0)+2)
       q = v/base
-      q = q.toFixed(fixed) unless (q|0) == q and !fix_integers
+      q = q.toFixed(fixed) unless (q % 1) == 0 and !fix_integers
       return "#{q} #{label}"
 
 # @return a "dasherized" css class names from a given string
 # @example Using dasherize
 #   Epoch.Util.dasherize('My Awesome Name') == 'my-awesome-name'
 Epoch.Util.dasherize = (str) ->
-  str.replace("\n", '').replace(/\s+/, '-').toLowerCase()
+  Epoch.Util.trim(str).replace("\n", '').replace(/\s+/g, '-').toLowerCase()
 
 # @return the full domain of a given variable from an array of layers
 # @param [Array] layers Layered plot data.
@@ -139,8 +143,20 @@ Epoch.Util.getComputedStyle = (element, pseudoElement) ->
 # @param [Number] opacity Opacity to use for the resulting color.
 # @return the resulting rgba color string.
 Epoch.Util.toRGBA = (color, opacity) ->
-  if (parts = color.match /^rgba\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)/)
+  if (parts = color.match /^rgba\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*[0-9\.]+\)/)
+    [all, r, g, b] = parts
     result = "rgba(#{r},#{g},#{b},#{opacity})"
   else if (v = d3.rgb color)
     result = "rgba(#{v.r},#{v.g},#{v.b},#{opacity})"
   return result
+
+# Obtains a graphics context for the given canvas node. Nice to have
+# this abstracted out in case we want to support WebGL in the future.
+# Also allows us to setup a special context when unit testing, as
+# jsdom doesn't have canvas support, and node-canvas is a pain in the
+# butt to install properly across different platforms.
+Epoch.Util.getContext = (node, type='2d') ->
+  return node.getContext(type) if node.getContext?
+  new Epoch.TestContext()
+
+
