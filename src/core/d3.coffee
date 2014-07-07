@@ -1,6 +1,6 @@
 # Gets the width of the first node, or sets the width of all the nodes
 # in a d3 selection.
-# @param value (optional) Width to set for all the nodes in the selection.
+# @param value [Number, String] (optional) Width to set for all the nodes in the selection.
 # @return The selection if setting the width of the nodes, or the width
 #   in pixels of the first node in the selection.
 d3.selection::width = (value) ->

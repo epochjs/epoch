@@ -451,7 +451,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   #   will be 0 when the plot is not animating and negative when it is.
   # @abstract It does nothing on its own but is provided so that subclasses can
   #   define a custom rendering routine.
-  draw: (delta=0)->
+  draw: (delta=0) -> super()
 
 
 # Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)

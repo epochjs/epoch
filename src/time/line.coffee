@@ -36,3 +36,5 @@ class Epoch.Time.Line extends Epoch.Time.Plot
           @ctx.lineTo.apply @ctx, args
 
       @ctx.stroke()
+
+    super()

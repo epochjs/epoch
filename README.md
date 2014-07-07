@@ -52,11 +52,17 @@ The best way to start contributing to Epoch is to follow these steps:
 3. In a web browser open the `test/index.html` and browse the rendering tests
 4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
 5. Use the rendering tests to see if your changes had the desired result
+6. Ensure unit tests with pass `cake test`
 
-Keeping the rendering tests up-to-date is important! When developing use the following guidelines:
 
-* When adding new features make sure to add new rendering tests
-* When changing existing functionality, ensure that the appropriate rendering tests still pass
+#### Testing
+
+Epoch uses two types of testing to ensure that changes do not cause unintended side effects. The first, unit tests, ensure that the core functional components of the library work as expected. The second, rendering tests, allow you to ensure that charts and graphs are correctly rendered.
+
+It is important to keep both unit test and rendering tests up-to-date! When developing, use the following guidelines:
+
+* When adding new features make sure to add new tests
+* When changing existing functionality, ensure that the appropriate both types of tests still pass
 * If you want to make a new type of chart, add a whole new test suite for that chart!
 
 Keeping the tests current makes it easier for others to review your code and spot issues. Also, pull requests without appropriate testing will not be merged... period.
@@ -75,6 +81,7 @@ cake package              # Packages the JavaScript into a single file
 cake compile              # Compiles the packaged source via the Google Closure Compiler
 cake watch
 cake documentation        # Compiles API documentation
+cake test                 # Runs unit tests
 cake release              # Releases a new version of the library
 cake clean                # Removes build files completely
 

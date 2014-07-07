@@ -13,8 +13,6 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
 
   # Draws the scatter plot.
   draw: ->
-    super()
-
     [x, y] = [@x(), @y()]
     radius = @options.radius
 
@@ -47,3 +45,5 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
       .duration(750)
       .style('opacity', 0)
       .remove()
+      
+    super()

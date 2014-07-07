@@ -17,7 +17,7 @@ class Epoch.Events
   # @param [Function, String] callback (Optional) Callback to remove from the listener list.
   #   If this parameter is not provided then all listeners will be removed for the event.
   off: (name, callback) ->
-    return unless Epoch.isObject(@_events[name])
+    return unless Epoch.isArray(@_events[name])
     return delete(@_events[name]) unless callback?
     while (i = @_events[name].indexOf(callback)) >= 0
       @_events[name].splice(i, 1)
@@ -50,7 +50,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param [Object] options Options to set for this chart.
   # @option options [Integer] width Sets an explicit width for the visualization (optional).
   # @option options [Integer] height Sets an explicit height for the visualization (optional).
-  constructor: (@options) ->
+  constructor: (@options={}) ->
     super()
 
     @setData(@options.data or [])
@@ -96,9 +96,10 @@ class Epoch.Chart.Base extends Epoch.Events
     @setData data
     @draw() if draw
 
-  # Draws the chart.
+  # Draws the chart. Triggers the 'draw' event, subclasses should call super() after drawing to 
+  # ensure that the event is triggered.
   # @abstract Must be overriden in child classes to perform chart specific drawing.
-  draw: ->
+  draw: -> @trigger 'draw'
 
   # Calculates an extent throughout the layers based on the given comparator.
   # @param [Function] cmp Comparator to use for performing the min and max for the extent
@@ -153,11 +154,11 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
       'height': "#{@height}px"
 
     @canvas.attr
-      width: @width * @pixelRatio
-      height: @height * @pixelRatio
+      width: @getWidth()
+      height: @getHeight()
 
     @el.node().appendChild @canvas.node() if @el?
-    @ctx = @canvas.node().getContext('2d')
+    @ctx = Epoch.Util.getContext @canvas.node()
 
   # @return [Number] width of the canvas with respect to the pixel ratio of the display
   getWidth: -> @width * @pixelRatio
