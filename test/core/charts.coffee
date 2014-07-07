@@ -270,5 +270,3 @@ describe 'Epoch.Chart', ->
         assert.equal chart.getHeight(), pixelRatio * defaultHeight
 
     #describe 'getStyles', ->
-
-
