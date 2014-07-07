@@ -11,6 +11,7 @@ version = 'X.Y.Z'
 
 package_order = [
   'epoch.js',
+  'core/context.js',
   'core/util.js',
   'core/d3.js',
   'core/format.js',
