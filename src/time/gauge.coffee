@@ -144,6 +144,8 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @ctx.stroke()
 
     @drawNeedle()
+    
+    super()
 
   # Draws the needle.
   drawNeedle: ->

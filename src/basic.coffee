@@ -107,11 +107,11 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Renders the axes for the visualization (subclasses must implement specific
   # drawing routines).
   draw: ->
-    super()
     if @_axesDrawn
       @_redrawAxes()
     else
       @_drawAxes()
+    super()
 
   # Redraws the axes for the visualization.
   _redrawAxes: ->

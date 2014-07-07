@@ -208,5 +208,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     return unless @isVisible()
     @clear()
     @ctx.drawImage @paint, delta, 0
+    super()
 
 # "Audio... Audio... Audio... Video Disco..." - Justice
