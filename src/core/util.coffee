@@ -149,3 +149,14 @@ Epoch.Util.toRGBA = (color, opacity) ->
   else if (v = d3.rgb color)
     result = "rgba(#{v.r},#{v.g},#{v.b},#{opacity})"
   return result
+
+# Obtains a graphics context for the given canvas node. Nice to have
+# this abstracted out in case we want to support WebGL in the future.
+# Also allows us to setup a special context when unit testing, as
+# jsdom doesn't have canvas support, and node-canvas is a pain in the
+# butt to install properly across different platforms.
+Epoch.Util.getContext = (node, type='2d') ->
+  return node.getContext(type) if node.getContext?
+  new Epoch.TestContext()
+
+

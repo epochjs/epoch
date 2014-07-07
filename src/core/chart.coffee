@@ -158,7 +158,7 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
       height: @getHeight()
 
     @el.node().appendChild @canvas.node() if @el?
-    @ctx = @canvas.node().getContext('2d')
+    @ctx = Epoch.Util.getContext @canvas.node()
 
   # @return [Number] width of the canvas with respect to the pixel ratio of the display
   getWidth: -> @width * @pixelRatio

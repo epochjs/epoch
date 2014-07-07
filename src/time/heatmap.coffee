@@ -110,7 +110,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @paint = document.createElement('CANVAS')
     @paint.width = @paintWidth
     @paint.height = @paintHeight
-    @p = @paint.getContext('2d')
+    @p = Epoch.Util.getContext @paint
 
     # Paint the initial data (rendering backwards from just before the fixed paint position)
     @redraw()
