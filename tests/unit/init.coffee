@@ -9,7 +9,7 @@ html = "<html><head></head><body></body></html>"
 before (done) ->
   jsdom.env
     html: html
-    scripts: ["http://d3js.org/d3.v3.min.js", "../js/epoch.js"]
+    scripts: ["http://d3js.org/d3.v3.min.js", "../../js/epoch.js"]
     done: (errors, window) ->
       global.Epoch = window.Epoch
       global.d3 = window.d3
@@ -20,7 +20,6 @@ before (done) ->
       
       done()
 
-
 global.addStyleSheet = (css) ->
   head = doc.head
   style = doc.createElement('style')
@@ -28,4 +27,3 @@ global.addStyleSheet = (css) ->
   style.appendChild(doc.createTextNode(css))
   head.appendChild(style)
   style
-

@@ -45,6 +45,3 @@ describe 'Epoch.Util', ->
 
       assert.equal result.a.b, options.a.b
       assert.equal result.a.c, defaults.a.c
-
-
-

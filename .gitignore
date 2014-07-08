@@ -1,8 +1,7 @@
 .stamp*
-doc/
-css/
-js/
-sass/.sass-cache
+/doc/
+/css/
+/js/
 npm-debug.log
 node_modules/*
 .DS_Store

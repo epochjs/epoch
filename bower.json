@@ -5,8 +5,7 @@
   "ignore": [
     "/src",
     "/sass",
-    "/test",
-    "/.codoopts",
+    "/tests",
     "/.gitignore",
     "/Cakefile",
     "/CHANGELOG.md",
@@ -15,7 +14,7 @@
   "authors": [
     "Ryan Sandor Richards <sandor.richards@gmail.com>"
   ],
-  "homepage": "http://fastly.github.io/epoch/",
+  "homepage": "https://fastly.github.io/epoch/",
   "repository": {
     "type": "git",
     "url": "git://github.com/fastly/epoch.git"

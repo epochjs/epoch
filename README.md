@@ -115,9 +115,11 @@ src/                   - Main source directory
   time.coffee          - Base Classes for Real-Time Charts
 lib/                   - "Baked in" libraries
 sass/                  - Scss source for the default epoch stylesheet
-test/                  - Rendering tests
-  basic/               - Basic chart rendering tests
-  real-time/           - Real-time rendering tests
+tests/
+  render/              - Rendering tests
+    basic/             - Basic chart rendering tests
+    real-time/         - Real-time rendering tests
+  unit/                - Unit tests
 ```
 
 ### Copyright / Legal

@@ -83,7 +83,3 @@ describe 'Epoch.QueryCSS', ->
       Epoch.QueryCSS.purge()
       styles = Epoch.QueryCSS.getStyles('rect#byid', container)
       assertStyles styles, 'body.alt-color rect#byid'
-
-
-
-

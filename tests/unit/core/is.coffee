@@ -68,8 +68,3 @@ describe 'Epoch.Util', ->
       assert.notOk Epoch.isElement({})
       assert.notOk Epoch.isElement([])
       assert.notOk Epoch.isElement(->)
-
-
-
-
-
