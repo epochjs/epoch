@@ -1,7 +1,7 @@
 .stamp*
-doc/
-css/
-js/
+/doc/
+/css/
+/js/
 sass/.sass-cache
 npm-debug.log
 node_modules/*
