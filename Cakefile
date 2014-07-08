@@ -137,7 +137,7 @@ task 'watch', ->
 
 task 'documentation', 'Compiles API documentation', ->
   console.log 'Compiling documentation...'
-  exec "./node_modules/.bin/codo --output #{dirs.doc} #{dirs.src}", (err, stdout, stderr) ->
+  exec "./node_modules/.bin/codo --quiet --private --name Epoch --readme README.md --title 'Epoch Documentation' --output #{dirs.doc} #{dirs.src} - LICENSE", (err, stdout, stderr) ->
     error('documentation', stdout + stderr) if err?
 
 task 'test', 'Runs unit tests', ->
