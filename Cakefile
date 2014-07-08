@@ -143,7 +143,7 @@ task 'documentation', 'Compiles API documentation', ->
 task 'test', 'Runs unit tests', ->
   after 'build', ->
     console.log "Testing..."
-    exec "./node_modules/.bin/mocha  --recursive --compilers coffee:coffee-script/register", (err, stdout, stderr) ->
+    exec "./node_modules/.bin/mocha --recursive --compilers coffee:coffee-script/register tests/unit/", (err, stdout, stderr) ->
       console.log stderr + stdout
   invoke 'build'
 

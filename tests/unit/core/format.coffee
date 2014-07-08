@@ -66,4 +66,3 @@ describe 'Epoch.Formats', ->
   describe 'seconds', ->
     it 'should return a well formatted date given a timestamp', ->
       assert.equal Epoch.Formats.seconds(1404385979), '04:12:59 AM'
-

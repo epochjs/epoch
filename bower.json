@@ -5,7 +5,7 @@
   "ignore": [
     "/src",
     "/sass",
-    "/test",
+    "/tests",
     "/.codoopts",
     "/.gitignore",
     "/Cakefile",
