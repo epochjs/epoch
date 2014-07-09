@@ -127,12 +127,75 @@
         });
         </script>
 
+        <h2>Chart Examples</h2>
+
         <div class="epoch gauge-medium"></div>
         <script>
         $(function() {
             $('.gauge-medium').epoch({ type: 'time.gauge', value: 0.25 });
         });
         </script>
+
+        <div id="pie" class="epoch" style="width: 300px; height: 300px;"></div>
+        <script>
+        $(function() {
+            var data = [],
+                className = 'category10';
+
+            for (var j = 0; j < 10; j++) {
+                data.push({label: String.fromCharCode(65+j), value: 10});
+            }
+
+            $('#pie').epoch({
+                type: 'pie',
+                inner: 80,
+                data: data
+            });
+        });
+        </script>
+
+
+        <div id="bar" class="epoch" style="height: 220px"></div>
+        <script>
+        $(function(){
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 10;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length;
+                data[0].values.push({x: x, y: x});
+                data[1].values.push({x: x, y: 2*x});
+                data[2].values.push({x: x, y: 3*x});
+            }
+
+            $('#bar').epoch({
+                type: 'bar',
+                data: data
+            });
+        });
+        </script>
+
+        <div id="line" class="epoch" style="height: 220px"></div>
+        <script>
+        $(function() {
+            var data = [
+                    { label: 'A', values: [] },
+                    { label: 'B', values: [] }
+                ],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length;
+                data[0].values.push({x: x, y: x*Math.sin(x)});
+                data[1].values.push({x: x, y: x*Math.cos(x)});
+            }
+            $('#line').epoch({type: 'line', data: data});
+        });
+        </script>
+
 
         <script>
         $(function() {
