@@ -46,16 +46,6 @@ class Epoch.Chart.Base extends Epoch.Events
     width: 320
     height: 240
 
-  trigger_options = (instance, scope, prefix) ->
-    for key, value of scope
-      if Epoch.isObject(value)
-        trigger_options(instance, value, prefix + '.' + key) 
-      else if prefix.length > 0
-        instance.trigger "option:#{prefix.substr(1)}.#{key}"
-      else
-        instance.trigger "option:#{key}"
-        
-
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
   # @option options [Integer] width Sets an explicit width for the visualization (optional).
@@ -75,6 +65,48 @@ class Epoch.Chart.Base extends Epoch.Events
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
 
+  # @return [Object] A copy of this charts options.
+  _get_all_options: ->
+    Epoch.Util.defaults({}, @options)
+
+  # Chart option accessor.
+  # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.left'
+  # @return The requested option if found, undefined otherwise.
+  _get_option: (key) ->
+    parts = key.split('.')
+    scope = @options
+    while parts.length and scope?
+      subkey = parts.shift()
+      scope = scope[subkey]
+    scope
+
+  # Chart option mutator.
+  # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.top'
+  # @param value Value to set for the option.
+  # @event option:`key` Triggers an option event with the given key being set.
+  _set_option: (key, value) ->
+    parts = key.split('.')
+    scope = @options
+    while parts.length
+      subkey = parts.shift()
+      if parts.length == 0
+        scope[subkey] = arguments[1]
+        @trigger "option:#{arguments[0]}"
+        return
+      unless scope[subkey]?
+        scope[subkey] = {}
+      scope = scope[subkey]
+
+  # Sets all options given an object of mixed hierarchical keys and nested objects.
+  # @param [Object] options Options to set.
+  # @event option:* Triggers an option event for each key that was set
+  _set_many_options: (options, prefix='') ->
+    for key, value of options
+      if Epoch.isObject(value)
+        @_set_many_options value, "#{prefix + key}."
+      else
+        @_set_option prefix + key, value
+
   # Gets and sets chart options after initialization. When using this as a setter, if an
   # option actually changes value then an event <code>option:NAME</code> will be triggered
   # where NAME is the name of the option.
@@ -90,39 +122,14 @@ class Epoch.Chart.Base extends Epoch.Events
   # Warning: This method is currently experimental, and is not used by any core part of the library.
   #   I'd feel much safer with real unit tests in place before proceeding to build around it.
   option: ->
-    # No Arguments: Return a copy of this chart's options
     if arguments.length == 0
-      return Epoch.Util.defaults({}, @options) 
-
-    # Get the option with the given key
-    if arguments.length == 1 and Epoch.isString(arguments[0])
-      parts = arguments[0].split('.')
-      scope = @options
-      while parts.length and scope?
-        subkey = parts.shift()
-        scope = scope[subkey]
-      return scope
-
-    # Set an option with the specified key to a specified value
-    if arguments.length == 2 and Epoch.isString(arguments[0])
-      parts = arguments[0].split('.')
-      scope = @options
-
-      while parts.length
-        subkey = parts.shift()
-        if parts.length == 0
-          scope[subkey] = arguments[1]
-          @trigger "option:#{arguments[0]}"
-          return
-        unless scope[subkey]?
-          scope[subkey] = {}
-        scope = scope[subkey]
-
-    # Set new options given an object
-    if arguments.length == 1 and Epoch.isObject(arguments[0])
-      @options = Epoch.Util.defaults(arguments[0], @options)
-      trigger_options @, arguments[0], ''
-      return
+      @_get_all_options()
+    else if arguments.length == 1 and Epoch.isString(arguments[0])
+      @_get_option arguments[0]
+    else if arguments.length == 2 and Epoch.isString(arguments[0])
+      @_set_option arguments[0], arguments[1]
+    else if arguments.length == 1 and Epoch.isObject(arguments[0])
+      @_set_many_options arguments[0]
 
   # Determines if the chart is currently visible in a document.
   # @return [Boolean] True if the chart is visible, false otherwise.
