@@ -205,7 +205,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   # Copies the paint canvas onto the display canvas, thus rendering the heatmap.
   draw: (delta=0) ->
-    return unless @isVisible()
     @clear()
     @ctx.drawImage @paint, delta, 0
     super()
