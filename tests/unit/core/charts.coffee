@@ -194,6 +194,16 @@ describe 'Epoch.Chart', ->
         chart.option(newOptions)
         assert.deepEqual chart.option(), newOptions
 
+      it 'should trigger an event when an option is changed', (done) ->
+        errorCallback = ->
+          assert false, 'Setting an option did not trigger the appropriate event'
+          done()
+        setTimeout(errorCallback, 1000)
+
+        [key, value] = ['a', 20]
+        chart = new Epoch.Chart.Base()
+        chart.on 'option:a', -> done()
+        chart.option(key, value)
 
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
