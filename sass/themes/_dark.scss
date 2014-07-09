@@ -1,0 +1,95 @@
+/*
+ * theme/_dark.scss - Theme design for dark page backgrounds.
+ * Designed by Ryan Sandor Richards
+ */
+
+$axisAndText: #d0d0d0;
+$background: #333;
+
+.epoch-theme-dark {
+  // Axes and Ticks
+  .epoch {
+    .axis path, .axis line {
+      stroke: $axisAndText;
+    }
+    .axis .tick text {
+      fill: $axisAndText;
+    }
+  }
+
+  // Pie Charts
+  .arc.pie {
+    stroke: $background;
+  }
+
+  .arc.pie text {
+    fill: $background;
+  }
+
+  // Gauges
+  .epoch .gauge-labels .value {
+    fill: #BBB;
+  }
+
+  .epoch .gauge {
+    .arc.outer {
+      stroke: #999;
+    }
+    .arc.inner {
+      stroke: #AAA;
+    }
+    .tick {
+      stroke: #AAA;
+    }
+
+    .needle {
+      fill: #F3DE88;
+    }
+
+    .needle-base {
+      fill: #999;
+    }
+  }
+
+  // Categorical Colors
+  $dark_category10: 
+    #909CFF, #FFAC89, #E889E8, #78E8D3, #C2FF97,
+    #B7BCD1, #FF857F, #F3DE88, #C9935E, #A488FF;
+
+  .epoch, .epoch.category10 {
+    @include epoch-category-colors($dark_category10, 10);  
+  }
+
+  $dark_category20:
+    #909CFF, #626AAD, #FFAC89, #BD7F66,
+    #E889E8, #995A99, #78E8D3, #4F998C,
+    #C2FF97, #789E5E, #B7BCD1, #7F8391,
+    #CCB889, #A1906B, #F3DE88, #A89A5E,
+    #FF857F, #BA615D, #A488FF, #7662B8;
+
+  .epoch.category20 {
+    @include epoch-category-colors($dark_category20, 20);
+  }
+
+  $dark_category20b:
+    #909CFF, #7680D1, #656DB2, #525992,
+    #FFAC89, #D18D71, #AB735C, #92624E,
+    #E889E8, #BA6EBA, #9B5C9B, #7B487B,
+    #78E8D3, #60BAAA, #509B8D, #3F7B70,
+    #C2FF97, #9FD17C, #7DA361, #65854E;
+  
+  .epoch.category20b {
+    @include epoch-category-colors($dark_category20b, 20);
+  }
+
+  $dark_category20c:
+    #B7BCD1, #979DAD, #6E717D, #595C66,
+    #FF857F, #DE746E, #B55F5A, #964E4B,
+    #F3DE88, #DBC87B, #BAAA68, #918551,
+    #C9935E, #B58455, #997048, #735436,
+    #A488FF, #8670D1, #705CAD, #52447F;
+
+  .epoch.category20c {
+    @include epoch-category-colors($dark_category20c, 20); 
+  }
+}

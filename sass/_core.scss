@@ -1,3 +1,7 @@
+/*
+ * Core Epoch Styles
+ */
+
 /**
  * Generates the styles needed to define a fill color for a given class name.
  * @param $name Name of the class to use (sans the leading .)
@@ -57,3 +61,39 @@
     }
   }
 }
+
+// Axis and Tick Shape Rendering
+.epoch {
+  .axis path, .axis line {
+    shape-rendering: crispEdges;
+  }
+
+  .axis.canvas .tick line {
+    shape-rendering: geometricPrecision;
+  }
+}
+
+/*
+ * Canvas Styles Reference Container
+ *
+ * The reference container is an SVG that is automatically created when Epoch is loaded. It is used
+ * by the canvas based plots to obtain color information from the page styles by creating reference
+ * elements and then reading their computed styles.
+ * 
+ * Note: don't mess with this ;)
+ */
+div#_canvas_css_reference {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: -1000px;
+    left: -1000px;
+  }
+}
+

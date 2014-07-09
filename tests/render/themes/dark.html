@@ -1,0 +1,211 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body {
+            background: #303030;
+            color: #d0d0d0;
+        }
+
+        .epoch:after {
+          content:"";
+          display:table;
+          clear:both;
+        }
+
+        .ref {
+            width: 120px;
+            height: 120px;
+            float: left;
+            margin: 2px;
+            color: #303030;
+            text-align: center;
+            line-height: 120px;
+            font-size: 31px;
+        }
+        </style>
+
+        <script>
+        var data = [
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] }
+        ];
+        for (var i = 0; i < 60; i++) {
+            for (j = 0; j < data.length; j++) {
+                data[j].values.push({time: i, y: 0.05*i + 0.5})
+            }
+        }
+        </script>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Dark Theme</h1>
+
+        <h2>Category 10</h2>
+        <div class="epoch category10" data-refs-range="1,5"></div>
+        <div class="epoch category10" data-refs-range="6,10"></div>
+
+        <br>
+
+        <div id="bar-10" class="epoch category10" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-10').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data.slice(0, 10) });
+        });
+        </script>
+
+
+
+        <h2>Category 20</h2>
+        <div class="epoch category20" data-refs-range="1,4"></div>
+        <div class="epoch category20" data-refs-range="5,8"></div>
+        <div class="epoch category20" data-refs-range="9,12"></div>
+        <div class="epoch category20" data-refs-range="13,16"></div>
+        <div class="epoch category20" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20" class="epoch category20" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+
+        <h2>Category 20b</h2>
+        <div class="epoch category20b" data-refs-range="1,4"></div>
+        <div class="epoch category20b" data-refs-range="5,8"></div>
+        <div class="epoch category20b" data-refs-range="9,12"></div>
+        <div class="epoch category20b" data-refs-range="13,16"></div>
+        <div class="epoch category20b" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20b" class="epoch category20b" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20b').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+
+        <h2>Category 20c</h2>
+        <div class="epoch category20c" data-refs-range="1,4"></div>
+        <div class="epoch category20c" data-refs-range="5,8"></div>
+        <div class="epoch category20c" data-refs-range="9,12"></div>
+        <div class="epoch category20c" data-refs-range="13,16"></div>
+        <div class="epoch category20c" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20c" class="epoch category20c" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20c').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+        <h2>Chart Examples</h2>
+
+        <div class="epoch gauge-medium"></div>
+        <script>
+        $(function() {
+            $('.gauge-medium').epoch({ type: 'time.gauge', value: 0.25 });
+        });
+        </script>
+
+        <div id="pie" class="epoch" style="width: 300px; height: 300px;"></div>
+        <script>
+        $(function() {
+            var data = [],
+                className = 'category10';
+
+            for (var j = 0; j < 10; j++) {
+                data.push({label: String.fromCharCode(65+j), value: 10});
+            }
+
+            $('#pie').epoch({
+                type: 'pie',
+                inner: 80,
+                data: data
+            });
+        });
+        </script>
+
+
+        <div id="bar" class="epoch" style="height: 220px"></div>
+        <script>
+        $(function(){
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 10;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length;
+                data[0].values.push({x: x, y: x});
+                data[1].values.push({x: x, y: 2*x});
+                data[2].values.push({x: x, y: 3*x});
+            }
+
+            $('#bar').epoch({
+                type: 'bar',
+                data: data
+            });
+        });
+        </script>
+
+        <div id="line" class="epoch" style="height: 220px"></div>
+        <script>
+        $(function() {
+            var data = [
+                    { label: 'A', values: [] },
+                    { label: 'B', values: [] }
+                ],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length;
+                data[0].values.push({x: x, y: x*Math.sin(x)});
+                data[1].values.push({x: x, y: x*Math.cos(x)});
+            }
+            $('#line').epoch({type: 'line', data: data});
+        });
+        </script>
+
+
+        <script>
+        $(function() {
+            $('div[data-refs-range]').each(function(i, el) {
+                var range = $(el).attr('data-refs-range').split(',');
+                for (var i = parseInt(range[0]); i <= parseInt(range[1]); i++) {
+                    $(el).append('<div class="ref category'+i+'">'+i+'</div>')
+                }
+            });
+        });
+        </script>
+    </body>
+</html>
