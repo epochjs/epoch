@@ -66,13 +66,13 @@ class Epoch.Chart.Base extends Epoch.Events
       @height = defaults.height unless @height?
 
   # @return [Object] A copy of this charts options.
-  _get_all_options: ->
+  _getAllOptions: ->
     Epoch.Util.defaults({}, @options)
 
   # Chart option accessor.
   # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.left'
   # @return The requested option if found, undefined otherwise.
-  _get_option: (key) ->
+  _getOption: (key) ->
     parts = key.split('.')
     scope = @options
     while parts.length and scope?
@@ -84,7 +84,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.top'
   # @param value Value to set for the option.
   # @event option:`key` Triggers an option event with the given key being set.
-  _set_option: (key, value) ->
+  _setOption: (key, value) ->
     parts = key.split('.')
     scope = @options
     while parts.length
@@ -100,12 +100,12 @@ class Epoch.Chart.Base extends Epoch.Events
   # Sets all options given an object of mixed hierarchical keys and nested objects.
   # @param [Object] options Options to set.
   # @event option:* Triggers an option event for each key that was set
-  _set_many_options: (options, prefix='') ->
+  _setManyOptions: (options, prefix='') ->
     for key, value of options
       if Epoch.isObject(value)
-        @_set_many_options value, "#{prefix + key}."
+        @_setManyOptions value, "#{prefix + key}."
       else
-        @_set_option prefix + key, value
+        @_setOption prefix + key, value
 
   # Gets and sets chart options after initialization. When using this as a setter, if an
   # option actually changes value then an event <code>option:NAME</code> will be triggered
@@ -123,13 +123,13 @@ class Epoch.Chart.Base extends Epoch.Events
   #   I'd feel much safer with real unit tests in place before proceeding to build around it.
   option: ->
     if arguments.length == 0
-      @_get_all_options()
+      @_getAllOptions()
     else if arguments.length == 1 and Epoch.isString(arguments[0])
-      @_get_option arguments[0]
+      @_getOption arguments[0]
     else if arguments.length == 2 and Epoch.isString(arguments[0])
-      @_set_option arguments[0], arguments[1]
+      @_setOption arguments[0], arguments[1]
     else if arguments.length == 1 and Epoch.isObject(arguments[0])
-      @_set_many_options arguments[0]
+      @_setManyOptions arguments[0]
 
   # Determines if the chart is currently visible in a document.
   # @return [Boolean] True if the chart is visible, false otherwise.
