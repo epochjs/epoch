@@ -107,12 +107,15 @@ class Epoch.Chart.Base extends Epoch.Events
     if arguments.length == 2 and Epoch.isString(arguments[0])
       parts = arguments[0].split('.')
       scope = @options
-      while parts.length and scope?
+
+      while parts.length
         subkey = parts.shift()
         if parts.length == 0
           scope[subkey] = arguments[1]
           @trigger "option:#{arguments[0]}"
           return
+        unless scope[subkey]?
+          scope[subkey] = {}
         scope = scope[subkey]
 
     # Set new options given an object
