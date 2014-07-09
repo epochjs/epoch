@@ -1,0 +1,34 @@
+/*
+ * Dark background theme and categorical colors.
+ */
+
+$axisAndText: #d0d0d0;
+
+.epoch.dark {
+  .axis path, .axis line {
+    stroke: $axisAndText;
+  }
+  .axis .tick text {
+    fill: $axisAndText;
+  }
+}
+
+$dark_category10: 
+  #909CFF, #FFAC89, #E889E8, #78E8D3, #C2FF97, // Core Colors
+  #6D75B0, #BD856F, #C580C7, #71C7B5, #8DB072;
+  //#727CC9, #D69073, #DF84E0, #74E0CB, #9AC978; // Darker Variants;
+
+.epoch.dark, .epoch.dark.category10 {
+  @include epoch-category-colors($dark_category10, 10);
+}
+
+$dark_category20:
+  #909CFF, #7680D1, #656DB2, #525992, // Shades of blue
+  #FFAC89, #D18D71, #B27860, #92624E, // Shades of tan
+  #E889E8, #BA6EBA, #9B5C9B, #7B487B, // Shades of violet
+  #78E8D3, #60BAAA, #509B8D, #3F7B70, // Shades of turquoise
+  #C2FF97, #9FD17C, #88B26A, #6F9256; // Shades of green
+
+.epoch.dark.category20 {
+  @include epoch-category-colors($dark_category20, 20);
+}

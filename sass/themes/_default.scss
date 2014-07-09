@@ -1,0 +1,186 @@
+/*
+ * Default Chart Theme
+ */
+
+// Fonts
+.epoch {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12pt;
+}
+
+// Axes and Ticks
+.epoch {
+  .axis path, .axis line {
+    fill: none;
+    stroke: #000;
+  }
+
+  .axis .tick text {
+    font-size: 9pt;
+  }
+}
+
+// Line Charts
+.epoch .line {
+  fill: none;
+  stroke-width: 2px;
+}
+
+.epoch.sparklines .line {
+  stroke-width: 1px;
+}
+
+
+// Area Charts
+.epoch .area {
+  stroke: none;
+}
+
+// Pie Charts
+.epoch {
+  .arc.pie {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+
+  .arc.pie text {
+    stroke: none;
+    fill: white;
+    font-size: 9pt;
+  }
+}
+
+// Gauge Charts
+.epoch .gauge-labels {
+  .value {
+    text-anchor: middle;
+    font-size: 140%;
+    fill: #666;
+  }
+}
+
+.epoch.gauge-tiny {
+  width: 120px; height: 90px;
+
+  .gauge-labels {
+    .value { font-size: 80%; }
+  }
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 2px;
+    }
+  }
+}
+
+.epoch.gauge-small {
+  width: 180px; height: 135px;
+
+  .gauge-labels {
+    .value { font-size: 120%; }
+  }
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 3px;
+    }
+  }
+}
+
+.epoch.gauge-medium {
+  width: 240px; height: 180px;
+
+  .gauge {
+    .arc.outer {
+      stroke-width: 3px;
+    }
+  }
+}
+
+.epoch.gauge-large {
+  width: 320px; height: 240px;
+  .gauge-labels {
+    .value { font-size: 180%; }
+  }
+}
+
+.epoch .gauge {
+  .arc.outer {
+    stroke-width: 4px;
+    stroke: #666;
+  }
+  .arc.inner {
+    stroke-width: 1px;
+    stroke: #555;
+  }
+  .tick {
+    stroke-width: 1px;
+    stroke: #555;
+  }
+
+  .needle {
+    fill: orange;
+  }
+
+  .needle-base {
+    fill: #666;
+  }
+}
+
+// Categorical Colors
+$category10:
+  #1f77b4, #ff7f0e, #2ca02c, #d62728, #9467bd,
+  #8c564b, #e377c2, #7f7f7f, #bcbd22, #17becf;
+
+.epoch, .epoch.category10 {
+  @include epoch-category-colors($category10, 10);
+}
+
+$category20:
+  #1f77b4, #aec7e8, #ff7f0e, #ffbb78, #2ca02c,
+  #98df8a, #d62728, #ff9896, #9467bd, #c5b0d5,
+  #8c564b, #c49c94, #e377c2, #f7b6d2, #7f7f7f,
+  #c7c7c7, #bcbd22, #dbdb8d, #17becf, #9edae5;
+
+.epoch.category20 {
+  @include epoch-category-colors($category20, 20);
+}
+
+$category20b:
+  #393b79, #5254a3, #6b6ecf, #9c9ede, #637939,
+  #8ca252, #b5cf6b, #cedb9c, #8c6d31, #bd9e39,
+  #e7ba52, #e7cb94, #843c39, #ad494a, #d6616b,
+  #e7969c, #7b4173, #a55194, #ce6dbd, #de9ed6;
+
+.epoch.category20b {
+  @include epoch-category-colors($category20b, 20);
+}
+
+$category20c:
+  #3182bd, #6baed6, #9ecae1, #c6dbef, #e6550d,
+  #fd8d3c, #fdae6b, #fdd0a2, #31a354, #74c476,
+  #a1d99b, #c7e9c0, #756bb1, #9e9ac8, #bcbddc,
+  #dadaeb, #636363, #969696, #bdbdbd, #d9d9d9;
+
+.epoch.category20c {
+  @include epoch-category-colors($category20c, 20);
+}
+
+
+/*
+ * Heatmap Colors
+ * 
+ * The heatmap real-time graph uses color blending to choose the color for which to render each bucket.
+ * Basic d3 categorical colors do not work well in this instance because the colors in the sequence
+ * vary wildly in precieved luminosity.
+ * 
+ * Below we define small subsets that should work well together because they are of similar luminosities.
+ * Note: darker colors work better since we use opacity to denote "height" or "intensity" for each bucket
+ *       after picking a mix color.
+ */
+$heatmap5:
+  #1f77b4, #2ca02c, #d62728, #8c564b, #7f7f7f;
+
+.epoch, .epoch.heatmap5 {
+  @include epoch-heatmap-colors($heatmap5, 5);
+}

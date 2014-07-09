@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body {
+            background: #303030;
+            color: #d0d0d0;
+        }
+
+        .epoch:after {
+          content:"";
+          display:table;
+          clear:both;
+        }
+
+        .ref {
+            width: 120px;
+            height: 120px;
+            float: left;
+            margin: 2px;
+            color: #303030;
+            text-align: center;
+            line-height: 120px;
+            font-size: 31px;
+        }
+        </style>
+
+        <script>
+        $(function() {
+            $('div[data-refs-range]').each(function(i, el) {
+                var range = $(el).attr('data-refs-range').split(',');
+                for (var i = parseInt(range[0]); i <= parseInt(range[1]); i++) {
+                    $(el).append('<div class="ref category'+i+'">'+i+'</div>')
+                }
+            });
+        });
+        </script>
+
+    </head>
+    <body>
+        <h1>Dark Theme</h1>
+
+        <h2>Category 10</h2>
+        <div class="epoch dark category10" data-refs-range="1,5"></div>
+        <div class="epoch dark category10" data-refs-range="6,10"></div>
+
+        <h2>Category 20</h2>
+        <div class="epoch dark category20" data-refs-range="1,4"></div>
+        <div class="epoch dark category20" data-refs-range="5,8"></div>
+        <div class="epoch dark category20" data-refs-range="9,12"></div>
+        <div class="epoch dark category20" data-refs-range="13,16"></div>
+        <div class="epoch dark category20" data-refs-range="17,20"></div>
+
+
+    </body>
+</html>
