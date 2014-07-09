@@ -30,6 +30,111 @@
         </style>
 
         <script>
+        var data = [
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] },
+            { values: [] }
+        ];
+        for (var i = 0; i < 60; i++) {
+            for (j = 0; j < data.length; j++) {
+                data[j].values.push({time: i, y: 0.05*i + 0.5})
+            }
+        }
+        </script>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Dark Theme</h1>
+
+        <h2>Category 10</h2>
+        <div class="epoch category10" data-refs-range="1,5"></div>
+        <div class="epoch category10" data-refs-range="6,10"></div>
+
+        <br>
+
+        <div id="bar-10" class="epoch category10" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-10').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data.slice(0, 10) });
+        });
+        </script>
+
+
+
+        <h2>Category 20</h2>
+        <div class="epoch category20" data-refs-range="1,4"></div>
+        <div class="epoch category20" data-refs-range="5,8"></div>
+        <div class="epoch category20" data-refs-range="9,12"></div>
+        <div class="epoch category20" data-refs-range="13,16"></div>
+        <div class="epoch category20" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20" class="epoch category20" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+
+        <h2>Category 20b</h2>
+        <div class="epoch category20b" data-refs-range="1,4"></div>
+        <div class="epoch category20b" data-refs-range="5,8"></div>
+        <div class="epoch category20b" data-refs-range="9,12"></div>
+        <div class="epoch category20b" data-refs-range="13,16"></div>
+        <div class="epoch category20b" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20b" class="epoch category20b" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20b').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+
+        <h2>Category 20c</h2>
+        <div class="epoch category20c" data-refs-range="1,4"></div>
+        <div class="epoch category20c" data-refs-range="5,8"></div>
+        <div class="epoch category20c" data-refs-range="9,12"></div>
+        <div class="epoch category20c" data-refs-range="13,16"></div>
+        <div class="epoch category20c" data-refs-range="17,20"></div>
+
+        <br>
+
+        <div id="bar-20c" class="epoch category20c" style="height: 300px"></div>
+        <script>
+        $(function() {
+            $('#bar-20c').epoch({ type: 'time.bar', axes: ['left', 'right'], data: data });
+        });
+        </script>
+
+        <div class="epoch gauge-medium"></div>
+        <script>
+        $(function() {
+            $('.gauge-medium').epoch({ type: 'time.gauge', value: 0.25 });
+        });
+        </script>
+
+        <script>
         $(function() {
             $('div[data-refs-range]').each(function(i, el) {
                 var range = $(el).attr('data-refs-range').split(',');
@@ -39,22 +144,5 @@
             });
         });
         </script>
-
-    </head>
-    <body>
-        <h1>Dark Theme</h1>
-
-        <h2>Category 10</h2>
-        <div class="epoch dark category10" data-refs-range="1,5"></div>
-        <div class="epoch dark category10" data-refs-range="6,10"></div>
-
-        <h2>Category 20</h2>
-        <div class="epoch dark category20" data-refs-range="1,4"></div>
-        <div class="epoch dark category20" data-refs-range="5,8"></div>
-        <div class="epoch dark category20" data-refs-range="9,12"></div>
-        <div class="epoch dark category20" data-refs-range="13,16"></div>
-        <div class="epoch dark category20" data-refs-range="17,20"></div>
-
-
     </body>
 </html>
