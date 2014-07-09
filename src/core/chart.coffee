@@ -12,6 +12,13 @@ class Epoch.Events
     @_events[name] ?= []
     @_events[name].push callback
 
+  # Registers a map of event names to given callbacks. This method calls <code>.on</code>
+  # directly for each of the events given.
+  # @param [Object] map A map of event names to callbacks.
+  onAll: (map) ->
+    return unless Epoch.isObject(map)
+    @on(name, callback) for name, callback of map
+
   # Removes a specific callback listener or all listeners for a given event.
   # @param [String] name Name of the event.
   # @param [Function, String] callback (Optional) Callback to remove from the listener list.
@@ -21,6 +28,16 @@ class Epoch.Events
     return delete(@_events[name]) unless callback?
     while (i = @_events[name].indexOf(callback)) >= 0
       @_events[name].splice(i, 1)
+
+  # Removes a set of callback listeners for all events given in the map or array of strings.
+  # This method calls <code>.off</code> directly for each event and callback to remove.
+  # @param [Object, Array] mapOrList Either a map that associates event names to specific callbacks
+  #   or an array of event names for which to completely remove listeners.
+  offAll: (mapOrList) ->
+    if Epoch.isArray(mapOrList)
+      @off(name) for name in mapOrList
+    else if Epoch.isObject(mapOrList)
+      @off(name, callback) for name, callback of mapOrList
 
   # Triggers an event causing all active listeners to be executed.
   # @param [String] name Name of the event to fire.
