@@ -22,7 +22,6 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
 
   # Draws the stacked bar chart.
   draw: (delta=0) ->
-    return unless @isVisible()
     @clear()
     [y, w] = [@y(), @w()]
 

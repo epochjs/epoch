@@ -69,7 +69,6 @@ class Epoch.Time.Area extends Epoch.Time.Stack
 
   # Draws the area chart.
   draw: (delta=0) ->
-    return unless @isVisible()
     @clear()
     @_drawAreas(delta)
     @_drawStrokes(delta)
