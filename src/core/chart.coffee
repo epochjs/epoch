@@ -97,12 +97,10 @@ class Epoch.Chart.Base extends Epoch.Events
     # Get the option with the given key
     if arguments.length == 1 and Epoch.isString(arguments[0])
       parts = arguments[0].split('.')
-      console.log parts
       scope = @options
       while parts.length and scope?
         subkey = parts.shift()
         scope = scope[subkey]
-        console.log subkey, scope
       return scope
 
     # Set an option with the specified key to a specified value
