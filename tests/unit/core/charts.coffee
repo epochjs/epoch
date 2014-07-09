@@ -190,7 +190,7 @@ describe 'Epoch.Chart', ->
       it 'should set all options given an object', ->
         original = { a: 20, b: { c: 30 } }
         newOptions = { a: 15, d: { e: 10, f: 30 } }
-        chart = new Epoch.Chart.Base 
+        chart = new Epoch.Chart.Base()
         chart.option(newOptions)
         assert.deepEqual chart.option(), newOptions
 
