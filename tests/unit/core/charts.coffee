@@ -143,7 +143,57 @@ describe 'Epoch.Chart', ->
       it 'should find the correct extent give an x-comparitor', ->
         [min, max] = chart.extent (d) -> d.x
         assert.equal min, xMin, "Incorrect minimum x"
-        assert.equal max, xMax, "Incorrect maximum x"        
+        assert.equal max, xMax, "Incorrect maximum x"
+
+    describe 'option', ->
+      it 'should return all options for the chart when called with no arguments', ->
+        options = { a: 20, b: 30, c: { d: 40 } }
+        chart = new Epoch.Chart.Base options
+        assert.isObject chart.option()
+        assert.deepEqual chart.option(), options
+
+      it 'should return a single value when given a key', ->
+        options = { a: 20, b: 30 }
+        chart = new Epoch.Chart.Base options
+        assert.equal chart.option('a'), options.a
+        assert.equal chart.option('b'), options.b
+        assert.isUndefined chart.option('c')
+
+      it 'should return a deep value when given a hierarchical key', ->
+        options =
+          a:
+            b: 20
+            c:
+              d: 30
+        chart = new Epoch.Chart.Base options
+        assert.equal chart.option('a.b'), options.a.b
+        assert.equal chart.option('a.c.d'), options.a.c.d
+
+      it 'should set an option given a string and a value', ->
+        chart = new Epoch.Chart.Base()
+        [key, value] = ['a', 'hello world']
+        chart.option(key, value)
+        assert.equal chart.option(key), value
+
+      it 'should set a deep value when given a hierarchical key', ->
+        chart = new Epoch.Chart.Base()
+
+        map =
+          'a.b': 'deep'
+          'a.c.d': 'deeper'
+          'b': 'shallow'
+
+        for key, value of map
+          chart.option(key, value)
+          assert.equal chart.option(key), value
+
+      it 'should set all options given an object', ->
+        original = { a: 20, b: { c: 30 } }
+        newOptions = { a: 15, d: { e: 10, f: 30 } }
+        chart = new Epoch.Chart.Base 
+        chart.option(newOptions)
+        assert.deepEqual chart.option(), newOptions
+
 
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
