@@ -212,8 +212,8 @@ class Epoch.Chart.Base extends Epoch.Events
   # 'option:width' or 'option:height' event.
   dimensionsChanged: ->
     [@width, @height] = [@option('width'), @option('height')]
-    @el.attr('width', @width).attr('height', @height) if @el?
-
+    @el.width(@width)
+    @el.height(@height)
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base

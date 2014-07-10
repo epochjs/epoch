@@ -2,21 +2,23 @@ describe 'Epoch.Chart', ->
   [defaultWidth, defaultHeight] = [320, 240]
 
   describe 'Base', ->
-    div1 = null
-    div1Width = 800
-    div1Height = 200
+    [testDivWidth, testDivHeight] = [800, 200]
+    [resizeDivWidth, resizeDivHeight] = [200, 200]
 
     before (done) ->
-      div1 = doc.createElement('div')
-      div1.id = 'base-1'
-      doc.body.appendChild(div1)
-      d3.select('#base-1').style
-        width: "#{div1Width}px"
-        height: "#{div1Height}px"
+      d3.select(doc.body).append('div').attr('id', 'testDiv').style
+        width: "#{testDivWidth}px"
+        height: "#{testDivHeight}px"
+
+      d3.select(doc.body).append('div').attr('id', 'resizeDiv').style
+        width: "#{resizeDivWidth}px"
+        height: "#{resizeDivHeight}px"
+
       done()
 
     after (done) ->
-      doc.body.removeChild(div1)
+      d3.select('#testDiv').remove()
+      d3.select('#resizeDiv').remove()
       done()
 
     describe 'constructor', ->
@@ -32,9 +34,9 @@ describe 'Epoch.Chart', ->
         assert.equal c.height, height, "Did not set height to #{height}"
 
       it 'should use the dimensions of the given element when applicable', ->
-        c = new Epoch.Chart.Base({ el: '#base-1' })
-        assert.equal c.width, div1Width, "Did not set width to that of the div"
-        assert.equal c.height, div1Height, "Did not set height to that of the div"
+        c = new Epoch.Chart.Base({ el: '#testDiv' })
+        assert.equal c.width, testDivWidth, "Did not set width to that of the div"
+        assert.equal c.height, testDivHeight, "Did not set height to that of the div"
 
       it 'should set default data to an empty array', ->
         c = new Epoch.Chart.Base()
@@ -208,6 +210,19 @@ describe 'Epoch.Chart', ->
           clearTimeout(timeout)
           done()
         chart.option(key, value)
+
+      it 'should resize the containing element when the width option is changed', ->
+        newWidth = resizeDivWidth + 20
+        chart = new Epoch.Chart.Base({ el: '#resizeDiv' })
+        chart.option('width', newWidth)
+        assert.equal d3.select('#resizeDiv').width(), newWidth
+
+      it 'should resize the containing element when the height option is changed', ->
+        newHeight = resizeDivHeight + 20
+        chart = new Epoch.Chart.Base({ el: '#resizeDiv' })
+        chart.option('height', newHeight)
+        assert.equal d3.select('#resizeDiv').height(), newHeight
+        
 
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
