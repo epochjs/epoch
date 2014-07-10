@@ -281,3 +281,9 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
   # @param [String] selector The selector used to compute the styles.
   getStyles: (selector) ->
     Epoch.QueryCSS.getStyles(selector, @el)
+
+  # Resizes the canvas element when the dimensions of the container change
+  dimensionsChanged: ->
+    super()
+    @canvas.style {'width': "#{@width}px", 'height': "#{@height}px"}
+    @canvas.attr { width: @getWidth(), height: @getHeight() }

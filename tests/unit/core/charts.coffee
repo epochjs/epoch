@@ -372,4 +372,28 @@ describe 'Epoch.Chart', ->
         chart = new Epoch.Chart.Canvas({ pixelRatio: pixelRatio })
         assert.equal chart.getHeight(), pixelRatio * defaultHeight
 
-    #describe 'getStyles', ->
+    describe 'dimensionsChanged', ->
+      [width, height, chart, pixelRatio] = [200, 100, null, 2]
+
+      before (done) ->
+        d3.select(doc.body).append('div').attr('id', 'canvasResize').style
+          width: width + 'px'
+          height: height + 'px'
+        chart = new Epoch.Chart.Canvas { el: '#canvasResize', pixelRatio: pixelRatio }
+        done()
+
+      after (done) ->
+        d3.select('#canvasResize').remove()
+        done()
+
+      it 'should resize the canvas element when the width option is changed', ->
+        newWidth = width + 500
+        chart.option 'width', newWidth
+        assert.equal chart.canvas.attr('width'), pixelRatio * newWidth
+        assert.equal chart.canvas.width(), newWidth
+
+      it 'should resize the canvas element when the height option is changed', ->
+        newHeight = height + 500
+        chart.option 'height', newHeight
+        assert.equal chart.canvas.attr('height'), pixelRatio * newHeight
+        assert.equal chart.canvas.height(), newHeight
