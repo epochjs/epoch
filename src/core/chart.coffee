@@ -63,6 +63,10 @@ class Epoch.Chart.Base extends Epoch.Events
     width: 320
     height: 240
 
+  optionListeners =
+    'option:width': 'dimensionsChanged'
+    'option:height': 'dimensionsChanged'
+
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
   # @option options [Integer] width Sets an explicit width for the visualization (optional).
@@ -81,6 +85,8 @@ class Epoch.Chart.Base extends Epoch.Events
     else
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
+
+    @onAll optionListeners
 
   # @return [Object] A copy of this charts options.
   _getAllOptions: ->
@@ -202,6 +208,12 @@ class Epoch.Chart.Base extends Epoch.Events
       d3.max(@data, (layer) -> d3.max(layer.values, cmp))
     ]
 
+  # Updates the width and height members and container dimensions in response to an
+  # 'option:width' or 'option:height' event.
+  dimensionsChanged: ->
+    [@width, @height] = [@option('width'), @option('height')]
+    @el.attr('width', @width).attr('height', @height) if @el?
+
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base
@@ -220,6 +232,11 @@ class Epoch.Chart.SVG extends Epoch.Chart.Base
         xmlns: 'http://www.w3.org/2000/svg',
         width: @width,
         height: @height
+
+  # Resizes the svg element in response to a 'option:width' or 'option:height' event.
+  dimensionsChanged: ->
+    super()
+    @svg.attr('width', @width).attr('height', @height)
 
 # Base Class for all Canvas based charts.
 class Epoch.Chart.Canvas extends Epoch.Chart.Base
