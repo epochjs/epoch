@@ -21,6 +21,7 @@
             <li><a href="#test-7">Color Override</a></li>
             <li><a href="#test-8">Categorical Colors</a></li>
             <li><a href="#test-9">Multi Series without Labels</a></li>
+            <li><a href="#test-10">Multi Series with Fixed Domain</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -372,6 +373,41 @@
             }
 
             $('#test-9 .epoch').epoch({ type: 'line', data: data });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Multi Series with Fixed Domain</h2>
+            <p>
+                Display a plot of the following functions:
+                <ul>
+                    <li><code>x*sin(x)</code></li>
+                    <li><code>x*cos(x)</code></li>
+                </ul>
+                On the domain <code>[0, 5]</code> and range <code>[0, 4]</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    { label: 'A', values: [] },
+                    { label: 'B', values: [] }
+                ],
+                length = 128;
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length;
+                data[0].values.push({x: x, y: x*Math.sin(x)});
+                data[1].values.push({x: x, y: x*Math.cos(x)});
+            }
+            $('#test-10 .epoch').epoch({
+                type: 'line',
+                data: data,
+                domain: [0, 5],
+                range: [0, 4]
+            });
         });
         </script>
 

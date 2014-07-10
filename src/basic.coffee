@@ -1,9 +1,10 @@
-
 # Base class for all two-dimensional basic d3 charts. This class handles axes and
 # margins so that subclasses can focus on the construction of particular chart
 # types.
 class Epoch.Chart.Plot extends Epoch.Chart.SVG
   defaults =
+    domain: null,
+    range: null,
     margins:
       top: 25
       right: 50
@@ -70,14 +71,16 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
 
   # @return [Function] The x scale for the visualization.
   x: ->
+    domain = @options.domain ? @extent((d) -> d.x)
     d3.scale.linear()
-      .domain(@extent((d) -> d.x))
+      .domain(domain)
       .range([0, @innerWidth()])
 
   # @return [Function] The y scale for the visualization.
   y: ->
+    domain = @options.range ? @extent((d) -> d.y)
     d3.scale.linear()
-      .domain(@extent((d) -> d.y))
+      .domain(domain)
       .range([@innerHeight(), 0])
 
   # @return [Function] d3 axis to use for the bottom of the visualization.
