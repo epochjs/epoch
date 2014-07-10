@@ -124,20 +124,27 @@ class Epoch.Chart.Base extends Epoch.Events
       else
         @_setOption prefix + key, value
 
-  # Gets and sets chart options after initialization. When using this as a setter, if an
-  # option actually changes value then an event <code>option:NAME</code> will be triggered
-  # where NAME is the name of the option.
+  # General accessor / mutator for chart options.
   #
-  # This method can be called in four different ways:
-  # <ol>
-  #   <li>chart.option() - Returns a an object containing all of the options for the chart.</li>
-  #   <li>chart.option(key) - Returns a specific option. Use <code>.</code> to access nested options.</li>
-  #   <li>chart.option(key, value) - Sets an option and triggers the associated event.</li>
-  #   <li>chart.option(object) - Allows for the setting of multiple options at once.</li>
-  # </ol>
+  # @overload option()
+  #   Fetches chart options.
+  #   @return a copy of this chart's options.
   #
-  # Warning: This method is currently experimental, and is not used by any core part of the library.
-  #   I'd feel much safer with real unit tests in place before proceeding to build around it.
+  # @overload option(name)
+  #   Fetches the value the option with the given name.
+  #   @param [String] name Name of the option to fetch. Can be hierarchical, e.g. <code>'margins.left'</code>
+  #   @return The requested option if found, <code>undefined</code> otherwise.
+  #
+  # @overload option(name, value)
+  #   Sets an option and triggers the associated event.
+  #   @param [String] name Name of the option to fetch. Can be hierarchical, e.g. 'margins.top'
+  #   @param value Value to set for the option.
+  #   @event option:`name` Triggers an option event with the given key being set.
+  #
+  # @overload option(options)
+  #   Sets multiple options at once.
+  #   @param [Object] options Options to set for the chart.
+  #   @event option:* Triggers an option event for each key that was set. 
   option: ->
     if arguments.length == 0
       @_getAllOptions()
