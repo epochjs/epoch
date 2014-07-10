@@ -262,6 +262,30 @@ describe 'Epoch.Chart', ->
         assert.equal chart.svg.attr('width'), containerWidth
         assert.equal chart.svg.attr('height'), containerHeight
 
+    describe 'dimensionsChanged', ->
+      [width, height, chart] = [200, 100, null]
+
+      before (done) ->
+        d3.select(doc.body).append('div').attr('id', 'svgResize').style
+          width: width + 'px'
+          height: height + 'px'
+        chart = new Epoch.Chart.SVG { el: '#svgResize' }
+        done()
+
+      after (done) ->
+        d3.select('#svgResize').remove()
+        done()
+
+      it 'should resize the SVG element when the width option is changed', ->
+        newWidth = width + 500
+        chart.option 'width', newWidth
+        assert.equal chart.svg.attr('width'), newWidth
+
+      it 'should resize the SVG element when the height option is changed', ->
+        newHeight = height + 500
+        chart.option 'height', newHeight
+        assert.equal chart.svg.attr('height'), newHeight
+
   describe 'Canvas', ->
     [containerWidth, containerHeight] = [1000, 280]
     container = null
