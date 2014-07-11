@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body { background: #333; color: #d0d0d0; }
+        a:link, a:visited { color: white; color: white; }
+        </style>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Basic Chart Options and Events</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Chart Options and Events</p>
+        <ol>
+            <li><a href="#test-1">Axes</a></li>
+            <li><a href="#test-2">Margins</a></li>
+            <li><a href="#test-3">Ticks and Tick Formats</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Axes</h2>
+            <p>
+                Correctly add and remove axes when options are set.
+            </p>
+            <div class="epoch"></div>
+            <div class="controls">
+                <button data-index="0">All</button>
+                <button data-index="1">[left, right]</button>
+                <button data-index="2">[top, bottom]</button>
+                <button data-index="3">[left, bottom]</button>
+                <button data-index="4">[top, right]</button>
+                <button data-index="5">None</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var axes = [
+                ['top', 'left', 'bottom', 'right'],
+                ['left', 'right'],
+                ['top', 'bottom'],
+                ['left', 'bottom'],
+                ['top', 'right'],
+                []
+            ];
+
+            var chart = $('#test-1 .epoch').epoch({ 
+                type: 'line', 
+                data: data().add(function(x) { return Math.cos(x) }).get([0, 2*Math.PI], Math.PI/25)
+            });
+
+            $('#test-1 button').click(function(e) {
+                chart.option('axes', axes[parseInt($(e.target).attr('data-index'))]);
+            });
+        });
+        </script>
+
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Margins</h2>
+            <p>
+                Correctly resize margins when options are set.
+            </p>
+            <div class="epoch"></div>
+            <div class="controls">
+                <button data-index="0">No Margins</button>
+                <button data-index="1">Big Margins</button>
+                <button data-index="2">Small Margins</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var sizes = [
+                {margins: {top: null, left: null, bottom: null, right: null }},
+                {margins: {top: 60, left: 60, bottom: 60, right: 60 }},
+                {margins: {top: 20, left: 20, bottom: 20, right: 20 }}
+            ];
+
+            var chart = $('#test-2 .epoch').epoch({ 
+                type: 'line', 
+                data: data().add(function(x) { return Math.sin(x); })
+                            .add(function(x) { return Math.cos(x); })
+                            .get([0, 2*Math.PI], Math.PI/25),
+                axes: []
+            });
+
+            $('#test-2 button').click(function(e) {
+                var margins = sizes[parseInt($(e.target).attr('data-index'))];
+                console.log(margins);
+                chart.option(margins);
+            });
+        });
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Ticks and Tick Formats</h2>
+            <p>
+                Correctly resize margins when options are set.
+            </p>
+            <div class="epoch"></div>
+            <div class="controls">
+                <button class="ticks">Toggle Ticks</button>
+                <button class="tickFormats">Toggle Tick Formats</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var ticksIndex = 0, ticks = [
+                { 
+                    ticks: {
+                        top: 14,
+                        bottom: 14,
+                        left: 5,
+                        right: 5,
+                    }
+                },
+                {
+                    ticks: {
+                        top: 30,
+                        left: 2,
+                        bottom: 30,
+                        right: 2
+                    }
+                }
+            ];
+
+            var tickFormatsIndex = 0, tickFormats = [
+                {
+                    tickFormats: {
+                        top: Epoch.Formats.regular,
+                        bottom: Epoch.Formats.regular,
+                        left: Epoch.Formats.si,
+                        right: Epoch.Formats.si
+                    }
+                },
+                {
+                    tickFormats: {
+                        top: function(d) { return parseInt(100*d)+'%' },
+                        bottom: function(d) { return parseInt(100*d)+'%' },
+                        left: function(d) { return parseInt(100*d)+'%' },
+                        right: function(d) { return parseInt(100*d)+'%' }
+                    }
+                }
+            ];
+
+            var chart = $('#test-3 .epoch').epoch({ 
+                type: 'area', 
+                data: data().add(function(x) { return (Math.sin(x)+1) / (x+1); })
+                            .add(function(x) { return (Math.cos(x)+1) / (x+2); })
+                            .get([0, 2*Math.PI], Math.PI/25),
+                axes: ['top', 'left', 'right', 'bottom']
+            });
+
+            $('#test-3 button.ticks').click(function(e) {
+                ticksIndex = (ticksIndex + 1) % ticks.length;
+                chart.option(ticks[ticksIndex]);
+            });
+
+            $('#test-3 button.tickFormats').click(function(e) {
+                tickFormatsIndex = (tickFormatsIndex + 1) % tickFormats.length;
+                chart.option(tickFormats[tickFormatsIndex]);
+            });
+        });
+        </script>
+
+
+    </body>
+</html>
