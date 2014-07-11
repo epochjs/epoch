@@ -228,3 +228,27 @@ body.docs #nav-dummy {
   display: inline-block;
 }
 
+.btn-clipboard-container {
+  position: relative;
+}
+
+.btn-clipboard {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  display: block;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+  background-color: #fff;
+  border: 1px solid #e1e1e8;
+  border-radius: 0 4px 0 4px;
+}
+
+span.btn-clipboard.zeroclipboard-is-hover {
+  color: #fff;
+  background-color: #ff0000;
+  border-color: #cc0000;
+}
