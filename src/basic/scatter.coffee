@@ -16,7 +16,7 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
     [x, y] = [@x(), @y()]
     radius = @options.radius
 
-    layer = @svg.selectAll('.layer')
+    layer = @g.selectAll('.layer')
       .data(@data, (d) -> d.category)
 
     layer.enter().append('g')

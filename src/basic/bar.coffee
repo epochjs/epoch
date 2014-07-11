@@ -91,7 +91,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     data = @_remapData()
 
     # 1) Join
-    layer = @svg.selectAll(".layer")
+    layer = @g.selectAll(".layer")
       .data(data, (d) -> d.group)
 
     # 2) Update
@@ -141,7 +141,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     data = @_remapData()
 
     # 1) Join
-    layer = @svg.selectAll(".layer")
+    layer = @g.selectAll(".layer")
       .data(data, (d) -> d.group)
 
     # 2) Update

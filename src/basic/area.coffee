@@ -28,9 +28,9 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
 
     data = stack(@data)
 
-    @svg.selectAll('.layer').remove()
+    @g.selectAll('.layer').remove()
 
-    layer = @svg.selectAll('.layer')
+    layer = @g.selectAll('.layer')
       .data(@data, (d) -> d.category)
 
     layer.select('.area')

@@ -19,6 +19,7 @@
             <li><a href="#test-1">Axes</a></li>
             <li><a href="#test-2">Margins</a></li>
             <li><a href="#test-3">Ticks and Tick Formats</a></li>
+            <li><a href="#test-4">Resize</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -169,6 +170,36 @@
         });
         </script>
 
+        <!-- Test 3 -->
+        <div id="test-4" class="test">
+            <h2>4. Resize</h2>
+            <p>
+                Correctly resize the chart when the width and height options are set.
+            </p>
+            <div class="epoch" style="width: 600px; height: 200px"></div>
+            <div class="controls">
+                <button data-index="0">Original</button>
+                <button data-index="1">Bigger</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var sizes = [
+                [600, 200],
+                [800, 320]
+            ];
 
+            var chart = $('#test-4 .epoch').epoch({
+                type: 'line',
+                data: data().add(function(x) { return Math.sin(x) }).get([0, 2*Math.PI], Math.PI/25)
+            });
+
+            $('#test-4 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.option('width', sizes[index][0]);
+                chart.option('height', sizes[index][1]);
+            });
+        });
+        </script>
     </body>
 </html>

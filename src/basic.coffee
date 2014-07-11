@@ -66,7 +66,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
         6
 
     # Add a translation for the top and left margins
-    @svg = @svg.append("g")
+    @g = @svg.append("g")
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
 
     # Register option change events
@@ -139,22 +139,22 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Redraws the axes for the visualization.
   _redrawAxes: ->
     if @hasAxis('bottom')
-      @svg.selectAll('.x.axis.bottom').transition()
+      @g.selectAll('.x.axis.bottom').transition()
         .duration(500)
         .ease('linear')
         .call(@bottomAxis())
     if @hasAxis('top')
-      @svg.selectAll('.x.axis.top').transition()
+      @g.selectAll('.x.axis.top').transition()
         .duration(500)
         .ease('linear')
         .call(@topAxis())
     if @hasAxis('left')
-      @svg.selectAll('.y.axis.left').transition()
+      @g.selectAll('.y.axis.left').transition()
         .duration(500)
         .ease('linear')
         .call(@leftAxis())
     if @hasAxis('right')
-      @svg.selectAll('.y.axis.right').transition()
+      @g.selectAll('.y.axis.right').transition()
         .duration(500)
         .ease('linear')
         .call(@rightAxis())
@@ -162,24 +162,30 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Draws the initial axes for the visualization.
   _drawAxes: ->
     if @hasAxis('bottom')
-      @svg.append("g")
+      @g.append("g")
         .attr("class", "x axis bottom")
         .attr("transform", "translate(0, #{@innerHeight()})")
         .call(@bottomAxis())
     if @hasAxis('top')
-      @svg.append("g")
+      @g.append("g")
         .attr('class', 'x axis top')
         .call(@topAxis())
     if @hasAxis('left')
-      @svg.append("g")
+      @g.append("g")
         .attr("class", "y axis left")
         .call(@leftAxis())
     if @hasAxis('right')
-      @svg.append('g')
+      @g.append('g')
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@innerWidth()}, 0)")
         .call(@rightAxis())
     @_axesDrawn = true
+
+  dimensionsChanged: ->
+    super()
+    @g.selectAll('.axis').remove()
+    @_axesDrawn = false
+    @draw()
 
   # Updates margins in response to a <code>option:margin.*</code> event.
   marginsChanged: ->
@@ -190,7 +196,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
       else
         @margins[pos] = size
 
-    @svg.transition()
+    @g.transition()
       .duration(750)
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
 
@@ -207,12 +213,12 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
         @margins[pos] = 6
 
     # Update the margin offset
-    @svg.transition()
+    @g.transition()
       .duration(750)
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
 
     # Remove the axes and redraw
-    @svg.selectAll('.axis').remove()
+    @g.selectAll('.axis').remove()
     @_axesDrawn = false
     @draw()
 

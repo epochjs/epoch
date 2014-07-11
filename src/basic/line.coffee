@@ -11,7 +11,7 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
     [x, y, line] = [@x(), @y(), @line()]
 
     # 1) Join
-    layer = @svg.selectAll('.layer')
+    layer = @g.selectAll('.layer')
       .data(@data, (d) -> d.category)
 
     # 2) Update (only existing)

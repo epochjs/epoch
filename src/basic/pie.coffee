@@ -17,14 +17,14 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
     @arc = d3.svg.arc()
       .outerRadius(radius - @options.margin)
       .innerRadius(@options.inner)
-    @svg = @svg.append('g')
+    @g = @svg.append('g')
       .attr("transform", "translate(#{@width/2}, #{@height/2})")
 
   # Draws the pie chart
   draw: ->
-    @svg.selectAll('.arc').remove()
+    @g.selectAll('.arc').remove()
 
-    arcs = @svg.selectAll(".arc")
+    arcs = @g.selectAll(".arc")
       .data(@pie(@data), (d) -> d.data.category)
 
     arcs.enter().append('g')
