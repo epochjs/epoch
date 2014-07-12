@@ -35,7 +35,7 @@ dirs =
 
 target =
   package: 'js/epoch.js'
-  compile: "./epoch.%version.min.js"
+  compile: "./epoch.min.js"
 
 
 compiler_url = 'http://closure-compiler.appspot.com/compile'
@@ -125,7 +125,7 @@ task 'compile', 'Compiles the packaged source via the Google Closure Compiler', 
       type: 'gcc'
       language: 'ECMASCRIPT5'
       fileIn: target.package
-      fileOut: target.compile.replace('%version', version)
+      fileOut: target.compile
       callback: (err) ->
         if err?
           error 'compile', err if err?
@@ -170,7 +170,7 @@ task 'release', 'Releases a new version of the library', (options) ->
   setVersion options, ->
     console.log "Building release #{version}..."
     all ['sass', 'compile'], ->
-      exec "cp css/epoch.css ./epoch.#{version}.min.css", (err, o, e) ->
+      exec "cp css/epoch.css ./epoch.min.css", (err, o, e) ->
         error('release', o+e) if err?
 
 task 'clean', 'Removes build files completely', ->
