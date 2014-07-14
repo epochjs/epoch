@@ -24,6 +24,8 @@
             <li><a href="#test-5">Color Override</a></li>
             <li><a href="#test-6">Categorical Colors</a></li>
             <li><a href="#test-7">Pie Chart Layers without Labels</a></li>
+            <li><a href="#test-8">Margin Changes</a></li>
+            <li><a href="#test-9">Inner Changes</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -262,6 +264,53 @@
             $('#test-7 .epoch').epoch({
                 type: 'pie',
                 data: [ {value: 30}, {value: 35}, {value: 35} ]
+            });
+        });
+        </script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Margin Changes</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Small</button>
+                <button data-index="1">Big</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var margins = [10, 40];
+            var chart = $('#test-8 .epoch').epoch({
+                type: 'pie',
+                data: [ {value: 30}, {value: 35}, {value: 35} ]
+            });
+            $('#test-8 button').click(function(e) {
+                var margin = margins[parseInt($(e.target).attr('data-index'))];
+                chart.option('margin', margin);
+            });
+        });
+        </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Inner Changes</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">No Inner</button>
+                <button data-index="1">Small Inner</button>
+                <button data-index="2">Big Inner</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var innerMargins = [0, 50, 100];
+            var chart = $('#test-9 .epoch').epoch({
+                type: 'pie',
+                data: [ {value: 30}, {value: 35}, {value: 35} ]
+            });
+            $('#test-9 button').click(function(e) {
+                var inner = innerMargins[parseInt($(e.target).attr('data-index'))];
+                chart.option('inner', inner);
             });
         });
         </script>
