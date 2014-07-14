@@ -1,4 +1,6 @@
-window.data = (function() {
+(function() {
+
+    // Quick data generator
     Data = function() {
         this.layers = []
     };
@@ -39,9 +41,47 @@ window.data = (function() {
         return [{ label: 'A', values: values }];
     };
 
-    return function() {
-        return new Data();
+    window.data = function() { return new Data(); };
+
+
+    // Quick real-time data generator
+    Time = function() {
+        Data.call(this);
     };
+
+    Time.prototype = new Data()
+
+    Time.prototype.get = function(domain, step) {
+        data = Data.prototype.get.apply(this, arguments);
+        time = parseInt(new Date().getTime() / 1000);
+
+        for (var i = 0; i < data[0].values.length; i++) {
+            for (var j = 0; j < this.layers.length; j++) {
+                delete data[j].values[i].x;
+                data[j].values[i].time = time + i;
+            }
+        }
+
+        this.currentTime = time;
+        this.lastX = domain[1];
+
+        return data;
+    };
+
+    Time.prototype.next = function(step) {
+        this.currentTime++;
+        this.lastX += (step ? step : 1);
+
+        data = [];
+        for (var j = 0; j < this.layers.length; j++) {
+            data.push({ time: this.currentTime, y: this.layers[j](this.lastX) })
+        }
+
+        return data;
+    }
+
+    window.time = function() { return new Time(); };
+
 })();
 
 

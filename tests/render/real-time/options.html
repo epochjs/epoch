@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body { background: #333; color: #d0d0d0; }
+        a:link, a:visited { color: white; color: white; }
+        </style>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Real-time Chart Options and Events</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Options and Events</p>
+        <ol>
+            <li><a href="#test-1">Resize</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+
+        <div id="test-1" class="test">
+            <h2>1. Resize</h2>
+            <p>Correctly Resize a Real-time Chart.</p>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="size" data-index="0">Size: Small</button>
+                <button class="size" data-index="1">Size: Medium</button>
+                <button class="size" data-index="2">Size: Large</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.cos(x) + 1; }),
+                interval = null;
+
+            var sizes = [
+                { width: 400, height: 100 },
+                { width: 800, height: 250 },
+                { width: $('#test-1 .epoch').width(), height: $('#test-1 .epoch').height() }
+            ];
+
+            var chart = $('#test-1 .epoch').epoch({
+                type: 'time.line',
+                data: data.get([0, 2*Math.PI], step)
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-1 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-1 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-1 .playback').text('Play');
+                }
+            });
+
+            $('#test-1 .size').click(function(e) {
+                var size = sizes[parseInt($(e.target).attr('data-index'))];
+                chart.option('width', size.width);
+                chart.option('height', size.height);
+            });
+        });
+        </script>
+    </body>
+</html>

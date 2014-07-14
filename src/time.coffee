@@ -11,11 +11,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     historySize: 120
     windowSize: 40
     queueSize: 10
-    margins:
-      top: 25
-      right: 50
-      bottom: 25
-      left: 50
     axes: ['bottom']
     ticks:
       time: 15
@@ -26,6 +21,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       bottom: Epoch.Formats.seconds
       left: Epoch.Formats.si
       right: Epoch.Formats.si
+
+  defaultAxisMargins =
+    top: 25
+    right: 50
+    bottom: 25
+    left: 50
 
   # Creates a new real-time plot.
   #
@@ -64,8 +65,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     # Margins
     @margins = {}
     for pos in ['top', 'right', 'bottom', 'left']
-      @margins[pos] = @options.margins[pos]
-      @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
+      @margins[pos] = if @options.margins? and @options.margins[pos]?
+        @options.margins[pos]
+      else if @hasAxis(pos)
+        defaultAxisMargins[pos]
+      else
+        6
 
     # SVG Overlay
     @svg = @el.insert('svg', ':first-child')
@@ -93,8 +98,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @animation =
       interval: null
       active: false
-      delta: -(@w() / @options.fps),
-      tickDelta: -( (@w() / @pixelRatio) / @options.fps )
+      delta: => -(@w() / @options.fps),
+      tickDelta: => -( (@w() / @pixelRatio) / @options.fps )
       frame: 0,
       duration: @options.fps
 
@@ -327,7 +332,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   _animate: ->
     return unless @inTransition()
     @_stopTransition() if ++@animation.frame == @animation.duration
-    @draw(@animation.frame * @animation.delta)
+    @draw(@animation.frame * @animation.delta())
     @_updateTimeAxes()
 
   # @return [Function] The y scale for the plot
@@ -426,7 +431,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # This performs animations for the time axes (top and bottom).
   _updateTimeAxes: ->
     return unless @hasAxis('top') or @hasAxis('bottom')
-    [dx, dop] = [@animation.tickDelta, 1 / @options.fps]
+    [dx, dop] = [@animation.tickDelta(), 1 / @options.fps]
 
     for tick in @_ticks
       tick.x += dx
@@ -443,6 +448,28 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       if tick.enter or tick.exit
         tick.bottomEl.style('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.style('opacity', tick.opacity) if @hasAxis('top')
+
+  dimensionsChanged: ->
+    super()
+
+    # Resize the Canvas
+    @canvas.attr
+      width: @innerWidth()
+      height: @innerHeight()
+
+    @canvas.style
+      width: "#{@innerWidth() / @pixelRatio}px"
+      height: "#{@innerHeight() / @pixelRatio}px"
+
+    # Remake Axes
+    @svg.selectAll('.axis').remove()
+    @_prepareTimeAxes()
+    @_prepareRangeAxes()
+
+    # Redraw the graph
+    @draw(@animation.frame * @animation.delta())
+
+
 
   # Draws the visualization in the plot's canvas.
   # @param delta The current x offset to apply to all elements when rendering. This number

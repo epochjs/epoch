@@ -211,7 +211,8 @@ class Epoch.Chart.Base extends Epoch.Events
   # Updates the width and height members and container dimensions in response to an
   # 'option:width' or 'option:height' event.
   dimensionsChanged: ->
-    [@width, @height] = [@option('width'), @option('height')]
+    @width = @option('width') or @width
+    @height = @option('height') or @height
     @el.width(@width)
     @el.height(@height)
 
@@ -287,3 +288,4 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
     super()
     @canvas.style {'width': "#{@width}px", 'height': "#{@height}px"}
     @canvas.attr { width: @getWidth(), height: @getHeight() }
+    @svg.attr('width', @width).attr('height', @height)
