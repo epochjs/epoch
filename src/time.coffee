@@ -59,7 +59,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     super(@options = Epoch.Util.defaults(@options, defaults))
 
     # Queue entering data to get around memory bloat and "non-active" tab issues
-    @_queueSize = @options.queueSize
     @_queue = []
 
     # Margins
@@ -221,8 +220,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # This method will remove the first incoming entry from the visualization's queue
   # and shift it into the working set (aka window). It then starts the animating the
-  # transition of the element into the visualization. Triggers the 'transition:start'
-  # only in the case that the animation is actually begun.
+  # transition of the element into the visualization. 
+  # @event transition:start in the case that animation is actually started.
   _startTransition: ->
     return if @animation.active == true or @_queue.length == 0
     @trigger 'transition:start'
@@ -231,8 +230,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @animation.interval = setInterval(@animationCallback, 1000/@options.fps)
 
   # Stops animating and clears the animation interval given there is no more
-  # incoming data to process. Also finalizes tick entering and exiting. Trigger
-  # the 'transition:end' event.
+  # incoming data to process. Also finalizes tick entering and exiting.
+  # @event transition:end After the transition has completed.
   _stopTransition: ->
     return unless @inTransition()
 
@@ -272,16 +271,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # This method is used by the application programmer to introduce new data into
   # the timeseries plot. The method queues the incoming data, ensures a fixed size
   # for the data queue, and finally calls <code>_startTransition</code> method to
-  # begin animating the plot. Triggers the 'push' event.
-  #
+  # begin animating the plot.
   # @param [Array] layers Layered incoming visualization data.
+  # @event push Triggered after the new data has been pushed into the queue.
   push: (layers) ->
     layers = @_prepareLayers(layers)
 
     # Handle entry queue maximum size
-    if @_queue.length > @_queueSize
-      @_queue.splice @_queueSize, (@_queue.length - @_queueSize)
-    return false if @_queue.length == @_queueSize
+    if @_queue.length > @options.queueSize
+      @_queue.splice @options.queueSize, (@_queue.length - @options.queueSize)
+    return false if @_queue.length == @options.queueSize
 
     # Push the entry into the queue
     @_queue.push layers.map((entry) => @_prepareEntry(entry))
@@ -300,9 +299,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # to @_updateTicks to handle horizontal (or "time") axes tick transitions
   # since we're implementing independent of d3 as well.
   #
-  # Triggers the 'before:shift' event before it has shifted an element
-  # off the queue and the 'after:shift' event after the entry has been shifted
-  # off the queue.
+  # @event before:shift Before an element has been shifted off the queue.
+  # @event after:shift After the element has been shifted off the queue.
   _shift: ->
     @trigger 'before:shift'
 
