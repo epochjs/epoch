@@ -5,6 +5,7 @@
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
     </head>
     <body>
@@ -20,6 +21,7 @@
             <li><a href="#test-7">Categorical Colors</a></li>
             <li><a href="#test-8">Multi Series without Labels</a></li>
             <li><a href="#test-9">Single Series with Radius</a></li>
+            <li><a href="#test-10">Radius Change</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -338,6 +340,31 @@
 
             $("#test-9 p button:eq(0)").click(function() {
                 chart.update(generateData(length));
+            });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Radius Change</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Small</button>
+                <button data-index="1">Normal</button>
+                <button data-index="2">Large</button>
+                <button data-index="3">Very Large</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var radii = [2.0, 3.5, 7, 14];
+            var chart = $('#test-10 .epoch').epoch({
+                type: 'scatter',
+                data: data().random()
+            });
+            $('#test-10 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.option('radius', radii[index]);
             });
         });
         </script>

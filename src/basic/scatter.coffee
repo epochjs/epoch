@@ -10,6 +10,7 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
   # @option options [Number] radius The default radius to use for the points in the plot (default 3.5). This can be overrwitten by individual points.
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
+    @on 'option:radius', 'radiusChanged'
 
   # Draws the scatter plot.
   draw: ->
@@ -47,3 +48,6 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
       .remove()
       
     super()
+
+  # Updates radius in response to an <code>option:radius</code> event.
+  radiusChanged: -> @draw()
