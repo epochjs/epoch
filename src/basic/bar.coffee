@@ -19,12 +19,22 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   horizontal_defaults = Epoch.Util.defaults(horizontal_specific, defaults)
 
+  optionListeners =
+    'option:orientation': 'orientationChanged'
+    'option:padding': 'paddingChanged'
+    'option:outerPadding': 'paddingChanged'
+    'option:padding:bar': 'paddingChanged'
+    'option:padding:group': 'paddingChanged'
+    'option:outerPadding:bar': 'paddingChanged'
+    'option:outerPadding:group': 'paddingChanged'
+
   constructor: (@options={}) ->
     if @options.orientation == 'horizontal'
       @options = Epoch.Util.defaults(@options, horizontal_defaults)
     else
       @options = Epoch.Util.defaults(@options, defaults)
     super(@options)
+    @onAll optionListeners
 
   # @return [Function] The scale used to generate the chart's x scale.
   x: ->
@@ -182,3 +192,21 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .duration(750)
       .style('opacity', '0')
       .remove()
+
+  # Updates orientation in response <code>option:orientation</code>.
+  orientationChanged: ->
+    top = @options.tickFormats.top
+    bottom = @options.tickFormats.bottom
+    left = @options.tickFormats.left
+    right = @options.tickFormats.right
+
+    @options.tickFormats.left = top
+    @options.tickFormats.right = bottom
+    @options.tickFormats.top = left
+    @options.tickFormats.bottom = right
+
+    @draw()
+
+
+  # Updates padding in response to <code>option:padding:*</code> and <code>option:outerPadding:*</code>.
+  paddingChanged: -> @draw()
