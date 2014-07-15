@@ -30,6 +30,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   optionListeners =
     'option:axes': 'axesChanged'
+    'option:ticks': 'ticksChanged'
+    'option:ticks.top': 'ticksChanged'
+    'option:ticks.right': 'ticksChanged'
+    'option:ticks.bottom': 'ticksChanged'
+    'option:ticks.left': 'ticksChanged'
 
   # Creates a new real-time plot.
   #
@@ -164,9 +169,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('class', 'domain')
         .attr('d', "M0,0H#{@innerWidth()/@pixelRatio+1}")
 
+    @_resetInitialTimeTicks()
+
+  # Resets the initial ticks for the time axes.
+  _resetInitialTimeTicks: ->
     tickInterval = @options.ticks.time
     @_ticks = []
     @_tickTimer = tickInterval
+
+    @bottomAxis.selectAll('.tick').remove() if @bottomAxis?
+    @topAxis.selectAll('.tick').remove() if @topAxis?
 
     for layer in @data
       continue unless layer.values? and layer.values.length > 0
@@ -190,7 +202,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
         .call(@rightAxis())
-
 
   # @return [Object] The d3 left axis.
   leftAxis: ->
@@ -322,12 +333,14 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @event after:shift After the element has been shifted off the queue.
   _shift: ->
     @trigger 'before:shift'
-
     entry = @_queue.shift()
     layer.values.push(entry[i]) for i, layer of @data
-
     @_updateTicks(entry[0].time)
+    @_transitionRangeAxes()
+    @trigger 'after:shift'
 
+  # Transitions the left and right axes when the range of the plot has changed.
+  _transitionRangeAxes: ->
     if @hasAxis('left')
       @svg.selectAll('.y.axis.left').transition()
         .duration(500)
@@ -339,8 +352,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .duration(500)
         .ease('linear')
         .call(@rightAxis())
-
-    @trigger 'after:shift'
 
   # Performs the animation for transitioning elements in the visualization.
   _animate: ->
@@ -486,6 +497,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         @margins[pos] = 6
     @_sizeCanvas()
     @_buildAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates ticks in response to an <code>option.ticks.*</code> event.
+  ticksChanged: ->
+    @_resetInitialTimeTicks()
+    @_transitionRangeAxes()
     @draw(@animation.frame * @animation.delta())
 
 
