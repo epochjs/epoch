@@ -29,6 +29,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     left: 50
 
   optionListeners =
+    'option:margins': 'marginsChanged'
+    'option:margins.top': 'marginsChanged'
+    'option:margins.right': 'marginsChanged'
+    'option:margins.bottom': 'marginsChanged'
+    'option:margins.left': 'marginsChanged'
     'option:axes': 'axesChanged'
     'option:ticks': 'ticksChanged'
     'option:ticks.top': 'ticksChanged'
@@ -514,6 +519,18 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   tickFormatsChanged: ->
     @_resetInitialTimeTicks()
     @_transitionRangeAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates margins in response to an <code>option.margins.*</code> event.
+  marginsChanged: ->
+    return unless @options.margins?
+    for pos, size of @options.margins
+      unless size?
+        @margins[pos] = 6
+      else
+        @margins[pos] = size
+
+    @_sizeCanvas()
     @draw(@animation.frame * @animation.delta())
 
 
