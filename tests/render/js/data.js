@@ -52,8 +52,8 @@
     Time.prototype = new Data()
 
     Time.prototype.get = function(domain, step) {
-        data = Data.prototype.get.apply(this, arguments);
-        time = parseInt(new Date().getTime() / 1000);
+        var data = Data.prototype.get.apply(this, arguments),
+            time = parseInt(new Date().getTime() / 1000);
 
         for (var i = 0; i < data[0].values.length; i++) {
             for (var j = 0; j < this.layers.length; j++) {
@@ -72,7 +72,7 @@
         this.currentTime++;
         this.lastX += (step ? step : 1);
 
-        data = [];
+        var data = [];
         for (var j = 0; j < this.layers.length; j++) {
             data.push({ time: this.currentTime, y: this.layers[j](this.lastX) })
         }

@@ -17,10 +17,10 @@
         <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Options and Events</p>
         <ol>
             <li><a href="#test-1">Resize</a></li>
+            <li><a href="#test-2">Axes</a></li>
         </ol>
 
         <!-- Test 1 -->
-
         <div id="test-1" class="test">
             <h2>1. Resize</h2>
             <p>Correctly Resize a Real-time Chart.</p>
@@ -40,7 +40,7 @@
 
             var sizes = [
                 { width: 400, height: 100 },
-                { width: 800, height: 250 },
+                { width: 800, height: 150 },
                 { width: $('#test-1 .epoch').width(), height: $('#test-1 .epoch').height() }
             ];
 
@@ -70,6 +70,63 @@
                 var size = sizes[parseInt($(e.target).attr('data-index'))];
                 chart.option('width', size.width);
                 chart.option('height', size.height);
+            });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Axes</h2>
+            <div class="epoch"></div>
+            <div class="controls">
+                <button class="playback">Play</button> | 
+                <button class="axes" data-index="0">All</button>
+                <button class="axes" data-index="1">[left, right]</button>
+                <button class="axes" data-index="2">[top, bottom]</button>
+                <button class="axes" data-index="3">[left, bottom]</button>
+                <button class="axes" data-index="4">[top, right]</button>
+                <button class="axes" data-index="5">None</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.sin(x) + 1; }),
+                interval = null;
+
+            var axes = [
+                ['top', 'left', 'bottom', 'right'],
+                ['left', 'right'],
+                ['top', 'bottom'],
+                ['left', 'bottom'],
+                ['top', 'right'],
+                []
+            ];
+
+            var chart = $('#test-2 .epoch').epoch({
+                type: 'time.line',
+                data: data.get([0, 2*Math.PI], step)
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-2 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-2 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-2 .playback').text('Play');
+                }
+            });
+
+            $('#test-2 button.axes').click(function(e) {
+                chart.option('axes', axes[parseInt($(e.target).attr('data-index'))]);
             });
         });
         </script>

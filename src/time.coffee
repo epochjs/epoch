@@ -28,6 +28,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     bottom: 25
     left: 50
 
+  optionListeners =
+    'option:axes': 'axesChanged'
+
   # Creates a new real-time plot.
   #
   # @param [Object] options Options for the plot.
@@ -82,17 +85,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
       @el.style('position', 'relative')
 
-    @canvas.attr
-      width: @innerWidth()
-      height: @innerHeight()
-
-    @canvas.style
-      position: 'absolute'
-      width: "#{@innerWidth() / @pixelRatio}px"
-      height: "#{@innerHeight() / @pixelRatio}px"
-      top: "#{@margins.top}px"
-      left: "#{@margins.left}px"
-      'z-index': '999'
+    @canvas.style { position: 'absolute', 'z-index': '999' }
+    @_sizeCanvas()
 
     # Animation / Transitions
     @animation =
@@ -103,12 +97,32 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       frame: 0,
       duration: @options.fps
 
-    # Top and Bottom axis ticks
-    @_prepareTimeAxes()
-    @_prepareRangeAxes()
+    # Add SVG Axes
+    @_buildAxes()
 
     # Callback used for animation
     @animationCallback = => @_animate()
+
+    # Listen for specific option changes
+    @onAll optionListeners
+
+  # Positions and sizes the canvas based on margins and axes.
+  _sizeCanvas: ->
+    @canvas.attr
+      width: @innerWidth()
+      height: @innerHeight()
+
+    @canvas.style
+      width: "#{@innerWidth() / @pixelRatio}px"
+      height: "#{@innerHeight() / @pixelRatio}px"
+      top: "#{@margins.top}px"
+      left: "#{@margins.left}px"
+
+  # Removes any axes found in the SVG and adds both the time and range axes to the plot.
+  _buildAxes: ->
+    @svg.selectAll('.axis').remove()
+    @_prepareTimeAxes()
+    @_prepareRangeAxes()
 
   # Sets the data for the visualization (truncated to the history size as defined in the options).
   # @param [Array] data Layered data to set for the visualization.
@@ -449,34 +463,30 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         tick.bottomEl.style('opacity', tick.opacity) if @hasAxis('bottom')
         tick.topEl.style('opacity', tick.opacity) if @hasAxis('top')
 
-  dimensionsChanged: ->
-    super()
-
-    # Resize the Canvas
-    @canvas.attr
-      width: @innerWidth()
-      height: @innerHeight()
-
-    @canvas.style
-      width: "#{@innerWidth() / @pixelRatio}px"
-      height: "#{@innerHeight() / @pixelRatio}px"
-
-    # Remake Axes
-    @svg.selectAll('.axis').remove()
-    @_prepareTimeAxes()
-    @_prepareRangeAxes()
-
-    # Redraw the graph
-    @draw(@animation.frame * @animation.delta())
-
-
-
   # Draws the visualization in the plot's canvas.
   # @param delta The current x offset to apply to all elements when rendering. This number
   #   will be 0 when the plot is not animating and negative when it is.
   # @abstract It does nothing on its own but is provided so that subclasses can
   #   define a custom rendering routine.
   draw: (delta=0) -> super()
+
+  dimensionsChanged: ->
+    super()
+    @_sizeCanvas()
+    @_buildAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates axes in response to an <code>option:axes</code> event.
+  axesChanged: ->
+    for pos in ['top', 'right', 'bottom', 'left']
+      continue if @options.margins? and @options.margins[pos]?
+      if @hasAxis(pos)
+        @margins[pos] = defaultAxisMargins[pos]
+      else
+        @margins[pos] = 6
+    @_sizeCanvas()
+    @_buildAxes()
+    @draw(@animation.frame * @animation.delta())
 
 
 # Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)
