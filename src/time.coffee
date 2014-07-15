@@ -35,6 +35,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     'option:ticks.right': 'ticksChanged'
     'option:ticks.bottom': 'ticksChanged'
     'option:ticks.left': 'ticksChanged'
+    'option:tickFormats': 'tickFormatsChanged'
+    'option:tickFormats.top': 'tickFormatsChanged'
+    'option:tickFormats.right': 'tickFormatsChanged'
+    'option:tickFormats.bottom': 'tickFormatsChanged'
+    'option:tickFormats.left': 'tickFormatsChanged'
 
   # Creates a new real-time plot.
   #
@@ -501,6 +506,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # Updates ticks in response to an <code>option.ticks.*</code> event.
   ticksChanged: ->
+    @_resetInitialTimeTicks()
+    @_transitionRangeAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates tick formats in response to an <code>option.tickFormats.*</code> event.
+  tickFormatsChanged: ->
     @_resetInitialTimeTicks()
     @_transitionRangeAxes()
     @draw(@animation.frame * @animation.delta())
