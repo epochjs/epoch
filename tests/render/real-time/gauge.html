@@ -23,11 +23,16 @@
             <li><a href="#test-3">Stream Transition</a></li>
             <li><a href="#test-4">Gauge Sizes</a></li>
             <li><a href="#test-5">Color Override</a></li>
+            <li><a href="test-6">Option: domain</a></li>
+            <li><a href="test-7">Option: ticks</a></li>
+            <li><a href="test-8">Option: tickSize</a></li>
+            <li><a href="test-9">Option: tickOffset</a></li>
+            <li><a href="test-10">Option: format</a></li>
         </ol>
 
         <!-- Test 1 -->
         <div id="test-1" class="test">
-            <h1>1. Single Value Display</h1>
+            <h2>1. Single Value Display</h2>
             <p>Display a single value of 25%</p>
             <div class="epoch gauge-small"></div>
         </div>
@@ -40,7 +45,7 @@
 
         <!-- Test 2 -->
         <div id="test-2" class="test">
-            <h1>2. Single Transition</h1>
+            <h2>2. Single Transition</h2>
             <p>Display value of 0% and transition to a random value when the button is pressed.</p>
             <div class="epoch gauge-small"></div>
             <p><button>Transition</button></p>
@@ -61,7 +66,7 @@
 
         <!-- Test 3 -->
         <div id="test-3" class="test">
-            <h1>3. Stream Transition</h1>
+            <h2>3. Stream Transition</h2>
             <p>Display value of 0% and transition to a random value every second when the button is pressed.</p>
             <div class="epoch gauge-small"></div>
             <p><button>Play</button></p>
@@ -156,5 +161,123 @@
             $('#test-5 .epoch').epoch({ type: 'time.gauge', value: 0.5 });
         });
         </script>
+
+        <!--
+            Common Option Event Listener Events
+        -->
+        <script>
+        window.makeOptionTest = function(testNumber, chartOptions, optionName) {
+            chartOptions = chartOptions ? chartOptions : {};
+
+            if (!chartOptions.type)
+                chartOptions.type = 'time.gauge';
+            if (!chartOptions.value)
+                chartOptions.value = 0.5;
+            if (!chartOptions.domain)
+                chartOptions.domain = [0, 1];
+
+            var domain = chartOptions.domain,
+                id = '#test-' + testNumber,
+                chart = $(id + ' .epoch').epoch(chartOptions),
+                interval = null,
+                next = function() { chart.push(Math.random()*(domain[1] - domain[0]) + domain[0]); };
+
+            $(id + ' .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(next, 1500);
+                    next();
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');
+                }
+            });
+
+            var formats = [
+                Epoch.Formats.percent,
+                function(d) { return d.toFixed(2); }
+            ];
+
+            $(id + ' .option').click(function(e) {
+                var value = parseInt($(e.target).attr('data-value'));
+
+                console.log(optionName, value);
+
+                if (optionName == 'domain')
+                    value = domain = $(e.target).attr('data-value').split(',').map(function(d) { return parseInt(d); });
+                else if (optionName == 'format')
+                    value = formats[value];
+                chart.option(optionName, value);
+            });
+        };
+        </script>
+
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Option: domain</h2>
+            <div class="epoch gauge-small"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="option" data-value="0,1">[0, 1]</button>
+                <button class="option" data-value="0,2">[0, 2]</button>
+            </p>
+        </div>
+        <script>$(function() { makeOptionTest(6, {}, 'domain'); });</script>
+
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Option: ticks</h2>
+            <div class="epoch gauge-small"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="option" data-value="5">5 Ticks</button>
+                <button class="option" data-value="10">10 Ticks</button>
+                <button class="option" data-value="20">20 Ticks</button>
+                <button class="option" data-value="40">40 Ticks</button>
+            </p>
+        </div>
+        <script>$(function() { makeOptionTest(7, {}, 'ticks'); });</script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Option: tickSize</h2>
+            <div class="epoch gauge-small"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="option" data-value="2">2px</button>
+                <button class="option" data-value="5">5px</button>
+                <button class="option" data-value="10">10px</button>
+                <button class="option" data-value="20">20px</button>
+            </p>
+        </div>
+        <script>$(function() { makeOptionTest(8, {}, 'tickSize'); });</script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Option: tickOffset</h2>
+            <div class="epoch gauge-small"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="option" data-value="5">5px</button>
+                <button class="option" data-value="10">10px</button>
+                <button class="option" data-value="20">20px</button>
+            </p>
+        </div>
+        <script>$(function() { makeOptionTest(9, {}, 'tickOffset'); });</script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Option: format</h2>
+            <div class="epoch gauge-small"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="option" data-value="0">Percent</button>
+                <button class="option" data-value="1">Normal</button>
+            </p>
+        </div>
+        <script>$(function() { makeOptionTest(10, {}, 'format'); });</script>
     </body>
 </html>
