@@ -17,6 +17,13 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     quartic: (value, max) -> Math.pow(value/max, 4)
     quintic: (value, max) -> Math.pow(value/max, 5)
 
+  optionListeners =
+    'option:buckets': 'bucketsChanged'
+    'option:bucketRange': 'bucketRangeChanged'
+    'option:opacity': 'opacityChanged'
+    'option:bucketPadding': 'bucketPaddingChanged'
+    'option:paintZeroValues': 'paintZeroValuesChanged'
+
   # Creates a new heatmap.
   # @param [Object] options Options for the heatmap.
   # @option options [Integer] buckets Number of vertical buckets to use when normalizing the
@@ -40,6 +47,9 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # Create the paint canvas
     @_setupPaintCanvas()
 
+    # Add option change listeners
+    @onAll optionListeners
+
   # Prepares initially set data for rendering.
   # @param [Array] data Layered histogram data for the visualization.
   setData: (data) ->
@@ -50,7 +60,9 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
   # @param [Object] entry Entry to prepare for visualization.
-  _prepareEntry: (entry) ->
+  #_prepareEntry: (entry) ->
+
+  _getBuckets: (entry) ->
     prepared =
       time: entry.time
       max: 0
@@ -121,13 +133,19 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # At the end of a transition we must reset the paint canvas by shifting the viewable
     # buckets to the left (this allows for a fixed cut point and single renders below in @draw)
     @on 'transition:end', '_shiftPaintCanvas'
+    @on 'transition:end', => @draw(@animation.frame * @animation.delta())
 
   # Redraws the entire heatmap for the current data.
   redraw: ->
     entryIndex = @data[0].values.length
     drawColumn = @options.windowSize
+
+    # This addresses a strange off-by-one issue when the chart is transitioning
+    drawColumn++ if @inTransition()
+
     while (--entryIndex >= 0) and (--drawColumn >= 0)
       @_paintEntry(entryIndex, drawColumn)
+    @draw(@animation.frame * @animation.delta())
 
   # Computes the correct color for a given bucket.
   # @param [Integer] value Normalized value at the bucket.
@@ -150,7 +168,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     maxTotal = 0
 
     for layer in @data
-      entry = layer.values[entryIndex]
+      entry = @_getBuckets( layer.values[entryIndex] )
       for bucket, count of entry.buckets
         bucketTotals[bucket] += count
       maxTotal += entry.max
@@ -209,5 +227,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @clear()
     @ctx.drawImage @paint, delta, 0
     super()
+
+  # Changes the number of buckets in response to an <code>option:buckets</code> event.
+  bucketsChanged: ->@redraw()
 
 # "Audio... Audio... Audio... Video Disco..." - Justice
