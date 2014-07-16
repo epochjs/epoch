@@ -23,8 +23,8 @@
             <li><a href="#test-9">Option: buckets</a></li>
             <li><a href="#test-10">Option: bucketRange</a></li>
             <li><a href="#test-11">Option: bucketPadding</a></li>
-            <li><a href="#test-12">Option: paintZeroValues</a></li>
-            <li><a href="#test-13">Option: cutOutliers</a></li>
+            <li><a href="#test-12">Option: cutOutliers</a></li>
+            <li><a href="#test-13">Option: opacity</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -326,12 +326,13 @@
             var beta = window.beta = new BetaData(2, 5, 1),
                 data = beta.history(120);
 
-            var chart = window.c = $('#test-10 .epoch').epoch({
+            var chart = $('#test-10 .epoch').epoch({
                 type: 'time.heatmap',
                 data: data,
                 axes: ['left', 'right'],
                 buckets: 20,
-                windowSize: 100
+                windowSize: 100,
+                cutOutliers: true
             });
 
             var interval = null,
@@ -353,7 +354,6 @@
             $('#test-10 .bucketRange').click(function(e) {
                 var bucketRange = $(e.target).attr('data-bucket-range')
                     .split(',').map(function(d) { return parseInt(d); });
-                console.log(bucketRange);
                 chart.option('bucketRange', bucketRange);
             });
         });
@@ -363,18 +363,147 @@
         <div id="test-11" class="test">
             <h2>11. Option: bucketPadding</h2>
             <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="bucketPadding" data-bucket-padding="0">Padding: 0</button>
+                <button class="bucketPadding" data-bucket-padding="2">Padding: 2</button>
+                <button class="bucketPadding" data-bucket-padding="4">Padding: 4</button>
+                <button class="bucketPadding" data-bucket-padding="8">Padding: 8</button>
+            </p>
         </div>
+        <script>
+        $(function() {
+            var beta = window.beta = new BetaData(2, 5, 1),
+                data = beta.history(120);
+
+            var chart = $('#test-11 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                axes: [],
+                buckets: 15,
+                windowSize: 100
+            });
+
+            var interval = null,
+                pushPoint = function () { chart.push(beta.next()); };
+
+            $('#test-11 .playback').click(function(e) {
+                if (interval == null) {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                else {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                    interval = null;
+                }
+            });
+
+            $('#test-11 .bucketPadding').click(function(e) {
+                var bucketPadding = parseInt($(e.target).attr('data-bucket-padding'));
+                console.log(bucketPadding)
+                chart.option('bucketPadding', bucketPadding);
+            });
+        });
+        </script>
 
         <!-- Test 12 -->
         <div id="test-12" class="test">
-            <h2>12. Option: paintZeroValues</h2>
+            <h2>12. Option: cutOutliers</h2>
             <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="cutOutliers" data-value="false">Keep Outliers</button>
+                <button class="cutOutliers" data-value="true">Cut Outliers</button>
+            </p>
         </div>
+        <script>
+        $(function() {
+            var beta = window.beta = new BetaData(2, 5, 1),
+                data = beta.history(120);
 
-        <!-- Test 13 -->
+            var chart = $('#test-12 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                axes: ['left', 'right'],
+                bucketRange: [0, 25],
+                buckets: 15,
+                windowSize: 100
+            });
+
+            var interval = null,
+                pushPoint = function () { chart.push(beta.next()); };
+
+            $('#test-12 .playback').click(function(e) {
+                if (interval == null) {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                else {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                    interval = null;
+                }
+            });
+
+            $('#test-12 .cutOutliers').click(function(e) {
+                var cutOutliers = $(e.target).attr('data-value') == "true" ? true : false;
+                chart.option('cutOutliers', cutOutliers);
+            });
+        });
+        </script>
+
         <div id="test-13" class="test">
-            <h2>13. Option: cutOutliers</h2>
+            <h2>13. Option: opacity</h2>
             <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <select class="opacity">
+                    <option value="root">&radic;n</option>
+                    <option value="linear" selected>n</option>
+                    <option value="quadratic">n<sup>2</sup></option>
+                    <option value="cubic">n<sup>3</sup></option>
+                    <option value="quartic">n<sup>4</sup></option>
+                    <option value="quintic">n<sup>5</sup></option>
+                </select>
+            </p>
         </div>
+        <script>
+        $(function() {
+            var beta = window.beta = new BetaData(2, 5, 1),
+                data = beta.history(120);
+
+            var chart = $('#test-13 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                axes: [],
+                buckets: 20,
+                windowSize: 100
+            });
+
+            var interval = null,
+                pushPoint = function () { chart.push(beta.next()); };
+
+            $('#test-13 .playback').click(function(e) {
+                if (interval == null) {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                else {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                    interval = null;
+                }
+            });
+
+            $('#test-13 select.opacity').on('change', function(e) {
+                var opacity = $('#test-13 select.opacity').val();
+                chart.option('opacity', opacity);
+            });
+        });
+        </script>
     </body>
 </html>

@@ -7,7 +7,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     opacity: 'linear'
     bucketPadding: 2
     paintZeroValues: false
-    cutOutliers: true
+    cutOutliers: false
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -24,6 +24,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     'option:opacity': 'opacityChanged'
     'option:bucketPadding': 'bucketPaddingChanged'
     'option:paintZeroValues': 'paintZeroValuesChanged'
+    'option:cutOutliers': 'cutOutliersChanged'
 
   # Creates a new heatmap.
   # @param [Object] options Options for the heatmap.
@@ -37,19 +38,18 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # @option options [Number] bucketPadding Amount of padding to apply around buckets (default: 2).
   constructor: (@options) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
+    @_setOpacityFunction()
+    @_setupPaintCanvas()
+    @onAll optionListeners
+
+  _setOpacityFunction: ->
     if Epoch.isString(@options.opacity)
-      @_colorFn = colorFunctions[@options.opacity]
-      Epoch.exception "Unknown coloring function provided '#{@options.opacity}'" unless @_colorFn?
+      @_opacityFn = colorFunctions[@options.opacity]
+      Epoch.exception "Unknown coloring function provided '#{@options.opacity}'" unless @_opacityFn?
     else if Epoch.isFunction(@options.opacity)
-      @_colorFn = @options.opacity
+      @_opacityFn = @options.opacity
     else
       Epoch.exception "Unknown type for provided coloring function."
-
-    # Create the paint canvas
-    @_setupPaintCanvas()
-
-    # Add option change listeners
-    @onAll optionListeners
 
   # Prepares initially set data for rendering.
   # @param [Array] data Layered histogram data for the visualization.
@@ -73,10 +73,12 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     for value, count of entry.histogram
       index = parseInt((value - @options.bucketRange[0]) / bucketSize)
 
-      # Bound the histogram to the range (aka, handle out of bounds values)
-      if @options.cutOutliers and (index < 0) or (index >= @options.buckets)
+      # Remove outliers from the preprared buckets if instructed to do so
+      if @options.cutOutliers and ((index < 0) or (index >= @options.buckets))
         continue
-      else if index < 0
+
+      # Bound the histogram to the range (aka, handle out of bounds values)
+      if index < 0
         index = 0
       else if index >= @options.buckets
         index = @options.buckets - 1
@@ -153,7 +155,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # @param [Integer] max Normalized maximum for the column.
   # @param [String] color Computed base color for the bucket.
   _computeColor: (value, max, color) ->
-    Epoch.Util.toRGBA(color, @_colorFn(value, max))
+    Epoch.Util.toRGBA(color, @_opacityFn(value, max))
 
   # Paints a single entry column on the paint canvas at the given column.
   # @param [Integer] entryIndex Index of the entry to paint.
@@ -238,7 +240,9 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @redraw()
 
   # Changes the opacity function in response to an <code>option:opacity</code> event.
-  opacityChanged: -> @redraw()
+  opacityChanged: ->
+    @_setOpacityFunction()
+    @redraw()
 
   # Changes the bucket padding in response to an <code>option:bucketPadding</code> event.
   bucketPaddingChanged: -> @redraw()
