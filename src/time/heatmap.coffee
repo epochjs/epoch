@@ -7,6 +7,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     opacity: 'linear'
     bucketPadding: 2
     paintZeroValues: false
+    cutOutliers: true
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -60,8 +61,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
   # @param [Object] entry Entry to prepare for visualization.
-  #_prepareEntry: (entry) ->
-
   _getBuckets: (entry) ->
     prepared =
       time: entry.time
@@ -72,15 +71,17 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     bucketSize = (@options.bucketRange[1] - @options.bucketRange[0]) / @options.buckets
 
     for value, count of entry.histogram
-      index = parseInt(value / bucketSize)
+      index = parseInt((value - @options.bucketRange[0]) / bucketSize)
 
       # Bound the histogram to the range (aka, handle out of bounds values)
-      if index < 0
+      if @options.cutOutliers and (index < 0) or (index >= @options.buckets)
+        continue
+      else if index < 0
         index = 0
       else if index >= @options.buckets
         index = @options.buckets - 1
 
-      prepared.buckets[index] += count
+      prepared.buckets[index] += parseInt count
 
     for i in [0...prepared.buckets.length]
       prepared.max = Math.max(prepared.max, prepared.buckets[i])
@@ -229,6 +230,6 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     super()
 
   # Changes the number of buckets in response to an <code>option:buckets</code> event.
-  bucketsChanged: ->@redraw()
+  bucketsChanged: -> @redraw()
 
 # "Audio... Audio... Audio... Video Disco..." - Justice

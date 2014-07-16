@@ -5,111 +5,8 @@
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
-
-        <script>
-        (function() {
-            window.nextTime = (function() {
-                var currentTime = parseInt(new Date().getTime() / 1000);
-                return function() { return currentTime++; }
-            })();
-
-
-            /*
-             * Normal distribution random histogram data generator.
-             */
-            var NormalData = function(layers) {
-                this.layers = layers;
-                this.timestamp = ((new Date()).getTime() / 1000)|0;
-            };
-            
-            var normal = function() {
-                var U = Math.random(),
-                    V = Math.random();
-                return Math.sqrt(-2*Math.log(U)) * Math.cos(2*Math.PI*V);
-            };
-
-            NormalData.prototype.sample = function() {
-                return parseInt(normal() * 12.5 + 50);
-            }
-
-            NormalData.prototype.rand = function() {
-                var histogram = {};
-
-                for (var i = 0; i < 1000; i ++) {
-                    var r = this.sample();
-                    if (!histogram[r]) {
-                        histogram[r] = 1;
-                    }
-                    else {
-                        histogram[r]++;
-                    }
-                }
-
-                return histogram;
-            };
-
-            NormalData.prototype.history = function(entries) {
-                if (typeof(entries) != 'number' || !entries) {
-                    entries = 60;
-                }
-
-                var history = [];
-                for (var k = 0; k < this.layers; k++) {
-                    history.push({ label: String.fromCharCode(65+k), values: [] });
-                }
-
-                for (var i = 0; i < entries; i++) {
-                    for (var j = 0; j < this.layers; j++) {
-                        history[j].values.push({time: this.timestamp, histogram: this.rand()});
-                    }
-                    this.timestamp++;
-                }
-
-                return history;
-            };
-
-            NormalData.prototype.next = function() {
-                var entry = [];
-                for (var i = 0; i < this.layers; i++) {
-                    entry.push({ time: this.timestamp, histogram: this.rand() });
-                }
-                this.timestamp++;
-                return entry;
-            }
-
-            window.NormalData = NormalData;
-
-
-            /*
-             * Beta distribution histogram data generator.
-             */
-            var BetaData = function(alpha, beta, layers) {
-                this.alpha = alpha;
-                this.beta = beta;
-                this.layers = layers;
-                this.timestamp = ((new Date()).getTime() / 1000)|0;
-            };
-
-            BetaData.prototype = new NormalData();
-
-            BetaData.prototype.sample = function() {
-                var X = 0,
-                    Y = 0;
-
-                for (var j = 1; j <= this.alpha; j++)
-                    X += -Math.log(1 - Math.random());
-
-                for (var j = 1; j <= this.beta; j++)
-                    Y += -Math.log(1 - Math.random());
-
-                return parseInt(100 * X / (X + Y));
-            }
-
-            window.BetaData = BetaData;
-
-        })();
-        </script>
     </head>
     <body>
         <h1>Real-time Heatmap Plot Test</h1>
@@ -123,6 +20,11 @@
             <li><a href="#test-6">Multi Series - Normal + Beta</a></li>
             <li><a href="#test-7">Multi Series Color Override</a></li>
             <li><a href="#test-8">Range Independent Bucketing</a></li>
+            <li><a href="#test-9">Option: buckets</a></li>
+            <li><a href="#test-10">Option: bucketRange</a></li>
+            <li><a href="#test-11">Option: bucketPadding</a></li>
+            <li><a href="#test-12">Option: paintZeroValues</a></li>
+            <li><a href="#test-13">Option: cutOutliers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -360,5 +262,119 @@
             });
         });
         </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Option: buckets</h2>
+            <div class="epoch"></div> 
+            <p>
+                <button class="playback">Play</button> |
+                <button class="buckets" data-buckets="10">10 Buckets</button>
+                <button class="buckets" data-buckets="20">20 Buckets</button>
+                <button class="buckets" data-buckets="40">40 Buckets</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var beta = new BetaData(2, 5, 1),
+                data = beta.history(120);
+
+            var chart = $('#test-9 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                buckets: 10
+            });
+
+            var interval = null,
+                pushPoint = function () { chart.push(beta.next()); };
+
+            $('#test-9 .playback').click(function(e) {
+                if (interval == null) {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                else {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                    interval = null;
+                }
+            });
+
+            $('#test-9 .buckets').click(function(e) {
+                var buckets = parseInt($(e.target).attr('data-buckets'));
+                chart.option('buckets', buckets);
+            });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Option: bucketRange</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="bucketRange" data-bucket-range="0,100">[0, 100]</button>
+                <button class="bucketRange" data-bucket-range="0,75">[0, 75]</button>
+                <button class="bucketRange" data-bucket-range="0,50">[0, 50]</button>
+                <button class="bucketRange" data-bucket-range="0,25">[0, 25]</button>
+                <button class="bucketRange" data-bucket-range="10,75">[10,75]</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var beta = window.beta = new BetaData(2, 5, 1),
+                data = beta.history(120);
+
+            var chart = window.c = $('#test-10 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                axes: ['left', 'right'],
+                buckets: 20,
+                windowSize: 100
+            });
+
+            var interval = null,
+                pushPoint = function () { chart.push(beta.next()); };
+
+            $('#test-10 .playback').click(function(e) {
+                if (interval == null) {
+                    $(e.target).text('Pause');
+                    pushPoint();
+                    interval = setInterval(pushPoint, 1000);
+                }
+                else {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                    interval = null;
+                }
+            });
+
+            $('#test-10 .bucketRange').click(function(e) {
+                var bucketRange = $(e.target).attr('data-bucket-range')
+                    .split(',').map(function(d) { return parseInt(d); });
+                console.log(bucketRange);
+                chart.option('bucketRange', bucketRange);
+            });
+        });
+        </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>11. Option: bucketPadding</h2>
+            <div class="epoch"></div>
+        </div>
+
+        <!-- Test 12 -->
+        <div id="test-12" class="test">
+            <h2>12. Option: paintZeroValues</h2>
+            <div class="epoch"></div>
+        </div>
+
+        <!-- Test 13 -->
+        <div id="test-13" class="test">
+            <h2>13. Option: cutOutliers</h2>
+            <div class="epoch"></div>
+        </div>
     </body>
 </html>
