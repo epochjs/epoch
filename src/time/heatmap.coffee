@@ -232,4 +232,22 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # Changes the number of buckets in response to an <code>option:buckets</code> event.
   bucketsChanged: -> @redraw()
 
+  # Changes the range of the buckets in response to an <code>option:bucketRange</code> event.
+  bucketRangeChanged: ->
+    @_transitionRangeAxes()
+    @redraw()
+
+  # Changes the opacity function in response to an <code>option:opacity</code> event.
+  opacityChanged: -> @redraw()
+
+  # Changes the bucket padding in response to an <code>option:bucketPadding</code> event.
+  bucketPaddingChanged: -> @redraw()
+
+  # Changes whether or not to paint zeros in response to an <code>option:paintZeroValues</code> event.
+  paintZeroValuesChanged: -> @redraw()
+
+  # Changes whether or not to cut outliers when bucketing in response to an
+  # <code>option:cutOutliers</code> event.
+  cutOutliersChanged: -> @redraw()
+
 # "Audio... Audio... Audio... Video Disco..." - Justice
