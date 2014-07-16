@@ -493,6 +493,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   dimensionsChanged: ->
     super()
+    @svg.attr('width', @width).attr('height', @height)
     @_sizeCanvas()
     @_buildAxes()
     @draw(@animation.frame * @animation.delta())

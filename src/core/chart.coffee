@@ -288,4 +288,3 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
     super()
     @canvas.style {'width': "#{@width}px", 'height': "#{@height}px"}
     @canvas.attr { width: @getWidth(), height: @getHeight() }
-    @svg.attr('width', @width).attr('height', @height)
