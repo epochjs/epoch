@@ -181,10 +181,6 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
 
     @ctx.restore()
 
-  # trigger: ->
-  #   console.log arguments
-  #   Epoch.Chart.Canvas::trigger.apply @, arguments
-
   # Correctly responds to an <code>option:</code>
   domainChanged: -> @draw()
 
