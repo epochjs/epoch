@@ -113,8 +113,6 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
 
   # Draws the gauge.
   draw: ->
-    return unless @isVisible()
-
     [cx, cy, r] = [@centerX(), @centerY(), @radius()]
     [tickOffset, tickSize] = [@options.tickOffset, @options.tickSize]
 

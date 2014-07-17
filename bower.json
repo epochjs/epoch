@@ -11,7 +11,7 @@
     "**/.*",
     "/src",
     "/sass",
-    "/test",
+    "/tests",
     "/Cakefile",
     "/CHANGELOG.md",
     "/package.json"
@@ -27,7 +27,7 @@
     "stats",
     "visualization"
   ],
-  "homepage": "http://fastly.github.io/epoch/",
+  "homepage": "https://fastly.github.io/epoch/",
   "repository": {
     "type": "git",
     "url": "git://github.com/fastly/epoch.git"
