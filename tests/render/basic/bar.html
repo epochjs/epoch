@@ -25,6 +25,8 @@
             <li><a href="#test-11">Horizontally Oriented Single Series</a></li>
             <li><a href="#test-12">Horizontally Oriented Multi Series</a></li>
             <li><a href="#test-13">Horizontally Oriented Multi Series Transition</a></li>
+            <li><a href="#test-14">Vertical to Horizontal Transition</a></li>
+            <li><a href="#test-15">Padding Changes</a></li>
         </ol>
 
 
@@ -558,6 +560,68 @@
             $('#test-13 button').on('click', function(e) {
                 var index = parseInt($(e.target).attr('data-index'));
                 chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <div id="test-14" class="test">
+            <h2>14. Vertical to Horizontal Transition</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-orientation="vertical">Vertical</button>
+                <button data-orientation="horizontal">Horizontal</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+            ];
+
+            var chart = $('#test-14 .epoch').epoch({
+                type: 'bar',
+                data: data
+            });
+
+            $('#test-14 button').click(function(e) {
+                var orientation = $(e.target).attr('data-orientation');
+                chart.option('orientation', orientation);
+            });
+        });
+        </script>
+
+        <div id="test-15" class="test">
+            <h2>15. Padding Changes</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Regular Padding</button>
+                <button data-index="1">Fat Padding</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+            ];
+
+            var padding = [
+                {
+                    padding: { bar: 0.08, group: 0.1 },
+                    outerPadding: { bar: 0.08, group: 0.1 }
+                },
+                {
+                    padding: { bar: 0.2, group: 0.3 },
+                    outerPadding: { bar: 0.1, group: 0.2 }
+                }
+            ];
+
+            var chart = $('#test-15 .epoch').epoch({ type: 'bar', data: data });
+            $('#test-15 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.option('padding', padding[index].padding);
+                chart.option('outerPadding', padding[index].outerPadding);
             });
         });
         </script>

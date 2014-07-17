@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body { background: #333; color: #d0d0d0; }
+        a:link, a:visited { color: white; color: white; }
+        </style>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Real-time Chart Options and Events</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Options and Events</p>
+        <ol>
+            <li><a href="#test-1">Resize</a></li>
+            <li><a href="#test-2">Axes</a></li>
+            <li><a href="#test-3">Ticks</a></li>
+            <li><a href="#test-4">Tick Formats</a></li>
+            <li><a href="#test-5">Margins</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Resize</h2>
+            <p>Correctly Resize a Real-time Chart.</p>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="size" data-index="0">Size: Small</button>
+                <button class="size" data-index="1">Size: Medium</button>
+                <button class="size" data-index="2">Size: Large</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.cos(x) + 1; }),
+                interval = null;
+
+            var sizes = [
+                { width: 400, height: 100 },
+                { width: 800, height: 150 },
+                { width: $('#test-1 .epoch').width(), height: $('#test-1 .epoch').height() }
+            ];
+
+            var chart = $('#test-1 .epoch').epoch({
+                type: 'time.line',
+                data: data.get([0, 2*Math.PI], step)
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-1 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-1 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-1 .playback').text('Play');
+                }
+            });
+
+            $('#test-1 .size').click(function(e) {
+                var size = sizes[parseInt($(e.target).attr('data-index'))];
+                chart.option('width', size.width);
+                chart.option('height', size.height);
+            });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Axes</h2>
+            <div class="epoch"></div>
+            <div class="controls">
+                <button class="playback">Play</button> | 
+                <button class="axes" data-index="0">All</button>
+                <button class="axes" data-index="1">[left, right]</button>
+                <button class="axes" data-index="2">[top, bottom]</button>
+                <button class="axes" data-index="3">[left, bottom]</button>
+                <button class="axes" data-index="4">[top, right]</button>
+                <button class="axes" data-index="5">None</button>
+            </div>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.sin(x) + 1; }),
+                interval = null;
+
+            var axes = [
+                ['top', 'left', 'bottom', 'right'],
+                ['left', 'right'],
+                ['top', 'bottom'],
+                ['left', 'bottom'],
+                ['top', 'right'],
+                []
+            ];
+
+            var chart = $('#test-2 .epoch').epoch({
+                type: 'time.line',
+                data: data.get([0, 2*Math.PI], step)
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-2 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-2 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-2 .playback').text('Play');
+                }
+            });
+
+            $('#test-2 button.axes').click(function(e) {
+                chart.option('axes', axes[parseInt($(e.target).attr('data-index'))]);
+            });
+        });
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Ticks</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="ticks" data-index="0">Normal</button>
+                <button class="ticks" data-index="1">Many</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.sqrt(x) * Math.sin(x) + 1; }),
+                interval = null;
+
+            var ticks = [
+                {time: 15, left: 5, right: 5},
+                {time: 5, left: 15, right: 15}
+            ];
+
+            var chart = $('#test-3 .epoch').epoch({
+                type: 'time.line',
+                data: data.get([0, 2*Math.PI], step),
+                axes: ['top', 'left', 'bottom', 'right']
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-3 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-3 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-3 .playback').text('Play');
+                }
+            });
+
+            $('#test-3 .ticks').click(function(e) {
+                chart.option('ticks', ticks[parseInt($(e.target).attr('data-index'))]);
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Tick Formats</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="tickFormats" data-index="0">Normal</button>
+                <button class="tickFormats" data-index="1">Different</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return Math.abs(Math.sin(x)); }),
+                interval = null;
+
+            var tickFormats = [
+                {
+                    top: Epoch.Formats.seconds,
+                    bottom: Epoch.Formats.seconds,
+                    left: Epoch.Formats.si,
+                    right: Epoch.Formats.si
+                },
+                {
+                    top: Epoch.Formats.si,
+                    bottom: Epoch.Formats.si,
+                    left: Epoch.Formats.percent,
+                    right: Epoch.Formats.percent
+                }
+            ];
+
+            var chart = $('#test-4 .epoch').epoch({
+                type: 'time.area',
+                data: data.get([0, 2*Math.PI], step),
+                axes: ['top', 'left', 'bottom', 'right']
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-4 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-4 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-4 .playback').text('Play');
+                }
+            });
+
+            $('#test-4 .tickFormats').click(function(e) {
+                chart.option('tickFormats', tickFormats[parseInt($(e.target).attr('data-index'))]);
+            });
+        });
+        </script>
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Margins</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="playback">Play</button> |
+                <button class="margins" data-index="0">None</button>
+                <button class="margins" data-index="1">Small</button>
+                <button class="margins" data-index="2">Big</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var step = Math.PI / 30,
+                data = time().add(function(x) { return 1 - Math.abs(Math.cos(x)); }),
+                interval = null;
+
+            var margins = [
+                { top: 6, bottom: 6, left: 6, right: 6 },
+                { top: 20, bottom: 20, left: 20, right: 20 },
+                { top: 100, bottom: 50, left: 50, right: 50 }
+            ];
+
+            var chart = $('#test-5 .epoch').epoch({
+                type: 'time.area',
+                data: data.get([0, 2*Math.PI], step),
+                axes: []
+            })
+
+            function pushPoint() {
+                chart.push(data.next(step));
+            }
+
+            $('#test-5 .playback').click(function(e) {
+                if (!interval) {
+                    interval = setInterval(function() { pushPoint() }, 1000);
+                    pushPoint();
+                    $('#test-5 .playback').text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $('#test-5 .playback').text('Play');
+                }
+            });
+
+            $('#test-5 .margins').click(function(e) {
+                chart.option('margins', margins[parseInt($(e.target).attr('data-index'))]);
+            });
+        });
+        </script>
+    </body>
+</html>

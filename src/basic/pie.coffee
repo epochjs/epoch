@@ -11,20 +11,21 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
   # @option options [Number] inner The inner radius for the chart (default: 0).
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
-    radius = Math.max(@width, @height) / 2
     @pie = d3.layout.pie().sort(null)
       .value (d) -> d.value
     @arc = d3.svg.arc()
-      .outerRadius(radius - @options.margin)
-      .innerRadius(@options.inner)
-    @svg = @svg.append('g')
+      .outerRadius(=> (Math.max(@width, @height) / 2) - @options.margin)
+      .innerRadius(=> @options.inner)
+    @g = @svg.append('g')
       .attr("transform", "translate(#{@width/2}, #{@height/2})")
+    @on 'option:margin', 'marginChanged'
+    @on 'option:inner', 'innerChanged'
 
   # Draws the pie chart
   draw: ->
-    @svg.selectAll('.arc').remove()
+    @g.selectAll('.arc').remove()
 
-    arcs = @svg.selectAll(".arc")
+    arcs = @g.selectAll(".arc")
       .data(@pie(@data), (d) -> d.data.category)
 
     arcs.enter().append('g')
@@ -48,3 +49,9 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
       .text((d) -> d.data.label or d.data.category)
 
     super()
+
+  # Updates margins in response to an <code>option:margin</code> event.
+  marginChanged: -> @draw()
+
+  # Updates inner margin in response to an <code>option:inner</code> event.
+  innerChanged: -> @draw()

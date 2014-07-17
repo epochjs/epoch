@@ -9,6 +9,13 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     fps: 34
     format: Epoch.Formats.percent
 
+  optionListeners =
+    'option:domain': 'domainChanged'
+    'option:ticks': 'ticksChanged'
+    'option:tickSize': 'tickSizeChanged'
+    'option:tickOffset': 'tickOffsetChanged'
+    'option:format': 'formatChanged'
+
   # Creates the new gauge chart.
   # @param [Object] options Options for the gauge chart.
   # @option options [Array] domain The domain to use when rendering values (default: [0, 1]).
@@ -16,7 +23,8 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   # @option options [Integer] tickSize The length (in pixels) for each tick (default: 5).
   # @option options [Integer] tickOffset The number of pixels by which to offset ticks from the outer arc (default: 5).
   # @option options [Integer] fps The number of animation frames to render per second (default: 34).
-  # @option options [Function] format The formatting function to use when rendering the gauge label (default: Epoch.Formats.percent).
+  # @option options [Function] format The formatting function to use when rendering the gauge label 
+  #   (default: Epoch.Formats.percent).
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @value = @options.value or 0
@@ -57,6 +65,8 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
 
       @svg.select('text.value').text(@options.format(@value))
       @draw()
+
+    @onAll optionListeners
 
   # Sets the value for the gauge to display and begins animating the guage.
   # @param [Number] value Value to set for the gauge.
@@ -168,5 +178,22 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @ctx.fill()
 
     @ctx.restore()
+
+  # Correctly responds to an <code>option:</code>
+  domainChanged: -> @draw()
+
+  # Correctly responds to an <code>option:</code>
+  ticksChanged: -> @draw()
+
+  # Correctly responds to an <code>option:</code>
+  tickSizeChanged: -> @draw()
+
+  # Correctly responds to an <code>option:</code>
+  tickOffsetChanged: -> @draw()
+
+  # Correctly responds to an <code>option:</code>
+  formatChanged: -> @svg.select('text.value').text(@options.format(@value))
+
+
 
 # "The mother of a million sons... CIVILIZATION!" -- Justice

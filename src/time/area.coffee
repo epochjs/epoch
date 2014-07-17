@@ -18,7 +18,7 @@ class Epoch.Time.Area extends Epoch.Time.Stack
   # Draws areas for the chart
   _drawAreas: (delta=0) ->
     [y, w] = [@y(), @w()]
-
+    
     for i in [@data.length-1..0]
       layer = @data[i]
       @setStyles layer

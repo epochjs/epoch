@@ -11,11 +11,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     historySize: 120
     windowSize: 40
     queueSize: 10
-    margins:
-      top: 25
-      right: 50
-      bottom: 25
-      left: 50
     axes: ['bottom']
     ticks:
       time: 15
@@ -26,6 +21,30 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       bottom: Epoch.Formats.seconds
       left: Epoch.Formats.si
       right: Epoch.Formats.si
+
+  defaultAxisMargins =
+    top: 25
+    right: 50
+    bottom: 25
+    left: 50
+
+  optionListeners =
+    'option:margins': 'marginsChanged'
+    'option:margins.top': 'marginsChanged'
+    'option:margins.right': 'marginsChanged'
+    'option:margins.bottom': 'marginsChanged'
+    'option:margins.left': 'marginsChanged'
+    'option:axes': 'axesChanged'
+    'option:ticks': 'ticksChanged'
+    'option:ticks.top': 'ticksChanged'
+    'option:ticks.right': 'ticksChanged'
+    'option:ticks.bottom': 'ticksChanged'
+    'option:ticks.left': 'ticksChanged'
+    'option:tickFormats': 'tickFormatsChanged'
+    'option:tickFormats.top': 'tickFormatsChanged'
+    'option:tickFormats.right': 'tickFormatsChanged'
+    'option:tickFormats.bottom': 'tickFormatsChanged'
+    'option:tickFormats.left': 'tickFormatsChanged'
 
   # Creates a new real-time plot.
   #
@@ -59,14 +78,17 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     super(@options = Epoch.Util.defaults(@options, defaults))
 
     # Queue entering data to get around memory bloat and "non-active" tab issues
-    @_queueSize = @options.queueSize
     @_queue = []
 
     # Margins
     @margins = {}
     for pos in ['top', 'right', 'bottom', 'left']
-      @margins[pos] = @options.margins[pos]
-      @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
+      @margins[pos] = if @options.margins? and @options.margins[pos]?
+        @options.margins[pos]
+      else if @hasAxis(pos)
+        defaultAxisMargins[pos]
+      else
+        6
 
     # SVG Overlay
     @svg = @el.insert('svg', ':first-child')
@@ -78,33 +100,44 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
       @el.style('position', 'relative')
 
-    @canvas.attr
-      width: @innerWidth()
-      height: @innerHeight()
-
-    @canvas.style
-      position: 'absolute'
-      width: "#{@innerWidth() / @pixelRatio}px"
-      height: "#{@innerHeight() / @pixelRatio}px"
-      top: "#{@margins.top}px"
-      left: "#{@margins.left}px"
-      'z-index': '999'
+    @canvas.style { position: 'absolute', 'z-index': '999' }
+    @_sizeCanvas()
 
     # Animation / Transitions
     @animation =
       interval: null
       active: false
-      delta: -(@w() / @options.fps),
-      tickDelta: -( (@w() / @pixelRatio) / @options.fps )
+      delta: => -(@w() / @options.fps),
+      tickDelta: => -( (@w() / @pixelRatio) / @options.fps )
       frame: 0,
       duration: @options.fps
 
-    # Top and Bottom axis ticks
-    @_prepareTimeAxes()
-    @_prepareRangeAxes()
+    # Add SVG Axes
+    @_buildAxes()
 
     # Callback used for animation
     @animationCallback = => @_animate()
+
+    # Listen for specific option changes
+    @onAll optionListeners
+
+  # Positions and sizes the canvas based on margins and axes.
+  _sizeCanvas: ->
+    @canvas.attr
+      width: @innerWidth()
+      height: @innerHeight()
+
+    @canvas.style
+      width: "#{@innerWidth() / @pixelRatio}px"
+      height: "#{@innerHeight() / @pixelRatio}px"
+      top: "#{@margins.top}px"
+      left: "#{@margins.left}px"
+
+  # Removes any axes found in the SVG and adds both the time and range axes to the plot.
+  _buildAxes: ->
+    @svg.selectAll('.axis').remove()
+    @_prepareTimeAxes()
+    @_prepareRangeAxes()
 
   # Sets the data for the visualization (truncated to the history size as defined in the options).
   # @param [Array] data Layered data to set for the visualization.
@@ -146,9 +179,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('class', 'domain')
         .attr('d', "M0,0H#{@innerWidth()/@pixelRatio+1}")
 
+    @_resetInitialTimeTicks()
+
+  # Resets the initial ticks for the time axes.
+  _resetInitialTimeTicks: ->
     tickInterval = @options.ticks.time
     @_ticks = []
     @_tickTimer = tickInterval
+
+    @bottomAxis.selectAll('.tick').remove() if @bottomAxis?
+    @topAxis.selectAll('.tick').remove() if @topAxis?
 
     for layer in @data
       continue unless layer.values? and layer.values.length > 0
@@ -172,7 +212,6 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@width - @margins.right}, #{@margins.top})")
         .call(@rightAxis())
-
 
   # @return [Object] The d3 left axis.
   leftAxis: ->
@@ -221,8 +260,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # This method will remove the first incoming entry from the visualization's queue
   # and shift it into the working set (aka window). It then starts the animating the
-  # transition of the element into the visualization. Triggers the 'transition:start'
-  # only in the case that the animation is actually begun.
+  # transition of the element into the visualization. 
+  # @event transition:start in the case that animation is actually started.
   _startTransition: ->
     return if @animation.active == true or @_queue.length == 0
     @trigger 'transition:start'
@@ -231,8 +270,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @animation.interval = setInterval(@animationCallback, 1000/@options.fps)
 
   # Stops animating and clears the animation interval given there is no more
-  # incoming data to process. Also finalizes tick entering and exiting. Trigger
-  # the 'transition:end' event.
+  # incoming data to process. Also finalizes tick entering and exiting.
+  # @event transition:end After the transition has completed.
   _stopTransition: ->
     return unless @inTransition()
 
@@ -272,16 +311,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # This method is used by the application programmer to introduce new data into
   # the timeseries plot. The method queues the incoming data, ensures a fixed size
   # for the data queue, and finally calls <code>_startTransition</code> method to
-  # begin animating the plot. Triggers the 'push' event.
-  #
+  # begin animating the plot.
   # @param [Array] layers Layered incoming visualization data.
+  # @event push Triggered after the new data has been pushed into the queue.
   push: (layers) ->
     layers = @_prepareLayers(layers)
 
     # Handle entry queue maximum size
-    if @_queue.length > @_queueSize
-      @_queue.splice @_queueSize, (@_queue.length - @_queueSize)
-    return false if @_queue.length == @_queueSize
+    if @_queue.length > @options.queueSize
+      @_queue.splice @options.queueSize, (@_queue.length - @options.queueSize)
+    return false if @_queue.length == @options.queueSize
 
     # Push the entry into the queue
     @_queue.push layers.map((entry) => @_prepareEntry(entry))
@@ -300,17 +339,18 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # to @_updateTicks to handle horizontal (or "time") axes tick transitions
   # since we're implementing independent of d3 as well.
   #
-  # Triggers the 'before:shift' event before it has shifted an element
-  # off the queue and the 'after:shift' event after the entry has been shifted
-  # off the queue.
+  # @event before:shift Before an element has been shifted off the queue.
+  # @event after:shift After the element has been shifted off the queue.
   _shift: ->
     @trigger 'before:shift'
-
     entry = @_queue.shift()
     layer.values.push(entry[i]) for i, layer of @data
-
     @_updateTicks(entry[0].time)
+    @_transitionRangeAxes()
+    @trigger 'after:shift'
 
+  # Transitions the left and right axes when the range of the plot has changed.
+  _transitionRangeAxes: ->
     if @hasAxis('left')
       @svg.selectAll('.y.axis.left').transition()
         .duration(500)
@@ -323,13 +363,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
         .ease('linear')
         .call(@rightAxis())
 
-    @trigger 'after:shift'
-
   # Performs the animation for transitioning elements in the visualization.
   _animate: ->
     return unless @inTransition()
     @_stopTransition() if ++@animation.frame == @animation.duration
-    @draw(@animation.frame * @animation.delta)
+    @draw(@animation.frame * @animation.delta())
     @_updateTimeAxes()
 
   # @return [Function] The y scale for the plot
@@ -428,7 +466,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # This performs animations for the time axes (top and bottom).
   _updateTimeAxes: ->
     return unless @hasAxis('top') or @hasAxis('bottom')
-    [dx, dop] = [@animation.tickDelta, 1 / @options.fps]
+    [dx, dop] = [@animation.tickDelta(), 1 / @options.fps]
 
     for tick in @_ticks
       tick.x += dx
@@ -452,6 +490,49 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @abstract It does nothing on its own but is provided so that subclasses can
   #   define a custom rendering routine.
   draw: (delta=0) -> super()
+
+  dimensionsChanged: ->
+    super()
+    @svg.attr('width', @width).attr('height', @height)
+    @_sizeCanvas()
+    @_buildAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates axes in response to an <code>option:axes</code> event.
+  axesChanged: ->
+    for pos in ['top', 'right', 'bottom', 'left']
+      continue if @options.margins? and @options.margins[pos]?
+      if @hasAxis(pos)
+        @margins[pos] = defaultAxisMargins[pos]
+      else
+        @margins[pos] = 6
+    @_sizeCanvas()
+    @_buildAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates ticks in response to an <code>option.ticks.*</code> event.
+  ticksChanged: ->
+    @_resetInitialTimeTicks()
+    @_transitionRangeAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates tick formats in response to an <code>option.tickFormats.*</code> event.
+  tickFormatsChanged: ->
+    @_resetInitialTimeTicks()
+    @_transitionRangeAxes()
+    @draw(@animation.frame * @animation.delta())
+
+  # Updates margins in response to an <code>option.margins.*</code> event.
+  marginsChanged: ->
+    return unless @options.margins?
+    for pos, size of @options.margins
+      unless size?
+        @margins[pos] = 6
+      else
+        @margins[pos] = size
+
+    @_sizeCanvas()
+    @draw(@animation.frame * @animation.delta())
 
 
 # Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)

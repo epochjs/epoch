@@ -2,21 +2,23 @@ describe 'Epoch.Chart', ->
   [defaultWidth, defaultHeight] = [320, 240]
 
   describe 'Base', ->
-    div1 = null
-    div1Width = 800
-    div1Height = 200
+    [testDivWidth, testDivHeight] = [800, 200]
+    [resizeDivWidth, resizeDivHeight] = [200, 200]
 
     before (done) ->
-      div1 = doc.createElement('div')
-      div1.id = 'base-1'
-      doc.body.appendChild(div1)
-      d3.select('#base-1').style
-        width: "#{div1Width}px"
-        height: "#{div1Height}px"
+      d3.select(doc.body).append('div').attr('id', 'testDiv').style
+        width: "#{testDivWidth}px"
+        height: "#{testDivHeight}px"
+
+      d3.select(doc.body).append('div').attr('id', 'resizeDiv').style
+        width: "#{resizeDivWidth}px"
+        height: "#{resizeDivHeight}px"
+
       done()
 
     after (done) ->
-      doc.body.removeChild(div1)
+      d3.select('#testDiv').remove()
+      d3.select('#resizeDiv').remove()
       done()
 
     describe 'constructor', ->
@@ -32,9 +34,9 @@ describe 'Epoch.Chart', ->
         assert.equal c.height, height, "Did not set height to #{height}"
 
       it 'should use the dimensions of the given element when applicable', ->
-        c = new Epoch.Chart.Base({ el: '#base-1' })
-        assert.equal c.width, div1Width, "Did not set width to that of the div"
-        assert.equal c.height, div1Height, "Did not set height to that of the div"
+        c = new Epoch.Chart.Base({ el: '#testDiv' })
+        assert.equal c.width, testDivWidth, "Did not set width to that of the div"
+        assert.equal c.height, testDivHeight, "Did not set height to that of the div"
 
       it 'should set default data to an empty array', ->
         c = new Epoch.Chart.Base()
@@ -143,7 +145,84 @@ describe 'Epoch.Chart', ->
       it 'should find the correct extent give an x-comparitor', ->
         [min, max] = chart.extent (d) -> d.x
         assert.equal min, xMin, "Incorrect minimum x"
-        assert.equal max, xMax, "Incorrect maximum x"        
+        assert.equal max, xMax, "Incorrect maximum x"
+
+    describe 'option', ->
+      it 'should return all options for the chart when called with no arguments', ->
+        options = { a: 20, b: 30, c: { d: 40 } }
+        chart = new Epoch.Chart.Base options
+        assert.isObject chart.option()
+        assert.deepEqual chart.option(), options
+
+      it 'should return a single value when given a key', ->
+        options = { a: 20, b: 30 }
+        chart = new Epoch.Chart.Base options
+        assert.equal chart.option('a'), options.a
+        assert.equal chart.option('b'), options.b
+        assert.isUndefined chart.option('c')
+
+      it 'should return a deep value when given a hierarchical key', ->
+        options =
+          a:
+            b: 20
+            c:
+              d: 30
+        chart = new Epoch.Chart.Base options
+        assert.equal chart.option('a.b'), options.a.b
+        assert.equal chart.option('a.c.d'), options.a.c.d
+
+      it 'should set an option given a string and a value', ->
+        chart = new Epoch.Chart.Base()
+        [key, value] = ['a', 'hello world']
+        chart.option(key, value)
+        assert.equal chart.option(key), value
+
+      it 'should set a deep value when given a hierarchical key', ->
+        chart = new Epoch.Chart.Base()
+
+        map =
+          'a.b': 'deep'
+          'a.c.d': 'deeper'
+          'b': 'shallow'
+
+        for key, value of map
+          chart.option(key, value)
+          assert.equal chart.option(key), value
+
+      it 'should set all options given an object', ->
+        original = { a: 20, b: { c: 30 } }
+        newOptions = { a: 15, d: { e: 10, f: 30 } }
+        chart = new Epoch.Chart.Base()
+        chart.option(newOptions)
+        assert.deepEqual chart.option(), newOptions
+
+      it 'should trigger an event when an option is changed', (done) ->
+        [key, value] = ['a', 20]
+        eventName = "option:#{key}"
+
+        errorCallback = ->
+          assert false, "Setting an option did not trigger the appropriate event: #{eventName}"
+          done()
+        timeout = setTimeout(errorCallback, 1000)
+
+        chart = new Epoch.Chart.Base()
+        chart.on eventName, ->
+          clearTimeout(timeout)
+          done()
+        chart.option(key, value)
+
+      it 'should resize the containing element when the width option is changed', ->
+        newWidth = resizeDivWidth + 20
+        chart = new Epoch.Chart.Base({ el: '#resizeDiv' })
+        chart.option('width', newWidth)
+        assert.equal d3.select('#resizeDiv').width(), newWidth
+
+      it 'should resize the containing element when the height option is changed', ->
+        newHeight = resizeDivHeight + 20
+        chart = new Epoch.Chart.Base({ el: '#resizeDiv' })
+        chart.option('height', newHeight)
+        assert.equal d3.select('#resizeDiv').height(), newHeight
+        
 
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
@@ -182,6 +261,30 @@ describe 'Epoch.Chart', ->
         chart = new Epoch.Chart.SVG({ el: '#svg-container' })
         assert.equal chart.svg.attr('width'), containerWidth
         assert.equal chart.svg.attr('height'), containerHeight
+
+    describe 'dimensionsChanged', ->
+      [width, height, chart] = [200, 100, null]
+
+      before (done) ->
+        d3.select(doc.body).append('div').attr('id', 'svgResize').style
+          width: width + 'px'
+          height: height + 'px'
+        chart = new Epoch.Chart.SVG { el: '#svgResize' }
+        done()
+
+      after (done) ->
+        d3.select('#svgResize').remove()
+        done()
+
+      it 'should resize the SVG element when the width option is changed', ->
+        newWidth = width + 500
+        chart.option 'width', newWidth
+        assert.equal chart.svg.attr('width'), newWidth
+
+      it 'should resize the SVG element when the height option is changed', ->
+        newHeight = height + 500
+        chart.option 'height', newHeight
+        assert.equal chart.svg.attr('height'), newHeight
 
   describe 'Canvas', ->
     [containerWidth, containerHeight] = [1000, 280]
@@ -269,4 +372,28 @@ describe 'Epoch.Chart', ->
         chart = new Epoch.Chart.Canvas({ pixelRatio: pixelRatio })
         assert.equal chart.getHeight(), pixelRatio * defaultHeight
 
-    #describe 'getStyles', ->
+    describe 'dimensionsChanged', ->
+      [width, height, chart, pixelRatio] = [200, 100, null, 2]
+
+      before (done) ->
+        d3.select(doc.body).append('div').attr('id', 'canvasResize').style
+          width: width + 'px'
+          height: height + 'px'
+        chart = new Epoch.Chart.Canvas { el: '#canvasResize', pixelRatio: pixelRatio }
+        done()
+
+      after (done) ->
+        d3.select('#canvasResize').remove()
+        done()
+
+      it 'should resize the canvas element when the width option is changed', ->
+        newWidth = width + 500
+        chart.option 'width', newWidth
+        assert.equal chart.canvas.attr('width'), pixelRatio * newWidth
+        assert.equal chart.canvas.width(), newWidth
+
+      it 'should resize the canvas element when the height option is changed', ->
+        newHeight = height + 500
+        chart.option 'height', newHeight
+        assert.equal chart.canvas.attr('height'), pixelRatio * newHeight
+        assert.equal chart.canvas.height(), newHeight

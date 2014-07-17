@@ -5,11 +5,6 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   defaults =
     domain: null,
     range: null,
-    margins:
-      top: 25
-      right: 50
-      bottom: 25
-      left: 50
     axes: ['left', 'bottom']
     ticks:
       top: 14
@@ -21,6 +16,29 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
       bottom: Epoch.Formats.regular
       left: Epoch.Formats.si
       right: Epoch.Formats.si
+
+  defaultAxisMargins =
+    top: 25
+    right: 50
+    bottom: 25
+    left: 50
+
+  optionListeners =
+    'option:margins.top': 'marginsChanged'
+    'option:margins.right': 'marginsChanged'
+    'option:margins.bottom': 'marginsChanged'
+    'option:margins.left': 'marginsChanged'
+    'option:axes': 'axesChanged'
+    'option:ticks.top': 'ticksChanged'
+    'option:ticks.right': 'ticksChanged'
+    'option:ticks.bottom': 'ticksChanged'
+    'option:ticks.left': 'ticksChanged'
+    'option:tickFormats.top': 'tickFormatsChanged'
+    'option:tickFormats.right': 'tickFormatsChanged'
+    'option:tickFormats.bottom': 'tickFormatsChanged'
+    'option:tickFormats.left': 'tickFormatsChanged'
+    'option:domain': 'domainChanged'
+    'option:range': 'rangeChanged'
 
   # Creates a new plot chart.
   # @param [Object] options Options to use when constructing the plot.
@@ -43,12 +61,19 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
     # axis is present.
     @margins = {}
     for pos in ['top', 'right', 'bottom', 'left']
-      @margins[pos] = @options.margins[pos]
-      @margins[pos] = 6 unless givenMargins[pos]? or @hasAxis(pos)
+      @margins[pos] = if @options.margins? and @options.margins[pos]?
+        @options.margins[pos]
+      else if @hasAxis(pos)
+        defaultAxisMargins[pos]
+      else
+        6
 
     # Add a translation for the top and left margins
-    @svg = @svg.append("g")
+    @g = @svg.append("g")
       .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
+
+    # Register option change events
+    @onAll optionListeners
 
   # Sets the tick formatting function to use on the given axis.
   # @param [String] axis Name of the axis.
@@ -119,22 +144,22 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Redraws the axes for the visualization.
   _redrawAxes: ->
     if @hasAxis('bottom')
-      @svg.selectAll('.x.axis.bottom').transition()
+      @g.selectAll('.x.axis.bottom').transition()
         .duration(500)
         .ease('linear')
         .call(@bottomAxis())
     if @hasAxis('top')
-      @svg.selectAll('.x.axis.top').transition()
+      @g.selectAll('.x.axis.top').transition()
         .duration(500)
         .ease('linear')
         .call(@topAxis())
     if @hasAxis('left')
-      @svg.selectAll('.y.axis.left').transition()
+      @g.selectAll('.y.axis.left').transition()
         .duration(500)
         .ease('linear')
         .call(@leftAxis())
     if @hasAxis('right')
-      @svg.selectAll('.y.axis.right').transition()
+      @g.selectAll('.y.axis.right').transition()
         .duration(500)
         .ease('linear')
         .call(@rightAxis())
@@ -142,21 +167,76 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Draws the initial axes for the visualization.
   _drawAxes: ->
     if @hasAxis('bottom')
-      @svg.append("g")
+      @g.append("g")
         .attr("class", "x axis bottom")
         .attr("transform", "translate(0, #{@innerHeight()})")
         .call(@bottomAxis())
     if @hasAxis('top')
-      @svg.append("g")
+      @g.append("g")
         .attr('class', 'x axis top')
         .call(@topAxis())
     if @hasAxis('left')
-      @svg.append("g")
+      @g.append("g")
         .attr("class", "y axis left")
         .call(@leftAxis())
     if @hasAxis('right')
-      @svg.append('g')
+      @g.append('g')
         .attr('class', 'y axis right')
         .attr('transform', "translate(#{@innerWidth()}, 0)")
         .call(@rightAxis())
     @_axesDrawn = true
+
+  dimensionsChanged: ->
+    super()
+    @g.selectAll('.axis').remove()
+    @_axesDrawn = false
+    @draw()
+
+  # Updates margins in response to a <code>option:margin.*</code> event.
+  marginsChanged: ->
+    return unless @options.margins?
+    for pos, size of @options.margins
+      unless size?
+        @margins[pos] = 6
+      else
+        @margins[pos] = size
+
+    @g.transition()
+      .duration(750)
+      .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
+
+    @draw()
+
+  # Updates axes in response to a <code>option:axes</code> event.
+  axesChanged: ->
+    # Remove default axis margins
+    for pos in ['top', 'right', 'bottom', 'left']
+      continue if @options.margins? and @options.margins[pos]?
+      if @hasAxis(pos)
+        @margins[pos] = defaultAxisMargins[pos]
+      else
+        @margins[pos] = 6
+
+    # Update the margin offset
+    @g.transition()
+      .duration(750)
+      .attr("transform", "translate(#{@margins.left}, #{@margins.top})")
+
+    # Remove the axes and redraw
+    @g.selectAll('.axis').remove()
+    @_axesDrawn = false
+    @draw()
+
+  # Updates ticks in response to a <code>option:ticks.*</code> event.
+  ticksChanged: -> @draw()
+
+  # Updates tick formats in response to a <code>option:tickFormats.*</code> event.
+  tickFormatsChanged: -> @draw()
+
+  # Updates chart in response to a <code>option:domain</code> event.
+  domainChanged: -> @draw()
+
+  # Updates chart in response to a <code>option:range</code> event.
+  rangeChanged: -> @draw()
+
+# "They will waving from such great heights, come down now..." - The Postal Service

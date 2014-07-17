@@ -7,6 +7,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     opacity: 'linear'
     bucketPadding: 2
     paintZeroValues: false
+    cutOutliers: false
 
   # Easy to use "named" color functions
   colorFunctions =
@@ -16,6 +17,14 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     cubic: (value, max) -> Math.pow(value/max, 3)
     quartic: (value, max) -> Math.pow(value/max, 4)
     quintic: (value, max) -> Math.pow(value/max, 5)
+
+  optionListeners =
+    'option:buckets': 'bucketsChanged'
+    'option:bucketRange': 'bucketRangeChanged'
+    'option:opacity': 'opacityChanged'
+    'option:bucketPadding': 'bucketPaddingChanged'
+    'option:paintZeroValues': 'paintZeroValuesChanged'
+    'option:cutOutliers': 'cutOutliersChanged'
 
   # Creates a new heatmap.
   # @param [Object] options Options for the heatmap.
@@ -29,16 +38,18 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # @option options [Number] bucketPadding Amount of padding to apply around buckets (default: 2).
   constructor: (@options) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
+    @_setOpacityFunction()
+    @_setupPaintCanvas()
+    @onAll optionListeners
+
+  _setOpacityFunction: ->
     if Epoch.isString(@options.opacity)
-      @_colorFn = colorFunctions[@options.opacity]
-      Epoch.exception "Unknown coloring function provided '#{@options.opacity}'" unless @_colorFn?
+      @_opacityFn = colorFunctions[@options.opacity]
+      Epoch.exception "Unknown coloring function provided '#{@options.opacity}'" unless @_opacityFn?
     else if Epoch.isFunction(@options.opacity)
-      @_colorFn = @options.opacity
+      @_opacityFn = @options.opacity
     else
       Epoch.exception "Unknown type for provided coloring function."
-
-    # Create the paint canvas
-    @_setupPaintCanvas()
 
   # Prepares initially set data for rendering.
   # @param [Array] data Layered histogram data for the visualization.
@@ -50,7 +61,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # Distributes the full histogram in the entry into the defined buckets
   # for the visualization.
   # @param [Object] entry Entry to prepare for visualization.
-  _prepareEntry: (entry) ->
+  _getBuckets: (entry) ->
     prepared =
       time: entry.time
       max: 0
@@ -60,7 +71,11 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     bucketSize = (@options.bucketRange[1] - @options.bucketRange[0]) / @options.buckets
 
     for value, count of entry.histogram
-      index = parseInt(value / bucketSize)
+      index = parseInt((value - @options.bucketRange[0]) / bucketSize)
+
+      # Remove outliers from the preprared buckets if instructed to do so
+      if @options.cutOutliers and ((index < 0) or (index >= @options.buckets))
+        continue
 
       # Bound the histogram to the range (aka, handle out of bounds values)
       if index < 0
@@ -68,7 +83,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       else if index >= @options.buckets
         index = @options.buckets - 1
 
-      prepared.buckets[index] += count
+      prepared.buckets[index] += parseInt count
 
     for i in [0...prepared.buckets.length]
       prepared.max = Math.max(prepared.max, prepared.buckets[i])
@@ -121,20 +136,26 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # At the end of a transition we must reset the paint canvas by shifting the viewable
     # buckets to the left (this allows for a fixed cut point and single renders below in @draw)
     @on 'transition:end', '_shiftPaintCanvas'
+    @on 'transition:end', => @draw(@animation.frame * @animation.delta())
 
   # Redraws the entire heatmap for the current data.
   redraw: ->
     entryIndex = @data[0].values.length
     drawColumn = @options.windowSize
+
+    # This addresses a strange off-by-one issue when the chart is transitioning
+    drawColumn++ if @inTransition()
+
     while (--entryIndex >= 0) and (--drawColumn >= 0)
       @_paintEntry(entryIndex, drawColumn)
+    @draw(@animation.frame * @animation.delta())
 
   # Computes the correct color for a given bucket.
   # @param [Integer] value Normalized value at the bucket.
   # @param [Integer] max Normalized maximum for the column.
   # @param [String] color Computed base color for the bucket.
   _computeColor: (value, max, color) ->
-    Epoch.Util.toRGBA(color, @_colorFn(value, max))
+    Epoch.Util.toRGBA(color, @_opacityFn(value, max))
 
   # Paints a single entry column on the paint canvas at the given column.
   # @param [Integer] entryIndex Index of the entry to paint.
@@ -150,7 +171,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     maxTotal = 0
 
     for layer in @data
-      entry = layer.values[entryIndex]
+      entry = @_getBuckets( layer.values[entryIndex] )
       for bucket, count of entry.buckets
         bucketTotals[bucket] += count
       maxTotal += entry.max
@@ -208,5 +229,28 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @clear()
     @ctx.drawImage @paint, delta, 0
     super()
+
+  # Changes the number of buckets in response to an <code>option:buckets</code> event.
+  bucketsChanged: -> @redraw()
+
+  # Changes the range of the buckets in response to an <code>option:bucketRange</code> event.
+  bucketRangeChanged: ->
+    @_transitionRangeAxes()
+    @redraw()
+
+  # Changes the opacity function in response to an <code>option:opacity</code> event.
+  opacityChanged: ->
+    @_setOpacityFunction()
+    @redraw()
+
+  # Changes the bucket padding in response to an <code>option:bucketPadding</code> event.
+  bucketPaddingChanged: -> @redraw()
+
+  # Changes whether or not to paint zeros in response to an <code>option:paintZeroValues</code> event.
+  paintZeroValuesChanged: -> @redraw()
+
+  # Changes whether or not to cut outliers when bucketing in response to an
+  # <code>option:cutOutliers</code> event.
+  cutOutliersChanged: -> @redraw()
 
 # "Audio... Audio... Audio... Video Disco..." - Justice

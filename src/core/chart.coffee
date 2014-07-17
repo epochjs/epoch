@@ -12,6 +12,13 @@ class Epoch.Events
     @_events[name] ?= []
     @_events[name].push callback
 
+  # Registers a map of event names to given callbacks. This method calls <code>.on</code>
+  # directly for each of the events given.
+  # @param [Object] map A map of event names to callbacks.
+  onAll: (map) ->
+    return unless Epoch.isObject(map)
+    @on(name, callback) for name, callback of map
+
   # Removes a specific callback listener or all listeners for a given event.
   # @param [String] name Name of the event.
   # @param [Function, String] callback (Optional) Callback to remove from the listener list.
@@ -21,6 +28,16 @@ class Epoch.Events
     return delete(@_events[name]) unless callback?
     while (i = @_events[name].indexOf(callback)) >= 0
       @_events[name].splice(i, 1)
+
+  # Removes a set of callback listeners for all events given in the map or array of strings.
+  # This method calls <code>.off</code> directly for each event and callback to remove.
+  # @param [Object, Array] mapOrList Either a map that associates event names to specific callbacks
+  #   or an array of event names for which to completely remove listeners.
+  offAll: (mapOrList) ->
+    if Epoch.isArray(mapOrList)
+      @off(name) for name in mapOrList
+    else if Epoch.isObject(mapOrList)
+      @off(name, callback) for name, callback of mapOrList
 
   # Triggers an event causing all active listeners to be executed.
   # @param [String] name Name of the event to fire.
@@ -46,6 +63,10 @@ class Epoch.Chart.Base extends Epoch.Events
     width: 320
     height: 240
 
+  optionListeners =
+    'option:width': 'dimensionsChanged'
+    'option:height': 'dimensionsChanged'
+
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
   # @option options [Integer] width Sets an explicit width for the visualization (optional).
@@ -64,6 +85,81 @@ class Epoch.Chart.Base extends Epoch.Events
     else
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
+
+    @onAll optionListeners
+
+  # @return [Object] A copy of this charts options.
+  _getAllOptions: ->
+    Epoch.Util.defaults({}, @options)
+
+  # Chart option accessor.
+  # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.left'
+  # @return The requested option if found, undefined otherwise.
+  _getOption: (key) ->
+    parts = key.split('.')
+    scope = @options
+    while parts.length and scope?
+      subkey = parts.shift()
+      scope = scope[subkey]
+    scope
+
+  # Chart option mutator.
+  # @param key Name of the option to fetch. Can be hierarchical, e.g. 'margins.top'
+  # @param value Value to set for the option.
+  # @event option:`key` Triggers an option event with the given key being set.
+  _setOption: (key, value) ->
+    parts = key.split('.')
+    scope = @options
+    while parts.length
+      subkey = parts.shift()
+      if parts.length == 0
+        scope[subkey] = arguments[1]
+        @trigger "option:#{arguments[0]}"
+        return
+      unless scope[subkey]?
+        scope[subkey] = {}
+      scope = scope[subkey]
+
+  # Sets all options given an object of mixed hierarchical keys and nested objects.
+  # @param [Object] options Options to set.
+  # @event option:* Triggers an option event for each key that was set
+  _setManyOptions: (options, prefix='') ->
+    for key, value of options
+      if Epoch.isObject(value)
+        @_setManyOptions value, "#{prefix + key}."
+      else
+        @_setOption prefix + key, value
+
+  # General accessor / mutator for chart options.
+  #
+  # @overload option()
+  #   Fetches chart options.
+  #   @return a copy of this chart's options.
+  #
+  # @overload option(name)
+  #   Fetches the value the option with the given name.
+  #   @param [String] name Name of the option to fetch. Can be hierarchical, e.g. <code>'margins.left'</code>
+  #   @return The requested option if found, <code>undefined</code> otherwise.
+  #
+  # @overload option(name, value)
+  #   Sets an option and triggers the associated event.
+  #   @param [String] name Name of the option to fetch. Can be hierarchical, e.g. 'margins.top'
+  #   @param value Value to set for the option.
+  #   @event option:`name` Triggers an option event with the given key being set.
+  #
+  # @overload option(options)
+  #   Sets multiple options at once.
+  #   @param [Object] options Options to set for the chart.
+  #   @event option:* Triggers an option event for each key that was set. 
+  option: ->
+    if arguments.length == 0
+      @_getAllOptions()
+    else if arguments.length == 1 and Epoch.isString(arguments[0])
+      @_getOption arguments[0]
+    else if arguments.length == 2 and Epoch.isString(arguments[0])
+      @_setOption arguments[0], arguments[1]
+    else if arguments.length == 1 and Epoch.isObject(arguments[0])
+      @_setManyOptions arguments[0]
 
   # Set the initial data for the chart.
   # @param data Data to initially set for the given chart. The data format can vary
@@ -105,6 +201,13 @@ class Epoch.Chart.Base extends Epoch.Events
       d3.max(@data, (layer) -> d3.max(layer.values, cmp))
     ]
 
+  # Updates the width and height members and container dimensions in response to an
+  # 'option:width' or 'option:height' event.
+  dimensionsChanged: ->
+    @width = @option('width') or @width
+    @height = @option('height') or @height
+    @el.width(@width)
+    @el.height(@height)
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base
@@ -123,6 +226,11 @@ class Epoch.Chart.SVG extends Epoch.Chart.Base
         xmlns: 'http://www.w3.org/2000/svg',
         width: @width,
         height: @height
+
+  # Resizes the svg element in response to a 'option:width' or 'option:height' event.
+  dimensionsChanged: ->
+    super()
+    @svg.attr('width', @width).attr('height', @height)
 
 # Base Class for all Canvas based charts.
 class Epoch.Chart.Canvas extends Epoch.Chart.Base
@@ -167,3 +275,9 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
   # @param [String] selector The selector used to compute the styles.
   getStyles: (selector) ->
     Epoch.QueryCSS.getStyles(selector, @el)
+
+  # Resizes the canvas element when the dimensions of the container change
+  dimensionsChanged: ->
+    super()
+    @canvas.style {'width': "#{@width}px", 'height': "#{@height}px"}
+    @canvas.attr { width: @getWidth(), height: @getHeight() }
