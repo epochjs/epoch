@@ -20,6 +20,8 @@
             <li><a href="#test-2">Margins</a></li>
             <li><a href="#test-3">Ticks and Tick Formats</a></li>
             <li><a href="#test-4">Resize</a></li>
+            <li><a href="#test-5">Domain</a></li>
+            <li><a href="#test-6">Range</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -170,7 +172,7 @@
         });
         </script>
 
-        <!-- Test 3 -->
+        <!-- Test 4 -->
         <div id="test-4" class="test">
             <h2>4. Resize</h2>
             <p>
@@ -201,5 +203,66 @@
             });
         });
         </script>
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>6. Option: domain</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Domain From Data Extent</button>
+                <button data-index="1">[0, &pi;]</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var domains = [
+                null,
+                [0, Math.PI]
+            ];
+
+            var chart = $('#test-5 .epoch').epoch({
+                type: 'line',
+                data: data().add(function(x) { return 1 - Math.sin(x) }).get([0, 2*Math.PI], Math.PI/25)
+            });
+
+            $('#test-5 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.option('domain', domains[index])
+            });
+        });
+        </script>
+
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>7. Option: range</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Range From Data Extent</button>
+                <button data-index="1">[0, 1.5]</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var ranges = [
+                null,
+                [0, 1.5]
+            ];
+
+            var chart = $('#test-6 .epoch').epoch({
+                type: 'area',
+                data: data().add(function(x) { return 1 - Math.cos(x) }).get([0, 2*Math.PI], Math.PI/25),
+                range: [0, 1]
+            });
+
+            $('#test-6 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                console.log(ranges[index]);
+                chart.option('range', ranges[index])
+
+            });
+        });
+        </script>
+
     </body>
 </html>

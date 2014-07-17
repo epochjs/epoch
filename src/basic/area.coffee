@@ -11,7 +11,7 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
         a[k] += v.y if a[k]?
         a[k] = v.y unless a[k]?
     d3.scale.linear()
-      .domain([0, d3.max(a)])
+      .domain(@options.range ? [0, d3.max(a)])
       .range([@height - @margins.top - @margins.bottom, 0])
 
   # Renders the SVG elements needed to display the stacked area chart.

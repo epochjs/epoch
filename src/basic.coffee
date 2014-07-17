@@ -37,6 +37,8 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
     'option:tickFormats.right': 'tickFormatsChanged'
     'option:tickFormats.bottom': 'tickFormatsChanged'
     'option:tickFormats.left': 'tickFormatsChanged'
+    'option:domain': 'domainChanged'
+    'option:range': 'rangeChanged'
 
   # Creates a new plot chart.
   # @param [Object] options Options to use when constructing the plot.
@@ -230,3 +232,11 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
 
   # Updates tick formats in response to a <code>option:tickFormats.*</code> event.
   tickFormatsChanged: -> @draw()
+
+  # Updates chart in response to a <code>option:domain</code> event.
+  domainChanged: -> @draw()
+
+  # Updates chart in response to a <code>option:range</code> event.
+  rangeChanged: -> @draw()
+
+# "They will waving from such great heights, come down now..." - The Postal Service
