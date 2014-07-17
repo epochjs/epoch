@@ -251,8 +251,7 @@
 
             var chart = $('#test-6 .epoch').epoch({
                 type: 'area',
-                data: data().add(function(x) { return 1 - Math.cos(x) }).get([0, 2*Math.PI], Math.PI/25),
-                range: [0, 1]
+                data: data().add(function(x) { return 1 - Math.cos(x) }).get([0, 2*Math.PI], Math.PI/25)
             });
 
             $('#test-6 button').click(function(e) {
