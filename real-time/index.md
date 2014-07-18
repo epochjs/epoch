@@ -235,7 +235,7 @@ for the chart to render correctly. Let's take a look at how one might create a n
 
 #### Options
 
-The guage chart implements the following common options:
+The gauge chart implements the following common options:
 
 * `fps` - Animation frames per second.
 * `pixelRatio` - Explicit pixel ratio override.
