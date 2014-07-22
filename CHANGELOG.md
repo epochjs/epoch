@@ -4,6 +4,8 @@
 
 ### Enhancements / Features
 
+* Source code restructure for easier programming
+* Replaced Compass with node-sass
 * Removed put.js from the repository
 * Removed dependency on jQuery
 * Added CSS controlled themes
@@ -16,8 +18,9 @@
 
 ### Bug Fixes
 
+* Event `.off` method was completely busted, fixed
 * Swapped terminology for horizontal and vertical bar plots
-* Remove `isVisible` hack on real-time plots
+* Removed `isVisible` and related rendering hacks (caused all sorts of woe)
 
 
 ## 0.5.2 - June 24th, 2014
