@@ -73,6 +73,21 @@ Unless otherwise stated each of the charts below have the following common optio
   </tr>
 
   <tr>
+    <td><code>domain</code></td>
+    <td>
+      Set an explicit domain for the chart.<br>
+      <i>Example:</i> <code>domain: [0, 2*Math.PI]</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>range</code></td>
+    <td>
+      Set an explicit range for the chart.</br>
+      <i>Example:</i> <code>range: [-1, 2]</code>
+  </tr>
+
+  <tr>
     <td><code>margins</code></td>
     <td>
       Explicit margin overrides for the chart.<br>
