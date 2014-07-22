@@ -1,5 +1,5 @@
 name: Epoch by Fastly
-version: 0.5.2
+version: 0.6.0
 markdown: redcarpet
 redcarpet:
     extensions: [with_toc_data]

@@ -10,23 +10,17 @@ This page will help you get started using Epoch in your projects.
 
 ### Prerequisites
 
-After [downloading epoch]({{ site.baseurl }}download/epoch.{{ site.version }}.zip) you'll need to setup your page so you can generate charts. First, epoch has two external library requirements:
-
-1. [jQuery](https://github.com/jquery/jquery)
-2. [d3](https://github.com/mbostock/d3)
-
-These scripts must be loaded before adding Epoch into your page, like so:
+After [downloading epoch]({{ site.baseurl }}download/epoch.{{ site.version }}.zip) you'll need to setup your page so you can generate charts. First, Epoch requires [d3](https://github.com/mbostock/d3), thus the scripts must be added to your page like so:
 
 ```html
-<script src="js/jquery.min.js"></script>
 <script src="js/d3.min.js"></script>
-<script src="js/epoch.X.Y.Z.min.js"></script>
+<script src="js/epoch.min.js"></script>
 ```
 
 Finally you'll need to include the Epoch CSS in the page's head section:
 
 ```html
-<link rel="stylesheet" type="text/css" href="css/epoch.X.Y.Z.min.css">
+<link rel="stylesheet" type="text/css" href="css/epoch.min.css">
 ```
 
 At this point you're ready to start using Epoch to build and place charts in your application.
@@ -34,7 +28,19 @@ At this point you're ready to start using Epoch to build and place charts in you
 
 ### Building a Chart
 
-Building a chart using epoch is a snap and each type of chart follows the same basic workflow. In this section we will run through the steps you'll use when adding charts to your pages.
+Building a chart using epoch is a snap and each type of chart follows the same basic workflow. In this section we will run through the steps you'll use when adding charts to your pages. For instance, let's build area chart, like this one:
+
+<div id="area" class="epoch category10" style="height: 200px; margin: 40px 0;"></div>
+<script>
+(function() {
+    var data = [
+        { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
+        { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
+    ];
+    $('#area').epoch({ type: 'area', data: data, axes: ['left', 'right', 'bottom'] });
+})();
+
+</script>
 
 #### 1. Place a chart container in the page
 
@@ -59,93 +65,27 @@ Each chart type expects a certain data format. For the most part they are very s
 #### 3. Initialize, Place, and Draw
 
 ```javascript
-var areaChartInstance = $('#area').epoch({ type: 'area', data: data });
+var areaChartInstance = $('#area').epoch({
+    type: 'area',
+    data: data,
+    axes: ['left', 'right', 'bottom']
+});
 ```
 
 Use the custom jQuery method `.epoch` to create the chart. The method will automatically insert the chart as a direct child of the selected container (in this case the `div` with an id of `area`). After the elements have been placed the method will resize the chart to completely fill the container and draw the chart based on the data it was given.
 
 The `.epoch` function returns a chart class instance that can be used to interact with the chart post initialization. In the example above we keep a reference to the chart instance in the `areaChartInstance` variable. For basic charts, such at the area chart we created, this instance can be used to update the chart's data via the `update` method.
 
+### Changing Chart Options
 
-### Visual Styles
+Sometimes you will want to change the structural elements of charts based on user input and the like. To do so, each chart instance provides a special method named `.option`. The option method allows you to reset any of the options you passed during initialization and all of Epoch's default charts are built to react appropriately when options change.
 
-Epoch charts use CSS to set fill colors, strokes, etc. By default charts are colored using
-[d3 categorical color](https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors). You can easily override
-these default colors or create your own custom categories.
+The method can be used in the following ways:
 
-#### Using Categorical Colors
+1. `.option()` - Returns a deep copy of the chart's options
+2. `.option(key)` - Returns a value for a given key
+3. `.option(key, value)` - Sets an option with the given key to the given value
+4. `.option(object)` - Sets key-value pairs in the given object as options for the chart
 
-We support the following categorical color sets:
+Note that all of the `key` strings can be hierarchical. For instance, you can use `.option('margins.left', 30)` to set the left margin, as opposed to having to use `.option({ margins: { left: 30 }})`.
 
-* `category20` (default)
-* `category20b`
-* `category20c`
-* `category10`
-
-You can change a chart's color set by simply adding a class to the chart, like so:
-
-```html
-<div id="container1" class="epoch category20"></div>
-<div id="container1" class="epoch category20b"></div>
-<div id="container1" class="epoch category20c"></div>
-<div id="container1" class="epoch category10"></div>
-```
-
-We achieve this by adding a category class to each element in a chart that needs to be rendered using the categorical color.
-
-#### Creating Your Own Categories
-
-The preferred method for doing this would be to use a css preprocessor like Sass or Less, here's an example of a simple color
-scheme as written in SCSS:
-
-```scss
-$colors: red, green, blue, pink, yellow;
-
-.epoch.my-colors {
-  @for $i from 1 through 5 {
-    .category#{$i} {
-      .line { stroke: nth($colors, $i); }
-      .area, .dot { fill: nth($colors, $i); }
-    }
-    .arc.category#{$i} path {
-      fill: nth($colors, $i);
-    }
-    .bar.category#{$i} { 
-      fill: nth($colors, $i);
-    }
-  }
-}
-```
-
-You could then apply the class to your containers and see your colors in action:
-
-```html
-<div id="myChart" class="epoch my-colors"></div>
-```
-
-In the future we will be creating SCSS and LESS plugins with mixins you can use to more easily define custom color categories.
-
-
-#### Specific Overrides
-
-For multi-series charts, the data format lets your supply an optional `label` for each series. We create a "dasherized"
-class name from this label and associate it with the rendered output of the chart. For instance, take the following
-data for an area chart:
-
-```javascript
-var areaChartData = [
-  {
-    label: "Layer 1",
-    values: [ {x: 0, y: 100}, {x: 20, y: 1000} ]
-  }
-];
-```
-
-The layer labeled `Layer 1` will be associated in the chart with the class name `layer-1`. To override it's color simply
-use the following CSS:
-
-```css
-#myChartContainer .layer-1 .area {
-  fill: pink;
-}
-```
