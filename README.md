@@ -119,6 +119,15 @@ tests/
   unit/                - Unit tests
 ```
 
+### Release Checklist
+
+- Update CHANGELOG.md with the changes since last release
+- Run `cake test` and ensure all tests pass
+- Run `cake release` to generate new minified JS and CSS
+- Copy new .zip of release source files to gh-pages branch
+- Update the website's library version in the _config.yml
+- Update the website's copy of Epoch
+
 ### Copyright / Legal
 
 The MIT License (MIT)
