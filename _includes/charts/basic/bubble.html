@@ -1,0 +1,24 @@
+<div id="basic-bubble-example" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var DATA_LENGTH = 24;
+
+    var data = [
+        { label: 'A', values: [] },
+        { label: 'B', values: [] }
+    ];
+
+    for (var i = 0; i < DATA_LENGTH; i++) {
+        for (var j = 0; j < data.length; j++) {
+            data[j].values.push({ x: (Math.random() * 1000), y: (Math.random() * 200), r: Math.random()*15 + 1 });
+        }
+    }
+
+    var chart = $('#basic-bubble-example').epoch({
+        type: 'scatter',
+        data: data,
+        axes: ['top', 'bottom', 'left', 'right']
+    });
+});
+</script>

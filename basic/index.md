@@ -383,6 +383,26 @@ Next, let's see the markup and scripting needed to add the plot to your page:
 </script>
 ```
 
+<h4>Bubble Charts</h4>
+{% include charts/basic/bubble.html %}
+
+Scatter plots can also be used to create bubble charts by setting the `r` value for each data point in a series. Here's an example of how this data can be formatted:
+
+```javascript
+var bubbleData = [
+  {
+    label: 'Group 1',
+    values: [
+      {x: 10, y: 40, r: 2},
+      {x: 48, y: 17, r: 5},
+      {x: 9, y: 33, r: 10}
+      ...
+    ]
+  }
+];
+```
+
+
 #### Options
 
 <table class="table table-bordered table-striped">
@@ -394,7 +414,7 @@ Next, let's see the markup and scripting needed to add the plot to your page:
   <tr>
     <td><code>radius</code></td>
     <td>
-      How large the "dots" should be in the plot (in pixels).<br>
+      Default radius for the "dots" in the plot (in pixels).<br>
       <i>Example:</i> <code>radius: 4.5</code>
     </td>
   </tr>
