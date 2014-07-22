@@ -1,10 +1,10 @@
 {
   "name": "epoch",
   "description": "A general purpose, real-time visualization library.",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "main": [
-    "/epoch.0.5.2.min.js",
-    "/epoch.0.5.2.min.css"
+    "/epoch.min.js",
+    "/epoch.min.css"
   ],
   "license": "MIT",
   "ignore": [

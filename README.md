@@ -17,14 +17,11 @@ There are two easy options you can use to install epoch. The first is to use [bo
 bower install epoch
 ```
 
-The second is to visit the [project site](http://fastly.github.io/epoch), download the latest release, and manually install it in your project. Both methods will provide you with the `epoch.X.Y.Z.min.js` and `epoch.X.Y.Z.min.css` files, simply include them along with jQuery and d3 in your page and you're ready to go.
+The second is to visit the [project site](http://fastly.github.io/epoch), download the latest release, and manually install it in your project. Both methods will provide you with the `epoch.min.js` and `epoch.min.css` files, simply include them along with d3 in your page and you're ready to go.
 
 ### Requirements
 
-Epoch has two external library requirements:
-
-1. [d3](https://github.com/mbostock/d3) - Used to generate the basic charts.
-2. [jQuery](https://github.com/jquery/jquery) - Used for DOM manipulation, etc.
+Epoch's only external requirement is [d3](https://github.com/mbostock/d3).
 
 ### Developing Epoch
 
