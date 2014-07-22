@@ -15,6 +15,7 @@
 * Added bubble charts (special case of scatter plots)
 * Added MooTools and Zepto Adapters
 * Added Core Library Unit Testing
+* New `domain` and `range` options for basic charts
 
 ### Bug Fixes
 
