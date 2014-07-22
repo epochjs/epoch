@@ -1,5 +1,25 @@
 # Epoch Changelog
 
+## 0.6.0 - July 21st, 2014
+
+### Enhancements / Features
+
+* Removed put.js from the repository
+* Removed dependency on jQuery
+* Added CSS controlled themes
+  * New "Dark" theme for dark backgrounds
+* Registered with bower
+* Added option accessor / mutator to all charts (making them adaptive)
+* Added bubble charts (special case of scatter plots)
+* Added MooTools and Zepto Adapters
+* Added Core Library Unit Testing
+
+### Bug Fixes
+
+* Swapped terminology for horizontal and vertical bar plots
+* Remove `isVisible` hack on real-time plots
+
+
 ## 0.5.2 - June 24th, 2014
 
 ### Enhancements / Features
