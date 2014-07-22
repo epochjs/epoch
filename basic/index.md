@@ -190,9 +190,9 @@ Next, let's take a look at the markup and scripting required to display our bar 
 </script>
 ```
 
-#### Vertically Oriented Bar Charts
+#### Horizontally Oriented Bar Charts
 
-The bar chart also provides the option for vertcial rendering by setting the `orientation` option to `'vertical'`. Charts that are vertically oriented will display the bars stacked atop one another, like so:
+The bar chart also provides the option for horizontal rendering by setting the `orientation` option to `'horizontal'`. Charts that are horizontally oriented will display the bars stacked atop one another, like so:
 
 {% include charts/basic/bar-vertical.html %}
 
