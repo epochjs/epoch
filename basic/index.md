@@ -210,8 +210,24 @@ The bar chart has the following set of additional options:
   <tr>
     <td><code>orientation</code></td>
     <td>
-      Sets the orientation for the chart. Can be either <code>'horizontal'</code> (default), or <code>'vertical'</code>.<br>
+      Sets the orientation for the chart. Can be either <code>'horizontal'</code>, or <code>'vertical'</code> (default).<br>
       <i>Example:</i> <code>orientation: 'vertical'</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>padding</code></td>
+    <td>
+      Sets padding (in percent) for the space between bars or groups of bars.<br>
+      <i>Example:</i> <code>padding: { bar: 0.8, group: 1 }</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>outerPadding</code></td>
+    <td>
+      Sets padding (in percent) for the space outside bars or groups of bars.<br>
+      <i>Example:</i> <code>outsidePadding: { bar: 0.8, group: 1 }</code>
     </td>
   </tr>
 </table>
