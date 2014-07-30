@@ -222,7 +222,81 @@ describe 'Epoch.Chart', ->
         chart = new Epoch.Chart.Base({ el: '#resizeDiv' })
         chart.option('height', newHeight)
         assert.equal d3.select('#resizeDiv').height(), newHeight
-        
+
+    describe 'layers', ->
+      chart = null
+      labels = ['A', 'B', 'C']
+      data = [
+        { label: 'A', data: [{x: 0, y: 0}] },
+        { label: 'B', data: [{x: 1, y: 1}] },
+        { label: 'C', data: [{x: 2, y: 2}] }
+      ]
+
+      before (done) ->
+        chart = new Epoch.Chart.Base
+          el: doc.createElement('div')
+          data: data
+        done()
+
+      describe '_findLayer', ->
+        it 'should find layers given a label', ->
+          for label in labels
+            layer = chart._findLayer(label)
+            assert.equal label, layer.label, "Could not find layer with label #{label}"
+
+        it 'should find layers given an index', ->
+          for i in [0...data.length]
+            layer = chart._findLayer(i)
+            assert.equal labels[i], layer.label, "Could not find layer with index #{i}"
+
+        it 'should return null if given an invalid label', ->
+          assert.isNull (chart._findLayer 'D')
+          assert.isNull (chart._findLayer 'not a thing')
+
+        it 'should return null if given an index that is out of bounds', ->
+          assert.isNull (chart._findLayer -1)
+          assert.isNull (chart._findLayer 5)
+
+      describe 'hideLayer', ->
+        it 'should hide a visible layer', ->
+          chart.hideLayer('A')
+          assert.isFalse chart._findLayer('A').visible
+
+        it 'should keep a hidden layer hidden', ->
+          assert.isFalse chart._findLayer('A').visible
+          chart.hideLayer('A')
+          assert.isFalse chart._findLayer('A').visible
+
+      describe 'showLayer', ->
+        it 'should have keep a visible layer visible', ->
+          assert.isTrue chart._findLayer('B').visible
+          chart.showLayer('B')
+          assert.isTrue chart._findLayer('B').visible
+
+        it 'should make a hidden layer visible', ->
+          assert.isFalse chart._findLayer('A').visible
+          chart.showLayer('A')
+          assert.isTrue chart._findLayer('B').visible
+
+      describe 'toggleLayer', ->
+        it 'should hide a visible layer', ->
+          chart.hideLayer('A')
+          chart.toggleLayer('A')
+          assert.isTrue chart._findLayer('A').visible
+
+        it 'should show a hidden layer', ->
+          chart.showLayer('B')
+          chart.toggleLayer('B')
+          assert.isFalse chart._findLayer('B').visible
+
+      describe 'isLayerVisible', ->
+        it 'should report true if a layer is visible', ->
+          chart.showLayer('A')
+          assert.isTrue chart.isLayerVisible('A')
+
+        it 'should report false if a layer is not visible', ->
+          chart.hideLayer('A')
+          assert.isFalse chart.isLayerVisible('B')
 
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
