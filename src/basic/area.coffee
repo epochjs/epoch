@@ -6,7 +6,7 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
   # @return [Function] The y scale for the visualization.
   y: ->
     a = []
-    for layer in @data
+    for layer in @getVisibleLayers()
       for k, v of layer.values
         a[k] += v.y if a[k]?
         a[k] = v.y unless a[k]?
@@ -16,7 +16,10 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
 
   # Renders the SVG elements needed to display the stacked area chart.
   draw: ->
-    [x, y] = [@x(), @y()]
+    [x, y, layers] = [@x(), @y(), @getVisibleLayers()]
+
+    @g.selectAll('.layer').remove()
+    return if layers.length == 0
 
     area = d3.svg.area()
       .x((d) -> x(d.x))
@@ -26,12 +29,10 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
     stack = d3.layout.stack()
       .values((d) -> d.values)
 
-    data = stack(@data)
-
-    @g.selectAll('.layer').remove()
+    data = stack layers
 
     layer = @g.selectAll('.layer')
-      .data(@data, (d) -> d.category)
+      .data(layers, (d) -> d.category)
 
     layer.select('.area')
       .attr('d', (d) -> area(d.values))

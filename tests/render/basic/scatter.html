@@ -22,6 +22,7 @@
             <li><a href="#test-8">Multi Series without Labels</a></li>
             <li><a href="#test-9">Single Series with Radius</a></li>
             <li><a href="#test-10">Radius Change</a></li>
+            <li><a href="#test-11">Show/Hide Layers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -368,5 +369,30 @@
             });
         });
         </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>11. Show/Hide Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Toggle A</button>
+                <button data-index="1">Toggle B</button>
+                <button data-index="2">Toggle C</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-11 .epoch').epoch({
+                type: 'scatter',
+                data: data().multiRandom(3)
+            });
+
+            $('#test-11 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+        });
+        </script>
+
     </body>
 </html>

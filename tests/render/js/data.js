@@ -31,7 +31,7 @@
         domain = domain ? domain : [0, 100];
         range = range ? range : [0, 100];
 
-        values = [];
+        var values = [];
         for (var i = 0; i < entries; i++) {
             var x = (domain[1] - domain[0]) * Math.random() + domain[0],
                 y = (range[1] - range[0]) * Math.random() + range[1];
@@ -39,6 +39,27 @@
         }
 
         return [{ label: 'A', values: values }];
+    };
+
+    Data.prototype.multiRandom = function(numSeries, entries, domain, range) {
+        numSeries = numSeries ? numSeries : 3;
+        entries = entries ? entries : 50;
+        domain = domain ? domain : [0, 100];
+        range = range ? range : [0, 100];
+
+        var data = [];
+
+        for (var j = 0; j < numSeries; j++) {
+            var layer = { label: String.fromCharCode(65 + j), values: [] };
+            for (var i = 0; i < entries; i++) {
+                var x = (domain[1] - domain[0]) * Math.random() + domain[0],
+                    y = (range[1] - range[0]) * Math.random() + range[1];
+                layer.values.push({ x: x, y: y });
+            }
+            data.push(layer);
+        }
+
+        return data;
     };
 
     window.data = function() { return new Data(); };

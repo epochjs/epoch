@@ -298,6 +298,16 @@ describe 'Epoch.Chart', ->
           chart.hideLayer('A')
           assert.isFalse chart.isLayerVisible('B')
 
+      describe 'getVisibleLayers', ->
+        it 'should only return visible layers', ->
+          chart.showLayer('A')
+          chart.showLayer('B')
+          chart.hideLayer('C')
+          visible = chart.getVisibleLayers()
+          assert.equal visible.length, 2
+          assert.equal visible[0].label, 'A'
+          assert.equal visible[1].label, 'B'
+
   describe 'SVG', ->
     [containerWidth, containerHeight] = [1000, 280]
     container = null

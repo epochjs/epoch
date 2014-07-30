@@ -66,6 +66,8 @@ class Epoch.Chart.Base extends Epoch.Events
   optionListeners =
     'option:width': 'dimensionsChanged'
     'option:height': 'dimensionsChanged'
+    'layer:shown': 'draw'
+    'layer:hidden': 'draw'
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
@@ -214,7 +216,6 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param [String, Number] labelOrIndex The label or index of the layer to toggle.
   # @event 'layer:shown' If the layer was made visible
   # @event 'layer:hidden' If the layer was made invisible
-  # @event 'layer:toggled' Regardless of the change in the layer's visibility.
   toggleLayer: (labelOrIndex) ->
     return unless (layer = @_findLayer labelOrIndex)
     layer.visible = !layer.visible
@@ -222,7 +223,6 @@ class Epoch.Chart.Base extends Epoch.Events
       @trigger 'layer:shown'
     else
       @trigger 'layer:hidden'
-    @trigger 'layer:toggled'
 
   # Determines whether or not a data layer is visible.
   # @param [String, Number] labelOrIndex The label or index of the layer to toggle.
@@ -230,6 +230,14 @@ class Epoch.Chart.Base extends Epoch.Events
   isLayerVisible: (labelOrIndex) ->
     return null unless (layer = @_findLayer labelOrIndex)
     layer.visible
+
+  # Calculates an array of layers in the charts data that are flagged as visible.
+  # @return [Array] The chart's visible layers.
+  getVisibleLayers: ->
+    visible = []
+    for layer in @data
+      visible.push(layer) if layer.visible
+    return visible
 
   # Updates the chart with new data.
   # @param data Data to replace the current data for the chart.
@@ -251,8 +259,8 @@ class Epoch.Chart.Base extends Epoch.Events
   #   chart's data set and the second element as the maximum.
   extent: (cmp) ->
     [
-      d3.min(@data, (layer) -> d3.min(layer.values, cmp)),
-      d3.max(@data, (layer) -> d3.max(layer.values, cmp))
+      d3.min(@getVisibleLayers(), (layer) -> d3.min(layer.values, cmp)),
+      d3.max(@getVisibleLayers(), (layer) -> d3.max(layer.values, cmp))
     ]
 
   # Updates the width and height members and container dimensions in response to an
