@@ -224,18 +224,24 @@ describe 'Epoch.Chart', ->
         assert.equal d3.select('#resizeDiv').height(), newHeight
 
     describe 'layers', ->
-      chart = null
+      [chart, eventChart] = [null, null]
       labels = ['A', 'B', 'C']
       data = [
         { label: 'A', data: [{x: 0, y: 0}] },
         { label: 'B', data: [{x: 1, y: 1}] },
         { label: 'C', data: [{x: 2, y: 2}] }
       ]
+      data2 = [
+        { label: 'A', data: [{x: 0, y: 0}] }
+      ]
 
       before (done) ->
         chart = new Epoch.Chart.Base
           el: doc.createElement('div')
           data: data
+        eventChart = new Epoch.Chart.Base
+          el: doc.createElement('div')
+          data: data2
         done()
 
       describe '_findLayer', ->
@@ -267,6 +273,16 @@ describe 'Epoch.Chart', ->
           chart.hideLayer('A')
           assert.isFalse chart._findLayer('A').visible
 
+        it 'should trigger layer:hidden when a layer is hidden', (done) ->
+          errorCallback = ->
+            assert false, "layer:hidden was not triggered"
+            done()
+          timeout = setTimeout errorCallback, 1000
+          eventChart.on 'layer:hidden', ->
+            clearTimeout timeout
+            done()
+          eventChart.hideLayer('A')
+
       describe 'showLayer', ->
         it 'should have keep a visible layer visible', ->
           assert.isTrue chart._findLayer('B').visible
@@ -276,7 +292,17 @@ describe 'Epoch.Chart', ->
         it 'should make a hidden layer visible', ->
           assert.isFalse chart._findLayer('A').visible
           chart.showLayer('A')
-          assert.isTrue chart._findLayer('B').visible
+          assert.isTrue chart._findLayer('A').visible
+
+        it 'should trigger layer:shown when a layer is shown', (done) ->
+          errorCallback = ->
+            assert false, "layer:shown was not triggered"
+            done()
+          timeout = setTimeout errorCallback, 1000
+          eventChart.on 'layer:shown', ->
+            clearTimeout timeout
+            done()
+          eventChart.showLayer('A')
 
       describe 'toggleLayer', ->
         it 'should hide a visible layer', ->
