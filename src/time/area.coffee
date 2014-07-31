@@ -17,18 +17,18 @@ class Epoch.Time.Area extends Epoch.Time.Stack
 
   # Draws areas for the chart
   _drawAreas: (delta=0) ->
-    [y, w] = [@y(), @w()]
-    
-    for i in [@data.length-1..0]
-      layer = @data[i]
+    [y, w, layers] = [@y(), @w(), @getVisibleLayers()]
+
+    for i in [layers.length-1..0]
+      layer = layers[i]
       @setStyles layer
       @ctx.beginPath()
 
-      [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
+      [j, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
       firstX = null
-      while (--i >= -2) and (--k >= 0)
+      while (--j >= -2) and (--k >= 0)
         entry = layer.values[k]
-        args = [(i+1)*w+delta, y(entry.y + entry.y0)]
+        args = [(j+1)*w+delta, y(entry.y + entry.y0)]
         args[0] += w if trans
         if i == @options.windowSize - 1
           @ctx.moveTo.apply @ctx, args
@@ -36,9 +36,9 @@ class Epoch.Time.Area extends Epoch.Time.Stack
           @ctx.lineTo.apply @ctx, args
 
       if trans
-        borderX = (i+3)*w+delta
+        borderX = (j+3)*w+delta
       else
-        borderX = (i+2)*w+delta
+        borderX = (j+2)*w+delta
 
       @ctx.lineTo(borderX, @innerHeight())
       @ctx.lineTo(@width*@pixelRatio+w+delta, @innerHeight())
@@ -47,10 +47,10 @@ class Epoch.Time.Area extends Epoch.Time.Stack
 
   # Draws strokes for the chart
   _drawStrokes: (delta=0) ->
-    [y, w] = [@y(), @w()]
+    [y, w, layers] = [@y(), @w(), @getVisibleLayers()]
 
-    for i in [@data.length-1..0]
-      layer = @data[i]
+    for i in [layers.length-1..0]
+      layer = layers[i]
       @setStyles layer
       @ctx.beginPath()
 

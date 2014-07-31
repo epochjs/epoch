@@ -66,8 +66,8 @@ class Epoch.Chart.Base extends Epoch.Events
   optionListeners =
     'option:width': 'dimensionsChanged'
     'option:height': 'dimensionsChanged'
-    'layer:shown': 'draw'
-    'layer:hidden': 'draw'
+    'layer:shown': 'layerChanged'
+    'layer:hidden': 'layerChanged'
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
@@ -270,6 +270,10 @@ class Epoch.Chart.Base extends Epoch.Events
     @height = @option('height') or @height
     @el.width(@width)
     @el.height(@height)
+
+  # Updates the chart in response to a layer being shown or hidden
+  layerChanged: ->
+    @draw()
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base
