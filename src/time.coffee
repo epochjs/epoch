@@ -535,17 +535,15 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @_sizeCanvas()
     @draw(@animation.frame * @animation.delta())
 
+  layerChanged: ->
+    @_transitionRangeAxes()
+    super()
+
 
 # Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)
 # @abstract It does not perform rendering but instead formats the data
 #   so as to ease the process of rendering stacked plots.
 class Epoch.Time.Stack extends Epoch.Time.Plot
-  layerChanged: ->
-    @_transitionRangeAxes()
-    @_stackLayers()
-    @_prepareLayers(layers) for layers in @_queue
-    super()
-
   # Sets stacking information (y0) for each of the points in each layer
   _stackLayers: ->
     return unless (layers = @getVisibleLayers()).length > 0
@@ -554,7 +552,6 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
       for layer in layers
         layer.values[i].y0 = y0
         y0 += layer.values[i].y
-
 
   # Adds stacking information for layers entering the visualization.
   # @param [Array] layers Layers to stack.
@@ -587,3 +584,8 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
       max = sum if sum > max
 
     [0, max]
+
+  layerChanged: ->
+    @_stackLayers()
+    @_prepareLayers(layers) for layers in @_queue
+    super()
