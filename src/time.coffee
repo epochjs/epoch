@@ -543,6 +543,7 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
   layerChanged: ->
     @_transitionRangeAxes()
     @_stackLayers()
+    @_prepareLayers(layers) for layers in @_queue
     super()
 
   # Sets stacking information (y0) for each of the points in each layer
@@ -559,7 +560,8 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
   # @param [Array] layers Layers to stack.
   _prepareLayers: (layers) ->
     y0 = 0
-    for d in layers
+    for i, d of layers
+      continue unless @data[i].visible
       d.y0 = y0
       y0 += d.y
     return layers
