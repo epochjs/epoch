@@ -40,7 +40,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   x: ->
     if @options.orientation == 'vertical'
       d3.scale.ordinal()
-        .domain(Epoch.Util.domain(@data))
+        .domain(Epoch.Util.domain(@getVisibleLayers()))
         .rangeRoundBands([0, @innerWidth()], @options.padding.group, @options.outerPadding.group)
     else
       extent = @extent((d) -> d.y)
@@ -52,7 +52,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   # @return [Function] The x scale used to render the horizontal bar chart.
   x1: (x0) ->
     d3.scale.ordinal()
-      .domain((layer.category for layer in @data))
+      .domain((layer.category for layer in @getVisibleLayers()))
       .rangeRoundBands([0, x0.rangeBand()], @options.padding.bar, @options.outerPadding.bar)
 
   # @return [Function] The y scale used to render the bar chart.
@@ -65,20 +65,20 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
         .range([@height - @margins.top - @margins.bottom, 0])
     else
       d3.scale.ordinal()
-        .domain(Epoch.Util.domain(@data))
+        .domain(Epoch.Util.domain(@getVisibleLayers()))
         .rangeRoundBands([0, @innerHeight()], @options.padding.group, @options.outerPadding.group)
 
   # @return [Function] The x scale used to render the vertical bar chart.
   y1: (y0) ->
     d3.scale.ordinal()
-      .domain((layer.category for layer in @data))
+      .domain((layer.category for layer in @getVisibleLayers()))
       .rangeRoundBands([0, y0.rangeBand()], @options.padding.bar, @options.outerPadding.bar)
 
   # Remaps the bar chart data into a form that is easier to display.
   # @return [Array] The reorganized data.
   _remapData: ->
     map = {}
-    for layer in @data
+    for layer in @getVisibleLayers()
       className = 'bar ' + layer.className.replace(/\s*layer\s*/, '')
       for entry in layer.values
         map[entry.x] ?= []
@@ -115,6 +115,8 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
     rects = layer.selectAll('rect')
       .data((group) -> group.values)
+
+    rects.attr('class', (d) -> d.className)
 
     rects.transition().duration(600)
       .attr('x', (d) -> x1(d.label))
@@ -165,6 +167,8 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
     rects = layer.selectAll('rect')
       .data((group) -> group.values)
+
+    rects.attr('class', (d) -> d.className)
 
     rects.transition().duration(600)
       .attr('x', (d) -> 0)

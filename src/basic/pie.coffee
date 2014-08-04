@@ -26,7 +26,7 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
     @g.selectAll('.arc').remove()
 
     arcs = @g.selectAll(".arc")
-      .data(@pie(@data), (d) -> d.data.category)
+      .data(@pie(@getVisibleLayers()), (d) -> d.data.category)
 
     arcs.enter().append('g')
       .attr('class', (d) -> "arc pie " + d.data.className)

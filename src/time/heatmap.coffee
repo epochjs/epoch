@@ -170,7 +170,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     bucketTotals = (0 for i in [0...@options.buckets])
     maxTotal = 0
 
-    for layer in @data
+    for layer in @getVisibleLayers()
       entry = @_getBuckets( layer.values[entryIndex] )
       for bucket, count of entry.buckets
         bucketTotals[bucket] += count
@@ -252,5 +252,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   # Changes whether or not to cut outliers when bucketing in response to an
   # <code>option:cutOutliers</code> event.
   cutOutliersChanged: -> @redraw()
+
+  layerChanged: -> @redraw()
 
 # "Audio... Audio... Audio... Video Disco..." - Justice

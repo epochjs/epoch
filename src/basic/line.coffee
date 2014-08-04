@@ -8,11 +8,15 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
 
   # Draws the line chart.
   draw: ->
-    [x, y, line] = [@x(), @y(), @line()]
+    [x, y, line, layers] = [@x(), @y(), @line(), @getVisibleLayers()]
+
+    # Zero visible layers, just drop all and get out
+    if layers.length == 0
+      return @g.selectAll('.layer').remove()
 
     # 1) Join
     layer = @g.selectAll('.layer')
-      .data(@data, (d) -> d.category)
+      .data(layers, (d) -> d.category)
 
     # 2) Update (only existing)
     layer.select('.line').transition().duration(500)

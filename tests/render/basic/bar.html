@@ -5,6 +5,7 @@
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
     </head>
     <body>
@@ -27,6 +28,7 @@
             <li><a href="#test-13">Horizontally Oriented Multi Series Transition</a></li>
             <li><a href="#test-14">Vertical to Horizontal Transition</a></li>
             <li><a href="#test-15">Padding Changes</a></li>
+            <li><a href="#test-16">Hide/Show Layers</a></li>
         </ol>
 
 
@@ -623,6 +625,40 @@
                 chart.option('padding', padding[index].padding);
                 chart.option('outerPadding', padding[index].outerPadding);
             });
+        });
+        </script>
+
+        <div id="test-16" class="test">
+            <h2>16. Hide/Show Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="toggle" data-index="0">Toggle A</button>
+                <button class="toggle" data-index="1">Toggle B</button>
+                <button class="toggle" data-index="2">Toggle C</button>
+                |
+                <button class="orientation">Orientation</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-16 .epoch').epoch({
+                type: 'bar',
+                data: data().add(function(x) { return x; })
+                    .add(function(x) { return 1.5*x; })
+                    .add(function(x) { return 2.0*x; }).get([0, 10], 1)
+            });
+
+            $('#test-16 button.toggle').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+
+            $('#test-16 button.orientation').click(function(e) {
+                if (chart.option('orientation') == 'vertical')
+                    chart.option('orientation', 'horizontal')
+                else
+                    chart.option('orientation', 'vertical')
+            })
         });
         </script>
     </body>

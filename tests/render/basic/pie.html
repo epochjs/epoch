@@ -26,6 +26,7 @@
             <li><a href="#test-7">Pie Chart Layers without Labels</a></li>
             <li><a href="#test-8">Margin Changes</a></li>
             <li><a href="#test-9">Inner Changes</a></li>
+            <li><a href="#test-10">Show/Hide Layers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -312,6 +313,33 @@
                 var inner = innerMargins[parseInt($(e.target).attr('data-index'))];
                 chart.option('inner', inner);
             });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Show/Hide Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Toggle A</button>
+                <button data-index="1">Toggle B</button>
+                <button data-index="2">Toggle C</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-10 .epoch').epoch({
+                type: 'pie',
+                data: [
+                    {label: 'A', value: 20},
+                    {label: 'B', value: 45},
+                    {label: 'C', value: 35}
+                ]
+            });
+            $('#test-10 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            }); 
         });
         </script>
     </body>

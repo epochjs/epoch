@@ -25,6 +25,7 @@
             <li><a href="#test-11">Option: bucketPadding</a></li>
             <li><a href="#test-12">Option: cutOutliers</a></li>
             <li><a href="#test-13">Option: opacity</a></li>
+            <li><a href="#test-14">Show/Hide Layer</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -502,6 +503,55 @@
             $('#test-13 select.opacity').on('change', function(e) {
                 var opacity = $('#test-13 select.opacity').val();
                 chart.option('opacity', opacity);
+            });
+        });
+        </script>
+
+        <div id="test-14" class="test">
+            <h2>14. Show/Hide Layer</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="toggle" data-index="0">Toggle A</button>
+                <button class="toggle" data-index="1">Toggle B</button> |
+                <button class="playback">Play</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var normal = new NormalData(1),
+                normalData = normal.history(120)[0],
+                beta = new BetaData(2, 5, 1),
+                betaData = beta.history(120)[0],
+                data = [normalData, betaData],
+                interval = null;
+
+            var chart = $('#test-14 .epoch').epoch({
+                type: 'time.heatmap',
+                data: data,
+                windowSize: 120,
+                buckets: 20
+            });
+
+            $('#test-14 .toggle').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+
+            function pushNext() {
+                chart.push([normal.next()[0], beta.next()[0]]);
+            }
+
+            $('#test-14 .playback').on('click', function(e) {
+                if (interval == null) {
+                    pushNext();
+                    interval = setInterval(pushNext, 1000);
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');   
+                }
             });
         });
         </script>

@@ -26,6 +26,7 @@
             <li><a href="#test-6">Multi Seires Stream</a></li>
             <li><a href="#test-7">Color Override</a></li>
             <li><a href="#test-8">Categorical Colors</a></li>
+            <li><a href="#test-9">Show/Hide Layers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -389,6 +390,75 @@ chart.draw();
                 chart.draw();
             });
         });
-        </script>        
+        </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Show/Hide Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="toggle" data-index="0">Toggle A</button>
+                <button class="toggle" data-index="1">Toggle B</button>
+                <button class="toggle" data-index="2">Toggle C</button> |
+                <button class="playback">Play</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 40,
+                nextIndex = length,
+                scale = 0.1,
+                playing = false,
+                interval = null;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i+1) * scale,
+                    time = nextTime();
+                data[0].values.push({time: time, y: x});
+                data[1].values.push({time: time, y: x * Math.log(x)});
+                data[2].values.push({time: time, y: x * Math.pow(Math.log(x), 2)});
+            }
+
+            var chart = $('#test-9 .epoch').epoch({
+                type: 'time.line',
+                data: data,
+                axes: ['right', 'bottom']
+            });
+
+            $('#test-9 .toggle').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+
+            var pushPoint = function() {
+                var x = (nextIndex +1) * scale,
+                    time = nextTime();
+                chart.push([
+                    { time: time, y: x},
+                    { time: time, y: x * Math.log(x)},
+                    { time: time, y: x * Math.pow(Math.log(x), 2)}
+                ]);
+                nextIndex++;
+            };
+
+            $('#test-9 .playback').on('click', function(e) {
+                if (playing) {
+                    $(e.target).text('Play');
+                    clearInterval(interval);
+                }
+                else {
+                    $(e.target).text('Pause');
+                    interval = setInterval(pushPoint, 1000);
+                    pushPoint();
+                }
+                playing = !playing;
+            });
+        });
+        </script>
     </body>
 </html>

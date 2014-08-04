@@ -26,6 +26,7 @@
             <li><a href="#test-6">Multi Seires Stream</a></li>
             <li><a href="#test-7">Color Override</a></li>
             <li><a href="#test-8">Categorical Colors</a></li>
+            <li><a href="#test-9">Show/Hide Layers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -389,6 +390,65 @@ chart.draw();
                 chart.draw();
             });
         });
-        </script>        
+        </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Show/Hide Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="toggle" data-index="0">Toggle A</button>
+                <button class="toggle" data-index="1">Toggle B</button>
+                <button class="toggle" data-index="2">Toggle C</button> |
+                <button class="playback">Play</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    { label: 'A', values: [] },
+                    { label: 'B', values: [] },
+                    { label: 'C', values: [] }
+                ],
+                time = nextTime(),
+                j = 0,
+                interval = null;
+
+            for (var i = 0; i < data.length; i++) {
+                for (j = 0; j < 60; j++) {
+                    data[i].values.push({time: time+j, y: 0.25*(i+4)*j })
+                }
+            }
+
+            function nextPoint() {
+                var entry = []
+                for (var i = 0; i < data.length; i++) {
+                    entry.push({time: time+j, y: 0.25*(i+4)*j });
+                }
+                chart.push(entry);
+                j++;
+            }
+
+            var chart = $('#test-9 .epoch').epoch({ type: 'time.bar', data: data });
+
+            $('#test-9 .toggle').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+
+            $('#test-9 .playback').click(function(e) {
+                if (interval == null) {
+                    interval = setInterval(nextPoint, 1000);
+                    nextPoint();
+                    $(e.target).text('Pause');
+                }
+                else {
+                    clearInterval(interval);
+                    interval = null;
+                    $(e.target).text('Play');
+                }
+            });
+        });
+        </script>
     </body>
 </html>

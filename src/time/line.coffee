@@ -19,7 +19,7 @@ class Epoch.Time.Line extends Epoch.Time.Plot
     @clear()
     [y, w] = [@y(), @w()]
 
-    for layer in @data
+    for layer in @getVisibleLayers()
       continue unless layer.values.length > 0
       @setStyles(layer.className)
       @ctx.beginPath()

@@ -5,6 +5,7 @@
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
     </head>
     <body>
@@ -22,6 +23,7 @@
             <li><a href="#test-8">Layer Color Override</a></li>
             <li><a href="#test-9">Categorical Color Switching</a></li>
             <li><a href="#test-10">Multi Series without Labels</a></li>
+            <li><a href="#test-11">Hide/Show Layers</a></li>
         </ol>
 
 
@@ -413,6 +415,33 @@
             }
 
             $('#test-10 .epoch').epoch({ type: 'area', data: data });
+        });
+        </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>11. Hide/Show Layers</h2>
+            <p>Correctly hide and show multiple layers</p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Toggle A</button>
+                <button data-index="1">Toggle B</button>
+                <button data-index="2">Toggle C</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-11 .epoch').epoch({
+                type: 'area',
+                data: data().add(function(x) { return x; })
+                    .add(function(x) { return 1.5*x; })
+                    .add(function(x) { return 2.0*x; }).get([0, 10], 1)
+            });
+
+            $('#test-11 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
         });
         </script>
 

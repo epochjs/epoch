@@ -151,6 +151,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       classes.push "category#{(i|0)+1}"
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       copy.className = classes.join(' ')
+      copy.visible = true
       @data.push copy
 
 
@@ -534,16 +535,30 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @_sizeCanvas()
     @draw(@animation.frame * @animation.delta())
 
+  layerChanged: ->
+    @_transitionRangeAxes()
+    super()
+
 
 # Base class for all "stacked" plot types (e.g. bar charts, area charts, etc.)
 # @abstract It does not perform rendering but instead formats the data
 #   so as to ease the process of rendering stacked plots.
 class Epoch.Time.Stack extends Epoch.Time.Plot
+  # Sets stacking information (y0) for each of the points in each layer
+  _stackLayers: ->
+    return unless (layers = @getVisibleLayers()).length > 0
+    for i in [0...layers[0].values.length]
+      y0 = 0
+      for layer in layers
+        layer.values[i].y0 = y0
+        y0 += layer.values[i].y
+
   # Adds stacking information for layers entering the visualization.
   # @param [Array] layers Layers to stack.
   _prepareLayers: (layers) ->
     y0 = 0
-    for d in layers
+    for i, d of layers
+      continue unless @data[i].visible
       d.y0 = y0
       y0 += d.y
     return layers
@@ -552,21 +567,25 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
   # @param [Array] data Layered data to set for the visualization.
   setData: (data) ->
     super(data)
-    for i in [0...@data[0].values.length]
-      y0 = 0
-      for layer in @data
-        layer.values[i].y0 = y0
-        y0 += layer.values[i].y
+    @_stackLayers()
 
   # Finds the correct extent to use for range axes (left and right).
   # @return [Array] An extent array with the first element equal to 0
   #   and the second element equal to the maximum value amongst the
   #   stacked entries.
   extent: ->
-    max = 0
-    for i in [0...@data[0].values.length]
+    [max, layers] = [0, @getVisibleLayers()]
+    return [0, 0] unless layers.length
+
+    for i in [0...layers[0].values.length]
       sum = 0
-      for j in [0...@data.length]
-        sum += @data[j].values[i].y
+      for j in [0...layers.length]
+        sum += layers[j].values[i].y
       max = sum if sum > max
+
     [0, max]
+
+  layerChanged: ->
+    @_stackLayers()
+    @_prepareLayers(layers) for layers in @_queue
+    super()

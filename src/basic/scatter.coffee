@@ -14,11 +14,14 @@ class Epoch.Chart.Scatter extends Epoch.Chart.Plot
 
   # Draws the scatter plot.
   draw: ->
-    [x, y] = [@x(), @y()]
+    [x, y, layers] = [@x(), @y(), @getVisibleLayers()]
     radius = @options.radius
 
+    if layers.length == 0
+      return @g.selectAll('.layer').remove()
+
     layer = @g.selectAll('.layer')
-      .data(@data, (d) -> d.category)
+      .data(layers, (d) -> d.category)
 
     layer.enter().append('g')
       .attr('class', (d) -> d.className)

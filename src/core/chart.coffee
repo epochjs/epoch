@@ -66,6 +66,8 @@ class Epoch.Chart.Base extends Epoch.Events
   optionListeners =
     'option:width': 'dimensionsChanged'
     'option:height': 'dimensionsChanged'
+    'layer:shown': 'layerChanged'
+    'layer:hidden': 'layerChanged'
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
@@ -171,11 +173,71 @@ class Epoch.Chart.Base extends Epoch.Events
       classes = ['layer']
       classes.push "category#{category}"
       layer.category = category
+      layer.visible = true
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       layer.className = classes.join(' ')
       category++
 
     @data = data
+
+  # Finds a layer in the chart's current data that has the given label or index.
+  # @param [String, Number] labelOrIndex The label or index of the layer to find.
+  _findLayer: (labelOrIndex) ->
+    layer = null
+    if Epoch.isString(labelOrIndex)
+      for l in @data
+        if l.label == labelOrIndex
+          layer = l
+          break
+    else if Epoch.isNumber(labelOrIndex)
+      index = parseInt(labelOrIndex)
+      layer = @data[index] unless index < 0 or index >= @data.length
+    return layer
+
+  # Instructs the chart that a data layer should be displayed.
+  # @param [String, Number] labelOrIndex The label or index of the layer to show.
+  # @event 'layer:shown' If a layer that was previously hidden now became visible.
+  showLayer: (labelOrIndex) ->
+    return unless (layer = @_findLayer labelOrIndex)
+    return if layer.visible
+    layer.visible = true
+    @trigger 'layer:shown'
+
+  # Instructs the chart that a data layer should not be displayed.
+  # @param [String, Number] labelOrIndex The label or index of the layer to hide.
+  # @event 'layer:hidden' If a layer that was visible was made hidden.
+  hideLayer: (labelOrIndex) ->
+    return unless (layer = @_findLayer labelOrIndex)
+    return unless layer.visible
+    layer.visible = false
+    @trigger 'layer:hidden'
+
+  # Instructs the chart that a data layer's visibility should be toggled.
+  # @param [String, Number] labelOrIndex The label or index of the layer to toggle.
+  # @event 'layer:shown' If the layer was made visible
+  # @event 'layer:hidden' If the layer was made invisible
+  toggleLayer: (labelOrIndex) ->
+    return unless (layer = @_findLayer labelOrIndex)
+    layer.visible = !layer.visible
+    if layer.visible
+      @trigger 'layer:shown'
+    else
+      @trigger 'layer:hidden'
+
+  # Determines whether or not a data layer is visible.
+  # @param [String, Number] labelOrIndex The label or index of the layer to toggle.
+  # @return <code>true</code> if the layer is visible, <code>false</code> otherwise.
+  isLayerVisible: (labelOrIndex) ->
+    return null unless (layer = @_findLayer labelOrIndex)
+    layer.visible
+
+  # Calculates an array of layers in the charts data that are flagged as visible.
+  # @return [Array] The chart's visible layers.
+  getVisibleLayers: ->
+    visible = []
+    for layer in @data
+      visible.push(layer) if layer.visible
+    return visible
 
   # Updates the chart with new data.
   # @param data Data to replace the current data for the chart.
@@ -197,8 +259,8 @@ class Epoch.Chart.Base extends Epoch.Events
   #   chart's data set and the second element as the maximum.
   extent: (cmp) ->
     [
-      d3.min(@data, (layer) -> d3.min(layer.values, cmp)),
-      d3.max(@data, (layer) -> d3.max(layer.values, cmp))
+      d3.min(@getVisibleLayers(), (layer) -> d3.min(layer.values, cmp)),
+      d3.max(@getVisibleLayers(), (layer) -> d3.max(layer.values, cmp))
     ]
 
   # Updates the width and height members and container dimensions in response to an
@@ -208,6 +270,10 @@ class Epoch.Chart.Base extends Epoch.Events
     @height = @option('height') or @height
     @el.width(@width)
     @el.height(@height)
+
+  # Updates the chart in response to a layer being shown or hidden
+  layerChanged: ->
+    @draw()
 
 # Base class for all SVG charts (via d3).
 class Epoch.Chart.SVG extends Epoch.Chart.Base
