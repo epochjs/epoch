@@ -5,6 +5,7 @@ Epoch._typeMap =
   'line': Epoch.Chart.Line
   'pie': Epoch.Chart.Pie
   'scatter': Epoch.Chart.Scatter
+  'histogram': Epoch.Chart.Histogram
   'time.area': Epoch.Time.Area
   'time.bar': Epoch.Time.Bar
   'time.line': Epoch.Time.Line

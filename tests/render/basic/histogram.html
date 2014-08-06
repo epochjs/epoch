@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+
+        <script>
+        window.beta = function(a, b) {
+            a = a ? a : 2;
+            b = b ? b : 5;
+
+            var histogram = new BetaData(a, b, 1).next()[0].histogram,
+                values = [];
+
+            for(var x in histogram)
+                values.push({x: x, y: histogram[x]})
+
+            return [{values: values}];
+        }
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+    </head>
+    <body>
+        <h1>Basic Bar Chart Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Bar</p>
+
+        <ol>
+            <li><a href="#test-1">Beta(2, 5)</a></li>
+            <li><a href="#test-2">Beta(2, 5) Horizontal</a></li>
+            <li><a href="#test-3">Option: buckets</a></li>
+            <li><a href="#test-4">Options: bucketRange &amp; cutOutliers</a></li>
+        </ol>
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Beta(2, 5)</h2>
+            <p>Plot a random selection of points from the Beta(2, 5) distribution as a histogram.</p>
+            <div class="epoch"></div>
+            <p><button>Refresh</button></p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-1 .epoch').epoch({
+                type: 'histogram',
+                buckets: 20,
+                data: beta(2, 5)
+            });
+
+            $('#test-1 button').click(function(e) {
+                chart.update( beta(2, 5) );
+            });
+        });
+        </script>
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Beta(2, 5) Horizontal</h2>
+            <p>Plot a random selection of points from Beta(2, 5) and display in a horizontal histogram.</p>
+            <div class="epoch"></div>
+            <p><button>Refresh</button></p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-2 .epoch').epoch({
+                type: 'histogram',
+                buckets: 10,
+                data: beta(2, 5),
+                orientation: 'horizontal'
+            });
+
+            $('#test-2 button').click(function(e) {
+                chart.update( beta(2, 5) );
+            });
+        });
+        </script>
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Option: buckets</h2>
+            <p>Plot Beta(2, 2) and change number of buckets on the fly.</p>
+            <div class="epoch"></div>
+            <p>
+                <button data-value="5">5 Buckets</button>
+                <button data-value="10">10 Buckets</button>
+                <button data-value="20">20 Buckets</button>
+                <button data-value="25">25 Buckets</button>
+                <button data-value="50">50 Buckets</button> |
+                <button class="refresh">Refresh</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-3 .epoch').epoch({
+                type: 'histogram',
+                buckets: 10,
+                data: beta(2, 2)
+            });
+
+            $('#test-3 button[data-value]').click(function(e) {
+                var buckets = parseInt($(e.target).attr('data-value'));
+                chart.option('buckets', buckets);
+            });
+
+            $('#test-3 button.refresh').click(function(e) {
+                chart.update( beta(2, 2) );
+            });
+        });
+        </script>
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Options: bucketRange &amp; cutOutliers</h2>
+            <p>Plot beta(2, 5) and change the bucket range on the fly.</p>
+            <div class="epoch"></div>
+            <p>
+                <button data-range="0,100">Range [0, 100]</button>
+                <button data-range="0,50">Range [0, 50]</button>
+                <button data-range="25,75">Range [25, 75]</button> |
+                <button class="cutOutliers">Cut Outliers</button>
+                <button class="keepOutliers">Keep Outliers</button> |
+                <button class="refresh">Refresh</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-4 .epoch').epoch({
+                type: 'histogram',
+                buckets: 25,
+                data: beta(2, 5)
+            });
+
+            $('#test-4 button[data-range]').click(function(e) {
+                var range = $(e.target).attr('data-range').split(',').map(function(d) { return +d; });
+                chart.option('bucketRange', range);
+            });
+
+            $('#test-4 .cutOutliers').click(function(e) {
+                chart.option('cutOutliers', true);
+            });
+
+            $('#test-4 .keepOutliers').click(function(e) {
+                chart.option('cutOutliers', false);
+            });
+
+            $('#test-4 button.refresh').click(function(e) {
+                chart.update( beta(2, 5) );
+            });
+        });
+        </script>
+    </body>
+</html>
