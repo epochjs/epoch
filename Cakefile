@@ -17,6 +17,7 @@ package_order = [
   'core/format.js',
   'core/chart.js',
   'core/css.js',
+  'data.js',
   'basic.js',
   'basic/*.js',
   'time.js',
@@ -143,7 +144,7 @@ task 'documentation', 'Compiles API documentation', ->
 task 'test', 'Runs unit tests', ->
   after 'build', ->
     console.log "Testing..."
-    exec "./node_modules/.bin/mocha --recursive --compilers coffee:coffee-script/register tests/unit/", (err, stdout, stderr) ->
+    exec "./node_modules/.bin/mocha --reporter dot --recursive --compilers coffee:coffee-script/register tests/unit/", (err, stdout, stderr) ->
       console.log stderr + stdout
   invoke 'build'
 
