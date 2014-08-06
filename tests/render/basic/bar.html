@@ -661,5 +661,25 @@
             })
         });
         </script>
+
+        <div id="test-17" class="test">
+            <h2>17. Histogram</h2>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var histogram = new BetaData(2, 5, 1).next()[0].histogram,
+                values = [];
+
+            for(var x in histogram)
+                values.push({x: x, y: histogram[x]})
+
+            $('#test-17 .epoch').epoch({
+                type: 'histogram',
+                buckets: 20,
+                data: [{values: values}]
+            });
+        });
+        </script>
     </body>
 </html>
