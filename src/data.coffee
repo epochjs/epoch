@@ -1,4 +1,5 @@
-Epoch.DataFormat = {}
+Epoch.Data ?= {}
+Epoch.Data.Format ?= {}
 
 # Default options for Data Formats
 defaultOptions =
@@ -37,7 +38,7 @@ applyLayerLabel = (layer, options, i) ->
 # @option options [Boolean] autoLabels Apply labels of ascending capital letters to each layer if true.
 # @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in 
 #   real-time data formatting.
-Epoch.DataFormat.array = (->
+Epoch.Data.Format.array = (->
   buildLayers = (data, options, mapFn) ->
     result = []
     if Epoch.isArray(data[0])
@@ -79,3 +80,11 @@ Epoch.DataFormat.array = (->
     else
       formatBasicPlot data, opt
 )()
+
+# Convenience data formatting method for easily accessing the various formatters.
+# @param [String] formatter Name of the formatter to use.
+# @param [Array] data Data to format.
+# @param [Object] options Options to pass to the formatter (if any).
+Epoch.data = (formatter, data, options={}) ->
+  return [] unless (formatFn = Epoch.Data.Format[formatter])?
+  formatFn(data, options)
