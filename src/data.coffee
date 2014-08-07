@@ -2,10 +2,12 @@ Epoch.Data ?= {}
 Epoch.Data.Format ?= {}
 
 # Private Helper Function for DataFormats below
-applyLayerLabel = (layer, options, i) ->
-  [labels, autoLabels] = [options.labels, options.autoLabels]
+applyLayerLabel = (layer, options, i, keys=[]) ->
+  [labels, autoLabels, keyLabels] = [options.labels, options.autoLabels, options.keyLabels]
   if labels? and Epoch.isArray(labels) and labels.length > i
     layer.label = labels[i]
+  else if keyLabels and keys.length > i
+    layer.label = keys[i]
   else if autoLabels
     label = []
     while i >= 0
@@ -80,7 +82,6 @@ Epoch.Data.Format.array = (->
       formatBasicPlot data, opt
 )()
 
-
 # Formats an input array of tuples such that the first element of the tuple is set
 # as the x-coordinate and the second element as the y-coordinate. Supports layers
 # of tupled series. For real-time plots the first element of a tuple is set as the
@@ -134,8 +135,10 @@ Epoch.Data.Format.tuple = (->
 # It then extracts the value for each key across each of the objects in the array
 # to produce multi-layer plot data of the given chart type. Note that this formatter
 # also can be passed an <code>x</code> or <code>time</code> option as a string that
-# allows the programmer specify a kto define which key to use for the value of the
-# first component of each resulting layer value.
+# allows the programmer specify a key to use for the value of the first component 
+# (x or time) of each resulting layer value.
+#
+# Note that this format does not work with basic pie charts nor real-time gauge charts.
 #
 # @param [Array] data Flat array of objects to format.
 # @param [Array] keys List of keys used to extract data from each of the objects.
@@ -144,18 +147,68 @@ Epoch.Data.Format.tuple = (->
 #   the resulting values or a function of the data at that point and index of the data.
 # @option options [Functoon, String] time Either an object key or function to use for the
 #   time-component of resulting real-time plot values.
+# @option options [Function] y(d, i) Maps the data to y values given a data point and the index of the point.
 # @option options [Array] labels Labels to apply to each data layer.
 # @option options [Boolean] autoLabels Apply labels of ascending capital letters to each layer if true.
-# @option options [Boolean] keyLabels Apply labels using the keys passed to the formatter.
+# @option options [Boolean] keyLabels Apply labels using the keys passed to the formatter (defaults to true).
+# @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in 
+#   real-time data formatting.
 Epoch.Data.Format.keyvalue = (->
-  (data=[], keys=[], options={}) ->
-)()
+  defaultOptions =
+    type: 'area',
+    x: (d, i) -> parseInt(i)
+    y: (d, i) -> d
+    time: (d, i, startTime) -> parseInt(startTime) + parseInt(i)
+    labels: []
+    autoLabels: false
+    keyLabels: true
+    startTime: parseInt(new Date().getTime() / 1000)
 
+  buildLayers = (data, keys, options, mapFn) ->
+    result = []
+    for j, key of keys
+      values = []
+      for i, d of data
+        values.push mapFn(d, key, parseInt(i))
+      result.push applyLayerLabel({ values: values }, options, parseInt(j), keys)
+    return result
+
+  formatBasicPlot = (data, keys, options) ->
+    buildLayers data, keys, options, (d, key, i) ->
+      if Epoch.isString(options.x)
+        x = d[options.x]
+      else
+        x = options.x(d, parseInt(i))
+      { x: x, y: options.y(d[key], parseInt(i)) }
+
+  formatTimePlot = (data, keys, options, rangeName='y') ->
+    buildLayers data, keys, options, (d, key, i) ->
+      if Epoch.isString(options.time)
+        value = { time: d[options.time] }
+      else
+        value = { time: options.time(d, parseInt(i), options.startTime) }
+      value[rangeName] = options.y(d[key], parseInt(i))
+      value
+
+  (data=[], keys=[], options={}) ->
+    return [] unless Epoch.isArray(data) and data.length > 0 and keys.length > 0
+    opt = Epoch.Util.defaults options, defaultOptions
+
+    if opt.type == 'pie' or opt.type == 'time.gauge'
+      return []
+    else if opt.type == 'time.heatmap'
+      formatTimePlot data, keys, opt, 'histogram'
+    else if opt.type.match /^time\./
+      formatTimePlot data, keys, opt
+    else
+      formatBasicPlot data, keys, opt
+
+)()
 
 # Convenience data formatting method for easily accessing the various formatters.
 # @param [String] formatter Name of the formatter to use.
 # @param [Array] data Data to format.
 # @param [Object] options Options to pass to the formatter (if any).
-Epoch.data = (formatter, data, options={}) ->
+Epoch.data = (formatter, args...) ->
   return [] unless (formatFn = Epoch.Data.Format[formatter])?
-  formatFn(data, options)
+  formatFn.apply formatFn, args
