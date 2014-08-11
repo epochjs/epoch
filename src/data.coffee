@@ -1,7 +1,7 @@
 Epoch.Data ?= {}
 Epoch.Data.Format ?= {}
 
-# Private Helper Function for DataFormats below
+# Private Helper Function for data formats below
 applyLayerLabel = (layer, options, i, keys=[]) ->
   [labels, autoLabels, keyLabels] = [options.labels, options.autoLabels, options.keyLabels]
   if labels? and Epoch.isArray(labels) and labels.length > i
@@ -145,7 +145,7 @@ Epoch.Data.Format.tuple = (->
 # @option options [String] type Type of chart for which to format the data.
 # @option options [Function, String] x Either the key to use for the x-componet of
 #   the resulting values or a function of the data at that point and index of the data.
-# @option options [Functoon, String] time Either an object key or function to use for the
+# @option options [Function, String] time Either an object key or function to use for the
 #   time-component of resulting real-time plot values.
 # @option options [Function] y(d, i) Maps the data to y values given a data point and the index of the point.
 # @option options [Array] labels Labels to apply to each data layer.
