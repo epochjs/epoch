@@ -2,6 +2,7 @@
 # Static scatter plot implementation (using d3).
 class Epoch.Chart.Scatter extends Epoch.Chart.Plot
   defaults =
+    type: 'scatter'
     radius: 3.5
     axes: ['top', 'bottom', 'left', 'right']
 

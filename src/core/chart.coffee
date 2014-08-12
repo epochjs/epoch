@@ -5,6 +5,7 @@ class Epoch.Chart.Base extends Epoch.Events
   defaults =
     width: 320
     height: 240
+    dataFormat: null
 
   optionListeners =
     'option:width': 'dimensionsChanged'
@@ -20,7 +21,10 @@ class Epoch.Chart.Base extends Epoch.Events
     super()
 
     @setData(@options.data or [])
-    @el = d3.select(@options.el) if @options.el?
+
+    if @options.el?
+      @el = d3.select(@options.el)
+
     @width = @options.width
     @height = @options.height
 
@@ -30,6 +34,9 @@ class Epoch.Chart.Base extends Epoch.Events
     else
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
+      @el = d3.select(document.createElement('DIV'))
+        .attr('width', @width)
+        .attr('height', @height)
 
     @onAll optionListeners
 
@@ -110,9 +117,10 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param data Data to initially set for the given chart. The data format can vary
   #   from chart to chart. The base class assumes that the data provided will be an
   #   array of layers.
-  setData: (data) ->
+  setData: (data, options={}) ->
+    prepared = @_prepareData (@rawData = @_formatData(data))
     category = 1
-    for layer in data
+    for layer in prepared
       classes = ['layer']
       classes.push "category#{category}"
       layer.category = category
@@ -120,8 +128,39 @@ class Epoch.Chart.Base extends Epoch.Events
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       layer.className = classes.join(' ')
       category++
+    @data = prepared
 
-    @data = data
+  # Performs post formatted data preparation.
+  # @param data Data to prepare before setting.
+  # @return The prepared data.
+  _prepareData: (data) -> data
+
+  # Performs data formatting before setting the charts data
+  # @param data Data to be formatted.
+  # @return The chart specific formatted data.
+  _formatData: (data) ->
+    return data unless @options.dataFormat?
+
+    if Epoch.isString(@options.dataFormat)
+      opts = { type: @options.type }
+      return Epoch.data(@options.dataFormat, data, opts)
+
+    return data unless Epoch.isObject(@options.dataFormat)
+    return data unless @options.dataFormat.name? and Epoch.isString(@options.dataFormat.name)
+    return data unless Epoch.Data.Format[@options.dataFormat.name]?
+
+    args = [@options.dataFormat.name, data]
+    if @options.dataFormat.arguments? and Epoch.isArray(@options.dataFormat.arguments)
+      args.push(a) for a in @options.dataFormat.arguments
+
+    if @options.dataFormat.options?
+      opts = @options.dataFormat.options
+      opts.type ?= @options.type if @options.type?
+      args.push opts
+    else if @options.type?
+      args.push {type: @options.type}
+
+    Epoch.data.apply(Epoch.data, args)
 
   # Finds a layer in the chart's current data that has the given label or index.
   # @param [String, Number] labelOrIndex The label or index of the layer to find.

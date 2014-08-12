@@ -2,6 +2,7 @@
 # Real-time Gauge Visualization. Note: Looks best with a 4:3 aspect ratio (w:h)
 class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   defaults =
+    type: 'time.gauge'
     domain: [0, 1]
     ticks: 10
     tickSize: 5

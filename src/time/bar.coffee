@@ -1,6 +1,9 @@
 
 # Real-time Bar Chart implementation.
 class Epoch.Time.Bar extends Epoch.Time.Stack
+  constructor: (@options={}) ->
+    @options.type ?= 'time.bar'
+    super(@options)
 
   # @return [Number] An offset used to align the ticks to the center of the rendered bars.
   _offsetX: ->

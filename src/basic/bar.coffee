@@ -1,6 +1,7 @@
 # Static bar chart implementation (using d3).
 class Epoch.Chart.Bar extends Epoch.Chart.Plot
   defaults =
+    type: 'bar'
     style: 'grouped'
     orientation: 'vertical'
     padding:

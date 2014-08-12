@@ -142,8 +142,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # Sets the data for the visualization (truncated to the history size as defined in the options).
   # @param [Array] data Layered data to set for the visualization.
   setData: (data) ->
+    prepared = @_prepareData (@rawData = @_formatData(data))
     @data = []
-    for i, layer of data
+    for i, layer of prepared
       copy = Epoch.Util.copy(layer)
       start = Math.max(0, layer.values.length - @options.historySize)
       copy.values = layer.values.slice(start)

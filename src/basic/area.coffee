@@ -1,6 +1,9 @@
 
 # Static stacked area chart implementation using d3.
 class Epoch.Chart.Area extends Epoch.Chart.Plot
+  constructor: (@options={}) ->
+    @options.type ?= 'area'
+    super(@options)
 
   # Generates a scale needed to appropriately render the stacked visualization.
   # @return [Function] The y scale for the visualization.

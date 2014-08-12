@@ -1,5 +1,6 @@
 class Epoch.Chart.Histogram extends Epoch.Chart.Bar
   defaults =
+    type: 'histogram'
     domain: [0, 100]
     bucketRange: [0, 100]
     buckets: 10
@@ -13,10 +14,6 @@ class Epoch.Chart.Histogram extends Epoch.Chart.Bar
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @onAll optionListeners
-
-  setData: (data) ->
-    @rawData = data
-    super @_prepareData(data)
 
   # Prepares data by sorting it into histogram buckets as instructed by the chart options.
   # @param [Array] data Data to prepare for rendering.

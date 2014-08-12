@@ -1,6 +1,10 @@
 
 # Real-time line chart implementation
 class Epoch.Time.Line extends Epoch.Time.Plot
+  constructor: (@options={}) ->
+    @options.type ?= 'time.line'
+    super(@options)
+
   # Sets the graphics context styles based ont he given layer class name.
   # @param [String] className The class name of the layer for which to set the styles.
   setStyles: (className) ->
