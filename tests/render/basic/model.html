@@ -35,14 +35,36 @@
 
         <script>
         $(function() {
-            window.model = new Epoch.Model({
-                dataFormat: 'array'
-            });
+            var dataA = [];
+            for (var j = 0; j < 3; j++) {
+                var layer = [];
+                for (var i = 0; i < 20; i++) {
+                    layer.push(50 + Math.random()*20);
+                }
+                dataA.push(layer);
+            }
 
-            model.on('data:updated', function(e) {
-                console.log("UPDATED");
-            });
+            var dataB = [];
+            for (var j = 0; j < 2; j++) {
+                var layer = [];
+                for (i = 0; i < 30; i++) {
+                    layer.push(10 + Math.random() * 40)
+                }
+                dataB.push(layer);
+            }
 
+            var dataC = [];
+            for (var i = 0; i < 50; i++) {
+                dataC.push(Math.random() * 100);
+            }
+
+            var data = [dataA, dataB, dataC];
+
+            // Setup the model
+            window.model = new Epoch.Model({ dataFormat: 'array' });
+            model.setData(dataA);
+
+            // Make the charts and associate them with the model
             var sparkline = $('#sparkline').epoch({
                 type: 'line',
                 axes: ['left', 'right'],
@@ -51,26 +73,21 @@
 
             var area = $('#area').epoch({
                 type: 'area',
-                axes: ['left', 'right'],
+                axes: ['left', 'right', 'bottom'],
                 model: model
             });
 
-            var bar = $('#bar').epoch({
+            window.bar = $('#bar').epoch({
                 type: 'bar',
                 axes: ['left', 'right', 'bottom'],
                 model: model
             });
 
-            var data = [];
-            for (var j = 0; j < 3; j++) {
-                layer = []
-                for (var i = 0; i < 20; i++) {
-                    layer.push(50 + Math.random()*20);
-                }
-                data.push(layer);
-            }
-
-            model.setData(data);
+            // Click listeners for the buttons
+            $('button.set').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                model.setData(data[index]);
+            });
         })
         </script>
     </body>
