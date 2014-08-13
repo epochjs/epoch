@@ -68,7 +68,7 @@ Epoch.Data.Format.array = (->
       result.push applyLayerLabel({ value: v }, options, i)
     return result
         
-  (data=[], options={}) ->
+  format = (data=[], options={}) ->
     return [] unless Epoch.isArray(data) and data.length > 0
     opt = Epoch.Util.defaults options, defaultOptions
 
@@ -80,6 +80,8 @@ Epoch.Data.Format.array = (->
       formatPie data, opt
     else
       formatBasicPlot data, opt
+
+  return format
 )()
 
 # Formats an input array of tuples such that the first element of the tuple is set
@@ -212,3 +214,31 @@ Epoch.Data.Format.keyvalue = (->
 Epoch.data = (formatter, args...) ->
   return [] unless (formatFn = Epoch.Data.Format[formatter])?
   formatFn.apply formatFn, args
+
+# Method used by charts and models for handling option based data formatting.
+# Abstracted here because we'd like to allow models and indivisual charts to
+# perform this action depending on the context.
+Epoch.Data.formatData = (data=[], type='area', dataFormat) ->
+  return data unless dataFormat? and data.length > 0
+
+  if Epoch.isString(dataFormat)
+    opts = { type: type }
+    return Epoch.data(dataFormat, data, opts)
+
+  return data unless Epoch.isObject(dataFormat)
+  return data unless dataFormat.name? and Epoch.isString(dataFormat.name)
+  return data unless Epoch.Data.Format[dataFormat.name]?
+
+  args = [dataFormat.name, data]
+  if dataFormat.arguments? and Epoch.isArray(dataFormat.arguments)
+    args.push(a) for a in dataFormat.arguments
+
+  if dataFormat.options?
+    opts = dataFormat.options
+    if type?
+      opts.type ?= type
+    args.push opts
+  else if type?
+    args.push {type: type}
+
+  Epoch.data.apply(Epoch.data, args)

@@ -18,6 +18,7 @@ package_order = [
   'core/chart.js',
   'core/css.js',
   'data.js',
+  'model.js',
   'basic.js',
   'basic/*.js',
   'time.js',

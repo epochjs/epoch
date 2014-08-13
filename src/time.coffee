@@ -138,12 +138,11 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @svg.selectAll('.axis').remove()
     @_prepareTimeAxes()
     @_prepareRangeAxes()
-
-  # Sets the data for the visualization (truncated to the history size as defined in the options).
-  # @param [Array] data Layered data to set for the visualization.
-  setData: (data) ->
-    prepared = @_prepareData (@rawData = @_formatData(data))
-    @data = []
+    
+  # Works exactly as in Epoch.Chart.Base with the addition of truncating value arrays
+  # to that of the historySize defined in the chart's options.
+  _annotateLayers: (prepared) ->
+    data = []
     for i, layer of prepared
       copy = Epoch.Util.copy(layer)
       start = Math.max(0, layer.values.length - @options.historySize)
@@ -153,8 +152,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       copy.className = classes.join(' ')
       copy.visible = true
-      @data.push copy
-
+      data.push copy
+    return data
 
   # This method is called to provide a small offset for placement of horizontal ticks.
   # The value returned will be added to the x value of each tick as they are being

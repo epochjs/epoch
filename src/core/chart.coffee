@@ -15,12 +15,21 @@ class Epoch.Chart.Base extends Epoch.Events
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
-  # @option options [Integer] width Sets an explicit width for the visualization (optional).
-  # @option options [Integer] height Sets an explicit height for the visualization (optional).
+  # @option options [Integer] width Sets an explicit width for the visualization.
+  # @option options [Integer] height Sets an explicit height for the visualization.
+  # @option options [Object, String] dataFormat Specific data format for the chart.
+  # @option options [Object] model Data model for the chart.
   constructor: (@options={}) ->
     super()
 
-    @setData(@options.data or [])
+    if @options.model
+      if @options.model.hasData()?
+        @setData(@options.model.getData())
+      else
+        @setData(@options.data or [])
+      @options.model.on 'data:updated', => @setDataFromModel()
+    else
+      @setData(@options.data or [])
 
     if @options.el?
       @el = d3.select(@options.el)
@@ -113,22 +122,19 @@ class Epoch.Chart.Base extends Epoch.Events
     else if arguments.length == 1 and Epoch.isObject(arguments[0])
       @_setManyOptions arguments[0]
 
+  # Retrieves and sets data from the chart's model
+  setDataFromModel: ->
+    prepared = @_prepareData @options.model.getData(@options.type, @options.dataFormat)
+    @data = @_annotateLayers(prepared)
+    @draw()
+
   # Set the initial data for the chart.
   # @param data Data to initially set for the given chart. The data format can vary
   #   from chart to chart. The base class assumes that the data provided will be an
   #   array of layers.
   setData: (data, options={}) ->
     prepared = @_prepareData (@rawData = @_formatData(data))
-    category = 1
-    for layer in prepared
-      classes = ['layer']
-      classes.push "category#{category}"
-      layer.category = category
-      layer.visible = true
-      classes.push(Epoch.Util.dasherize layer.label) if layer.label?
-      layer.className = classes.join(' ')
-      category++
-    @data = prepared
+    @data = @_annotateLayers(prepared)
 
   # Performs post formatted data preparation.
   # @param data Data to prepare before setting.
@@ -139,28 +145,20 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param data Data to be formatted.
   # @return The chart specific formatted data.
   _formatData: (data) ->
-    return data unless @options.dataFormat?
+    Epoch.Data.formatData(data, @options.type, @options.dataFormat)
 
-    if Epoch.isString(@options.dataFormat)
-      opts = { type: @options.type }
-      return Epoch.data(@options.dataFormat, data, opts)
-
-    return data unless Epoch.isObject(@options.dataFormat)
-    return data unless @options.dataFormat.name? and Epoch.isString(@options.dataFormat.name)
-    return data unless Epoch.Data.Format[@options.dataFormat.name]?
-
-    args = [@options.dataFormat.name, data]
-    if @options.dataFormat.arguments? and Epoch.isArray(@options.dataFormat.arguments)
-      args.push(a) for a in @options.dataFormat.arguments
-
-    if @options.dataFormat.options?
-      opts = @options.dataFormat.options
-      opts.type ?= @options.type if @options.type?
-      args.push opts
-    else if @options.type?
-      args.push {type: @options.type}
-
-    Epoch.data.apply(Epoch.data, args)
+  # Annotates data to add class names, categories, and initial visibility states
+  _annotateLayers: (data) ->
+    category = 1
+    for layer in data
+      classes = ['layer']
+      classes.push "category#{category}"
+      layer.category = category
+      layer.visible = true
+      classes.push(Epoch.Util.dasherize layer.label) if layer.label?
+      layer.className = classes.join(' ')
+      category++
+    return data
 
   # Finds a layer in the chart's current data that has the given label or index.
   # @param [String, Number] labelOrIndex The label or index of the layer to find.
