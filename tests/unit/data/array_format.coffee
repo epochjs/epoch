@@ -82,3 +82,25 @@ describe 'Epoch.Data.Format.array', ->
     result = Epoch.Data.Format.array [[1], [2]], {labels: labels, autoLabels: true}
     for i in [0...labels.length]
       assert.equal labels[i], result[i].label
+
+  it 'should produce single series entries correctly', ->
+    result = Epoch.Data.Format.array.entry(2)
+    assert.isArray result
+    assert.equal 1, result.length
+    assert.isObject result[0]
+    assert.equal 0, result[0].x
+    assert.equal 2, result[0].y
+
+  it 'should produce multi-series entries correctly', ->
+    expected = [
+      { x: 0, y: 1 },
+      { x: 0, y: 2 },
+      { x: 0, y: 3 }
+    ]
+    result = Epoch.Data.Format.array.entry([1, 2, 3])
+    assert.isArray result
+    assert.equal 3, result.length
+    for i in [0...expected.length]
+      assert.isObject result[i]
+      assert.equal expected[i].x, result[i].x
+      assert.equal expected[i].y, result[i].y

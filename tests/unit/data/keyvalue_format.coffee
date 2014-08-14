@@ -74,4 +74,28 @@ describe 'Epoch.Data.Format.keyvalue', ->
     labels = ['A', 'B']
     layers = Epoch.Data.Format.keyvalue(data, ['a', 'b'], {keyLabels: false, autoLabels: true})
     for i in [0...labels.length]
-      assert.equal labels[i], layers[i].label    
+      assert.equal labels[i], layers[i].label
+
+  it 'should produce single series entries correctly', ->
+    input = data[0]
+    keys = ['a']
+    expected = [{x: 0, y: input.a}]
+    result = Epoch.Data.Format.keyvalue.entry(input, keys)
+    assert.isArray result
+    assert.equal 1, result.length
+    assert.isObject result[0]
+    assert.equal 0, result[0].x
+    assert.equal input.a, result[0].y
+
+  it 'should produce multi-series entries correctly', ->
+    input = data[1]
+    keys = ['a', 'b', 'c']
+    options = {x: 'x'}
+    expected = ({x: input.x, y: input[key]} for key in keys)
+    result = Epoch.Data.Format.keyvalue.entry(input, keys, options)
+    assert.isArray result
+    assert.equal expected.length, result.length
+    for i in [0...expected.length]
+      assert.isObject result[i]
+      assert.equal expected[i].x, result[i].x
+      assert.equal expected[i].y, result[i].y

@@ -54,3 +54,23 @@ describe 'Epoch.Data.Format.tuple', ->
     assert.equal 0, Epoch.Data.Format.tuple(input, {type: 'time.heatmap'}).length
     assert.equal 0, Epoch.Data.Format.tuple(input, {type: 'time.gauge'}).length
     assert.equal 0, Epoch.Data.Format.tuple(input, {type: 'pie'}).length
+
+  it 'should produce single series entries correctly', ->
+    input = [5, 6]
+    result = Epoch.Data.Format.tuple.entry(input)
+    assert.isArray result
+    assert.equal 1, result.length
+    assert.isObject result[0]
+    assert.equal input[0], result[0].x
+    assert.equal input[1], result[0].y
+
+  it 'should produce multi-series entries correctly', ->
+    input = [[5, -10], [4, 8], [2, 3]]
+    expected = ({x: d[0], y: d[1]} for d in input)
+    result = Epoch.Data.Format.tuple.entry(input)
+    assert.isArray result
+    assert.equal expected.length, result.length
+    for i in [0...expected.length]
+      assert.isObject result[i]
+      assert.equal expected[i].x, result[i].x
+      assert.equal expected[i].y, result[i].y

@@ -81,6 +81,18 @@ Epoch.Data.Format.array = (->
     else
       formatBasicPlot data, opt
 
+  format.entry = (datum, options={}) ->
+    return [] unless datum?
+    unless options.startTime?
+      options.startTime = parseInt(new Date().getTime() / 1000)
+
+    if Epoch.isArray(datum)
+      data = datum.map (d) -> [d]
+    else
+      data = [datum]
+
+    (layer.values[0] for layer in format(data, options))
+
   return format
 )()
 
@@ -118,7 +130,7 @@ Epoch.Data.Format.tuple = (->
       result.push applyLayerLabel({values: data.map(mapFn)}, options, 0)
     return result
 
-  (data=[], options={}) ->
+  format = (data=[], options={}) ->
     return [] unless Epoch.isArray(data) and data.length > 0
     opt = Epoch.Util.defaults options, defaultOptions
 
@@ -130,8 +142,21 @@ Epoch.Data.Format.tuple = (->
     else
       buildLayers data, opt, (d, i) ->
         {x: opt.x(d[0], parseInt(i)), y: opt.y(d[1], parseInt(i))}
-)()
 
+  format.entry = (datum, options={}) ->
+    return [] unless datum?
+    unless options.startTime?
+      options.startTime = parseInt(new Date().getTime() / 1000)
+
+    if Epoch.isArray(datum) and Epoch.isArray(datum[0])
+      data = datum.map (d) -> [d]
+    else
+      data = [datum]
+
+    (layer.values[0] for layer in format(data, options))
+
+  return format
+)()
 
 # This formatter expects to be passed a flat array of objects and a list of keys.
 # It then extracts the value for each key across each of the objects in the array
@@ -192,7 +217,7 @@ Epoch.Data.Format.keyvalue = (->
       value[rangeName] = options.y(d[key], parseInt(i))
       value
 
-  (data=[], keys=[], options={}) ->
+  format = (data=[], keys=[], options={}) ->
     return [] unless Epoch.isArray(data) and data.length > 0 and keys.length > 0
     opt = Epoch.Util.defaults options, defaultOptions
 
@@ -205,6 +230,13 @@ Epoch.Data.Format.keyvalue = (->
     else
       formatBasicPlot data, keys, opt
 
+  format.entry = (datum, keys=[], options={}) ->
+    return [] unless datum? and keys? and keys.length > 0
+    unless options.startTime?
+     options.startTime = parseInt(new Date().getTime() / 1000)
+    (layer.values[0] for layer in format([datum], keys, options))
+
+  return format
 )()
 
 # Convenience data formatting method for easily accessing the various formatters.
@@ -214,6 +246,7 @@ Epoch.Data.Format.keyvalue = (->
 Epoch.data = (formatter, args...) ->
   return [] unless (formatFn = Epoch.Data.Format[formatter])?
   formatFn.apply formatFn, args
+
 
 # Method used by charts and models for handling option based data formatting.
 # Abstracted here because we'd like to allow models and indivisual charts to
@@ -242,3 +275,30 @@ Epoch.Data.formatData = (data=[], type='area', dataFormat) ->
     args.push {type: type}
 
   Epoch.data.apply(Epoch.data, args)
+
+# Method used to format incoming entries for real-time charts.
+Epoch.Data.formatEntry = (datum, type='time.area', dataFormat) ->
+  return datum unless dataFormat?
+
+  if Epoch.isString(dataFormat)
+    opts = { type: type }
+    return Epoch.Data.Format[dataFormat].entry datum, opts
+
+  return datum unless Epoch.isObject(dataFormat)
+  return datum unless dataFormat.name? and Epoch.isString(dataFormat.name)
+  return datum unless Epoch.Data.Format[dataFormat.name]?
+
+  args = [datum]
+  if dataFormat.arguments? and Epoch.isArray(dataFormat.arguments)
+    args.push(a) for a in dataFormat.arguments
+
+  if dataFormat.options?
+    opts = dataFormat.options
+    if type?
+      opts.type ?= type
+    args.push opts
+  else if type?
+    args.push {type: type}
+
+  entry = Epoch.Data.Format[dataFormat.name].entry
+  entry.apply entry, args
