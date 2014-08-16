@@ -30,6 +30,9 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     super(@options = Epoch.Util.defaults(@options, defaults))
     @value = @options.value or 0
 
+    if @options.model
+      @options.model.on 'data:push', => @pushFromModel()
+
     # SVG Labels Overlay
     if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
       @el.style('position', 'relative')
@@ -82,6 +85,11 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   # @param [Number] value Value to set for the gauge.
   push: (value) ->
     @update value
+
+  # Responds to a model's 'data:push' event.
+  pushFromModel: ->
+    next = @options.model.getNext(@options.type, @options.dataFormat)
+    @update next
 
   # @return [Number] The radius for the gauge.
   radius: -> @getHeight() / 1.58

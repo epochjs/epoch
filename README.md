@@ -108,7 +108,9 @@ src/                   - Main source directory
   time/                - Real-time Chart Classes
   adapters.coffee      - Options / Global Classes for Adapter Implementations
   basic.coffee         - Base Classes for Basic Charts
+  data.coffee          - Data Formatting
   epoch.coffee         - Main source file, defines name spaces, etc.
+  model.coffee         - Data Model
   time.coffee          - Base Classes for Real-Time Charts
 lib/                   - "Baked in" libraries
 sass/                  - Scss source for the default epoch stylesheet

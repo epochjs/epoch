@@ -82,6 +82,12 @@ Epoch.Data.Format.array = (->
       formatBasicPlot data, opt
 
   format.entry = (datum, options={}) ->
+    if options.type == 'time.gauge'
+      return 0 unless datum?
+      opt = Epoch.Util.defaults options, defaultOptions
+      d = if Epoch.isArray(datum) then datum[0] else datum
+      return opt.y(d, 0)
+
     return [] unless datum?
     unless options.startTime?
       options.startTime = parseInt(new Date().getTime() / 1000)
@@ -251,7 +257,7 @@ Epoch.data = (formatter, args...) ->
 # Method used by charts and models for handling option based data formatting.
 # Abstracted here because we'd like to allow models and indivisual charts to
 # perform this action depending on the context.
-Epoch.Data.formatData = (data=[], type='area', dataFormat) ->
+Epoch.Data.formatData = (data=[], type, dataFormat) ->
   return data unless dataFormat? and data.length > 0
 
   if Epoch.isString(dataFormat)
@@ -277,16 +283,18 @@ Epoch.Data.formatData = (data=[], type='area', dataFormat) ->
   Epoch.data.apply(Epoch.data, args)
 
 # Method used to format incoming entries for real-time charts.
-Epoch.Data.formatEntry = (datum, type='time.area', dataFormat) ->
-  return datum unless dataFormat?
+Epoch.Data.formatEntry = (datum, type, format) ->
+  return datum unless format?
 
-  if Epoch.isString(dataFormat)
+  if Epoch.isString(format)
     opts = { type: type }
-    return Epoch.Data.Format[dataFormat].entry datum, opts
+    return Epoch.Data.Format[format].entry datum, opts
 
-  return datum unless Epoch.isObject(dataFormat)
-  return datum unless dataFormat.name? and Epoch.isString(dataFormat.name)
-  return datum unless Epoch.Data.Format[dataFormat.name]?
+  return datum unless Epoch.isObject(format)
+  return datum unless format.name? and Epoch.isString(format.name)
+  return datum unless Epoch.Data.Format[format.name]?
+
+  dataFormat = Epoch.Util.defaults format, {}
 
   args = [datum]
   if dataFormat.arguments? and Epoch.isArray(dataFormat.arguments)
@@ -294,8 +302,7 @@ Epoch.Data.formatEntry = (datum, type='time.area', dataFormat) ->
 
   if dataFormat.options?
     opts = dataFormat.options
-    if type?
-      opts.type ?= type
+    opts.type = type
     args.push opts
   else if type?
     args.push {type: type}

@@ -77,6 +77,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     givenMargins = Epoch.Util.copy(@options.margins) or {}
     super(@options = Epoch.Util.defaults(@options, defaults))
 
+    if @options.model
+      @options.model.on 'data:push', => @pushFromModel()
+
     # Queue entering data to get around memory bloat and "non-active" tab issues
     @_queue = []
 
@@ -331,6 +334,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     # Begin the transition unless we are already doing so
     @_startTransition() unless @inTransition()
 
+  # Fetches new entry data from the model in response to a 'data:push' event.
+  pushFromModel: ->
+    @push @options.model.getNext(@options.type, @options.dataFormat)
 
   # Shift elements off the incoming data queue (see the implementation of
   # push above).

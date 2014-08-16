@@ -24,7 +24,7 @@ class Epoch.Chart.Base extends Epoch.Events
 
     if @options.model
       if @options.model.hasData()?
-        @setData(@options.model.getData())
+        @setData(@options.model.getData(@options.type, @options.dataFormat))
       else
         @setData(@options.data or [])
       @options.model.on 'data:updated', => @setDataFromModel()
