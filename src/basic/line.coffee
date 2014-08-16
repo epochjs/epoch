@@ -1,5 +1,8 @@
 # Static line chart implementation (using d3).
 class Epoch.Chart.Line extends Epoch.Chart.Plot
+  constructor: (@options={}) ->
+    @options.type ?= 'line'
+    super(@options)
 
   # @return [Function] The line generator used to construct the plot.
   line: ->

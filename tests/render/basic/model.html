@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body { background: #333; color: #d0d0d0; }
+        a:link, a:visited { color: white; color: white; }
+
+        .epoch {
+            height: 220px;
+        }
+
+        #sparkline { height: 50px; }
+
+        </style>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Basic Chart Model / Data Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Chart Model / Data Test</p>
+
+        <p>
+            <button class="set" data-index="0">Data A</button>
+            <button class="set" data-index="1">Data B</button>
+            <button class="set" data-index="2">Data C</button>
+        </p>
+
+        <div id="sparkline" class="epoch"></div>
+        <div id="area" class="epoch"></div>
+        <div id="bar" class="epoch"></div>
+
+        <script>
+        $(function() {
+            var dataA = [];
+            for (var j = 0; j < 3; j++) {
+                var layer = [];
+                for (var i = 0; i < 20; i++) {
+                    layer.push(50 + Math.random()*20);
+                }
+                dataA.push(layer);
+            }
+
+            var dataB = [];
+            for (var j = 0; j < 2; j++) {
+                var layer = [];
+                for (i = 0; i < 30; i++) {
+                    layer.push(10 + Math.random() * 40)
+                }
+                dataB.push(layer);
+            }
+
+            var dataC = [];
+            for (var i = 0; i < 50; i++) {
+                dataC.push(Math.random() * 100);
+            }
+
+            var data = [dataA, dataB, dataC];
+
+            // Setup the model
+            window.model = new Epoch.Model({ dataFormat: 'array' });
+            model.setData(dataA);
+
+            // Make the charts and associate them with the model
+            var sparkline = $('#sparkline').epoch({
+                type: 'line',
+                axes: ['left', 'right'],
+                model: model
+            });
+
+            var area = $('#area').epoch({
+                type: 'area',
+                axes: ['left', 'right', 'bottom'],
+                model: model
+            });
+
+            window.bar = $('#bar').epoch({
+                type: 'bar',
+                axes: ['left', 'right', 'bottom'],
+                model: model
+            });
+
+            // Click listeners for the buttons
+            $('button.set').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                model.setData(data[index]);
+            });
+        })
+        </script>
+    </body>
+</html>

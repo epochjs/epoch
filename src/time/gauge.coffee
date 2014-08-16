@@ -2,6 +2,7 @@
 # Real-time Gauge Visualization. Note: Looks best with a 4:3 aspect ratio (w:h)
 class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   defaults =
+    type: 'time.gauge'
     domain: [0, 1]
     ticks: 10
     tickSize: 5
@@ -28,6 +29,9 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @value = @options.value or 0
+
+    if @options.model
+      @options.model.on 'data:push', => @pushFromModel()
 
     # SVG Labels Overlay
     if @el.style('position') != 'absolute' and @el.style('position') != 'relative'
@@ -81,6 +85,11 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   # @param [Number] value Value to set for the gauge.
   push: (value) ->
     @update value
+
+  # Responds to a model's 'data:push' event.
+  pushFromModel: ->
+    next = @options.model.getNext(@options.type, @options.dataFormat)
+    @update next
 
   # @return [Number] The radius for the gauge.
   radius: -> @getHeight() / 1.58

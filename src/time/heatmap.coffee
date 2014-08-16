@@ -2,6 +2,7 @@
 # Real-time Heatmap Implementation.
 class Epoch.Time.Heatmap extends Epoch.Time.Plot
   defaults =
+    type: 'time.heatmap'
     buckets: 10
     bucketRange: [0, 100]
     opacity: 'linear'
@@ -36,7 +37,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
   #   'quartic', and 'quintic'. A custom function can be supplied given it accepts two parameters (value, max)
   #   and returns a numeric value from 0 to 1. Default: linear.
   # @option options [Number] bucketPadding Amount of padding to apply around buckets (default: 2).
-  constructor: (@options) ->
+  constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @_setOpacityFunction()
     @_setupPaintCanvas()
@@ -140,6 +141,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   # Redraws the entire heatmap for the current data.
   redraw: ->
+    return unless Epoch.isArray(@data) and @data.length > 0 and @data[0].length > 0
     entryIndex = @data[0].values.length
     drawColumn = @options.windowSize
 

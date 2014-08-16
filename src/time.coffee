@@ -77,6 +77,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     givenMargins = Epoch.Util.copy(@options.margins) or {}
     super(@options = Epoch.Util.defaults(@options, defaults))
 
+    if @options.model
+      @options.model.on 'data:push', => @pushFromModel()
+
     # Queue entering data to get around memory bloat and "non-active" tab issues
     @_queue = []
 
@@ -138,12 +141,12 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @svg.selectAll('.axis').remove()
     @_prepareTimeAxes()
     @_prepareRangeAxes()
-
-  # Sets the data for the visualization (truncated to the history size as defined in the options).
-  # @param [Array] data Layered data to set for the visualization.
-  setData: (data) ->
-    @data = []
-    for i, layer of data
+    
+  # Works exactly as in Epoch.Chart.Base with the addition of truncating value arrays
+  # to that of the historySize defined in the chart's options.
+  _annotateLayers: (prepared) ->
+    data = []
+    for i, layer of prepared
       copy = Epoch.Util.copy(layer)
       start = Math.max(0, layer.values.length - @options.historySize)
       copy.values = layer.values.slice(start)
@@ -152,8 +155,8 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       copy.className = classes.join(' ')
       copy.visible = true
-      @data.push copy
-
+      data.push copy
+    return data
 
   # This method is called to provide a small offset for placement of horizontal ticks.
   # The value returned will be added to the x value of each tick as they are being
@@ -331,6 +334,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     # Begin the transition unless we are already doing so
     @_startTransition() unless @inTransition()
 
+  # Fetches new entry data from the model in response to a 'data:push' event.
+  pushFromModel: ->
+    @push @options.model.getNext(@options.type, @options.dataFormat)
 
   # Shift elements off the incoming data queue (see the implementation of
   # push above).

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <style>
+        body { background: #333; color: #d0d0d0; }
+        a:link, a:visited { color: white; color: white; }
+
+        .epoch {
+            height: 220px;
+        }
+
+        #sparkline { height: 50px; }
+
+        </style>
+    </head>
+    <body class="epoch-theme-dark">
+        <h1>Real-time Chart Model / Data Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Real-time Chart Model / Data Test</p>
+
+        <p><button class="next">Next</button></p>
+
+        <div id="gauge" class="epoch gauge-small"></div>
+        <div id="sparkline" class="epoch"></div>
+        <div id="area" class="epoch"></div>
+        <div id="bar" class="epoch"></div>
+
+        <script>
+        $(function() {
+            var rnd = function() { return Math.random(); };
+
+            var data = [];
+            for (var j = 0; j < 3; j++) {
+                var layer = [];
+                for (var i = 0; i < 80; i++) {
+                    layer.push(rnd());
+                }
+                data.push(layer);
+            }
+
+            // Setup the model
+            window.model = new Epoch.Model({
+                dataFormat: {
+                    name: 'array',
+                    options: { startTime: (new Date().getTime() / 1000)|0 }
+                }
+            });
+            model.setData(data);
+
+            // Make the charts and associate them with the model
+            window.sparkline = $('#sparkline').epoch({
+                type: 'time.line',
+                axes: ['left', 'right'],
+                model: model
+            });
+
+            window.area = $('#area').epoch({
+                type: 'time.area',
+                axes: ['left', 'right', 'bottom'],
+                model: model
+            });
+
+            window.bar = $('#bar').epoch({
+                type: 'time.bar',
+                axes: ['left', 'right', 'bottom'],
+                model: model
+            });
+
+            window.gauge = $('#gauge').epoch({
+                type: 'time.gauge',
+                model: model
+            })
+
+            $('button.next').click(function(e) {
+                model.push([rnd(), rnd(), rnd()]);
+            });
+        })
+        </script>
+    </body>
+</html>

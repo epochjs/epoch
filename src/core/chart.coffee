@@ -1,60 +1,3 @@
-# Basic eventing base class for all Epoch classes.
-class Epoch.Events
-  constructor: ->
-    @_events = {}
-
-  # Registers a callback to a given event.
-  # @param [String] name Name of the event.
-  # @param [Function, String] callback Either a closure to call when the event fires
-  #   or a string that denotes a method name to call on this object.
-  on: (name, callback) ->
-    return unless callback?
-    @_events[name] ?= []
-    @_events[name].push callback
-
-  # Registers a map of event names to given callbacks. This method calls <code>.on</code>
-  # directly for each of the events given.
-  # @param [Object] map A map of event names to callbacks.
-  onAll: (map) ->
-    return unless Epoch.isObject(map)
-    @on(name, callback) for name, callback of map
-
-  # Removes a specific callback listener or all listeners for a given event.
-  # @param [String] name Name of the event.
-  # @param [Function, String] callback (Optional) Callback to remove from the listener list.
-  #   If this parameter is not provided then all listeners will be removed for the event.
-  off: (name, callback) ->
-    return unless Epoch.isArray(@_events[name])
-    return delete(@_events[name]) unless callback?
-    while (i = @_events[name].indexOf(callback)) >= 0
-      @_events[name].splice(i, 1)
-
-  # Removes a set of callback listeners for all events given in the map or array of strings.
-  # This method calls <code>.off</code> directly for each event and callback to remove.
-  # @param [Object, Array] mapOrList Either a map that associates event names to specific callbacks
-  #   or an array of event names for which to completely remove listeners.
-  offAll: (mapOrList) ->
-    if Epoch.isArray(mapOrList)
-      @off(name) for name in mapOrList
-    else if Epoch.isObject(mapOrList)
-      @off(name, callback) for name, callback of mapOrList
-
-  # Triggers an event causing all active listeners to be executed.
-  # @param [String] name Name of the event to fire.
-  trigger: (name) ->
-    return unless @_events[name]?
-    args = (arguments[i] for i in [1...arguments.length])
-    for callback in @_events[name]
-      fn = null
-      if Epoch.isString(callback)
-        fn = @[callback]
-      else if Epoch.isFunction(callback)
-        fn = callback
-      unless fn?
-        Epoch.exception "Callback for event '#{name}' is not a function or reference to a method."
-      fn.apply @, args
-
-
 # The base class for all charts in Epoch. Defines chart dimensions, keeps a reference
 # of the chart's containing elements. And defines core method for handling data and
 # drawing.
@@ -62,6 +5,7 @@ class Epoch.Chart.Base extends Epoch.Events
   defaults =
     width: 320
     height: 240
+    dataFormat: null
 
   optionListeners =
     'option:width': 'dimensionsChanged'
@@ -71,13 +15,25 @@ class Epoch.Chart.Base extends Epoch.Events
 
   # Creates a new base chart.
   # @param [Object] options Options to set for this chart.
-  # @option options [Integer] width Sets an explicit width for the visualization (optional).
-  # @option options [Integer] height Sets an explicit height for the visualization (optional).
+  # @option options [Integer] width Sets an explicit width for the visualization.
+  # @option options [Integer] height Sets an explicit height for the visualization.
+  # @option options [Object, String] dataFormat Specific data format for the chart.
+  # @option options [Object] model Data model for the chart.
   constructor: (@options={}) ->
     super()
 
-    @setData(@options.data or [])
-    @el = d3.select(@options.el) if @options.el?
+    if @options.model
+      if @options.model.hasData()?
+        @setData(@options.model.getData(@options.type, @options.dataFormat))
+      else
+        @setData(@options.data or [])
+      @options.model.on 'data:updated', => @setDataFromModel()
+    else
+      @setData(@options.data or [])
+
+    if @options.el?
+      @el = d3.select(@options.el)
+
     @width = @options.width
     @height = @options.height
 
@@ -87,6 +43,9 @@ class Epoch.Chart.Base extends Epoch.Events
     else
       @width = defaults.width unless @width?
       @height = defaults.height unless @height?
+      @el = d3.select(document.createElement('DIV'))
+        .attr('width', @width)
+        .attr('height', @height)
 
     @onAll optionListeners
 
@@ -163,11 +122,33 @@ class Epoch.Chart.Base extends Epoch.Events
     else if arguments.length == 1 and Epoch.isObject(arguments[0])
       @_setManyOptions arguments[0]
 
+  # Retrieves and sets data from the chart's model
+  setDataFromModel: ->
+    prepared = @_prepareData @options.model.getData(@options.type, @options.dataFormat)
+    @data = @_annotateLayers(prepared)
+    @draw()
+
   # Set the initial data for the chart.
   # @param data Data to initially set for the given chart. The data format can vary
   #   from chart to chart. The base class assumes that the data provided will be an
   #   array of layers.
-  setData: (data) ->
+  setData: (data, options={}) ->
+    prepared = @_prepareData (@rawData = @_formatData(data))
+    @data = @_annotateLayers(prepared)
+
+  # Performs post formatted data preparation.
+  # @param data Data to prepare before setting.
+  # @return The prepared data.
+  _prepareData: (data) -> data
+
+  # Performs data formatting before setting the charts data
+  # @param data Data to be formatted.
+  # @return The chart specific formatted data.
+  _formatData: (data) ->
+    Epoch.Data.formatData(data, @options.type, @options.dataFormat)
+
+  # Annotates data to add class names, categories, and initial visibility states
+  _annotateLayers: (data) ->
     category = 1
     for layer in data
       classes = ['layer']
@@ -177,8 +158,7 @@ class Epoch.Chart.Base extends Epoch.Events
       classes.push(Epoch.Util.dasherize layer.label) if layer.label?
       layer.className = classes.join(' ')
       category++
-
-    @data = data
+    return data
 
   # Finds a layer in the chart's current data that has the given label or index.
   # @param [String, Number] labelOrIndex The label or index of the layer to find.

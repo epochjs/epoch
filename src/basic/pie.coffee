@@ -2,6 +2,7 @@
 # Static Pie Chart implementation (using d3).
 class Epoch.Chart.Pie extends Epoch.Chart.SVG
   defaults =
+    type: 'pie'
     margin: 10
     inner: 0
 
