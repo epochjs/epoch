@@ -7,9 +7,7 @@ To get started using Epoch, please refer to the [Epoch Project Site](http://fast
 
 Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of visualization programming: **basic charts** for creating historical reports, and **real-time charts** for displaying frequently updating timeseries data.
 
-### Getting Started
-
-#### Installing Epoch
+### Installing Epoch
 
 There are two easy options you can use to install epoch. The first is to use [bower](http://bower.io/) from the command-line, like so:
 
