@@ -14,7 +14,7 @@ bower install epoch
 
 The second is to visit the [project site](http://fastly.github.io/epoch), download the latest release, and manually install it in your project. Both methods will provide you with the `epoch.min.js` and `epoch.min.css` files, simply include them along with d3 in your page and you're ready to go.
 
-Also, Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
+**Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
 
 ### Developing Epoch
 
