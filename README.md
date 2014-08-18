@@ -1,4 +1,4 @@
-## Epoch
+## Epoch [(Project Site)](http://fastly.github.io/epoch)
 By Ryan Sandor Richards
 
 ### Introduction
