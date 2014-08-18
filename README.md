@@ -1,6 +1,7 @@
 ## Epoch
 By Ryan Sandor Richards
-[Project Site](http://fastly.github.io/epoch)
+
+[Visit the Github Pages Project Site](http://fastly.github.io/epoch)
 
 ### Introduction
 
