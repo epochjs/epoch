@@ -27,6 +27,7 @@
             <li><a href="#test-7">Color Override</a></li>
             <li><a href="#test-8">Categorical Colors</a></li>
             <li><a href="#test-9">Show/Hide Layers</a></li>
+            <li><a href="#test-10">Show/Hide Layers</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -351,7 +352,7 @@ Epoch.QueryCSS.purge();
 chart.draw();
 </pre></code>
             </p>
-                
+
             <div class="epoch category10"></div>
 
             <p>
@@ -457,6 +458,36 @@ chart.draw();
                     pushPoint();
                 }
                 playing = !playing;
+            });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Fixed Range</h2>
+            <p>
+                Render a single series plot of <code>y = cos(x)</code>. Instead of automatically setting the range to <code>[-1, 1]</code>, the range is manually set to <code>[-2, 5]</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x),
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+            }
+
+            $('#test-10 .epoch').epoch({
+                type: 'time.line',
+                axes: ['right', 'bottom'],
+                data: data,
+                range: [-2, 5]
             });
         });
         </script>
