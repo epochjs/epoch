@@ -7,6 +7,7 @@
 # rendering text, glyphs, etc.
 class Epoch.Time.Plot extends Epoch.Chart.Canvas
   defaults =
+    range: null
     fps: 24
     historySize: 120
     windowSize: 40
@@ -379,14 +380,16 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # @return [Function] The y scale for the plot
   y: ->
+    domain = @options.range ? @extent((d) -> d.y)
     d3.scale.linear()
-      .domain(@extent((d) -> d.y))
+      .domain(domain)
       .range([@innerHeight(), 0])
 
   # @return [Function] The y scale for the svg portions of the plot
   ySvg: ->
+    domain = @options.range ? @extent((d) -> d.y)
     d3.scale.linear()
-      .domain(@extent((d) -> d.y))
+      .domain(domain)
       .range([@innerHeight() / @pixelRatio, 0])
 
   # @return [Number] The width of a single section of the graph pertaining to a data point

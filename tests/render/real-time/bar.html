@@ -351,7 +351,7 @@ Epoch.QueryCSS.purge();
 chart.draw();
 </pre></code>
             </p>
-                
+
             <div class="epoch category10"></div>
 
             <p>
@@ -447,6 +447,36 @@ chart.draw();
                     interval = null;
                     $(e.target).text('Play');
                 }
+            });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Fixed Range</h2>
+            <p>
+                Render a single series plot of <code>y = cos(x) + 1</code>. Instead of automatically setting the range to <code>[0, 2]</code>, the range is manually set to <code>[0, 5]</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1,
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+            }
+
+            $('#test-10 .epoch').epoch({
+                type: 'time.bar',
+                axes: ['right', 'bottom'],
+                data: data,
+                range: [0, 5]
             });
         });
         </script>
