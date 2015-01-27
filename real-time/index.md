@@ -425,7 +425,7 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
 <div id="lineChart" style="width: 800px; height: 200px"></div>
 <script>
   $('#lineChart').epoch({
-    type: 'time.bar',
+    type: 'time.line',
     data: lineChartData
   });
 </script>
