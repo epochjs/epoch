@@ -142,7 +142,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @svg.selectAll('.axis').remove()
     @_prepareTimeAxes()
     @_prepareRangeAxes()
-    
+
   # Works exactly as in Epoch.Chart.Base with the addition of truncating value arrays
   # to that of the historySize defined in the chart's options.
   _annotateLayers: (prepared) ->
@@ -265,7 +265,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
 
   # This method will remove the first incoming entry from the visualization's queue
   # and shift it into the working set (aka window). It then starts the animating the
-  # transition of the element into the visualization. 
+  # transition of the element into the visualization.
   # @event transition:start in the case that animation is actually started.
   _startTransition: ->
     return if @animation.active == true or @_queue.length == 0

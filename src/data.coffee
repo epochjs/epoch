@@ -28,7 +28,7 @@ applyLayerLabel = (layer, options, i, keys=[]) ->
 # @option options [Function] time(d, i, startTime) Maps the data to time values for real-time plots given the point and index.
 # @option options [Array] labels Labels to apply to each data layer.
 # @option options [Boolean] autoLabels Apply labels of ascending capital letters to each layer if true.
-# @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in 
+# @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in
 #   real-time data formatting.
 Epoch.Data.Format.array = (->
   defaultOptions =
@@ -67,7 +67,7 @@ Epoch.Data.Format.array = (->
       return [] unless Epoch.isNumber(data[0])
       result.push applyLayerLabel({ value: v }, options, i)
     return result
-        
+
   format = (data=[], options={}) ->
     return [] unless Epoch.isArray(data) and data.length > 0
     opt = Epoch.Util.defaults options, defaultOptions
@@ -168,7 +168,7 @@ Epoch.Data.Format.tuple = (->
 # It then extracts the value for each key across each of the objects in the array
 # to produce multi-layer plot data of the given chart type. Note that this formatter
 # also can be passed an <code>x</code> or <code>time</code> option as a string that
-# allows the programmer specify a key to use for the value of the first component 
+# allows the programmer specify a key to use for the value of the first component
 # (x or time) of each resulting layer value.
 #
 # Note that this format does not work with basic pie charts nor real-time gauge charts.
@@ -184,7 +184,7 @@ Epoch.Data.Format.tuple = (->
 # @option options [Array] labels Labels to apply to each data layer.
 # @option options [Boolean] autoLabels Apply labels of ascending capital letters to each layer if true.
 # @option options [Boolean] keyLabels Apply labels using the keys passed to the formatter (defaults to true).
-# @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in 
+# @option options [Number] startTime Unix timestamp used as the starting point for auto acsending times in
 #   real-time data formatting.
 Epoch.Data.Format.keyvalue = (->
   defaultOptions =
