@@ -85,7 +85,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param [Object] options Options to set.
   # @event option:* Triggers an option event for each key that was set
   _setManyOptions: (options, prefix='') ->
-    for key, value of options
+    for own key, value of options
       if Epoch.isObject(value)
         @_setManyOptions value, "#{prefix + key}."
       else

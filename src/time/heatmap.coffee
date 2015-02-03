@@ -71,7 +71,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     # Bucket size = (Range[1] - Range[0]) / number of buckets
     bucketSize = (@options.bucketRange[1] - @options.bucketRange[0]) / @options.buckets
 
-    for value, count of entry.histogram
+    for own value, count of entry.histogram
       index = parseInt((value - @options.bucketRange[0]) / bucketSize)
 
       # Remove outliers from the preprared buckets if instructed to do so
@@ -174,7 +174,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     for layer in @getVisibleLayers()
       entry = @_getBuckets( layer.values[entryIndex] )
-      for bucket, count of entry.buckets
+      for own bucket, count of entry.buckets
         bucketTotals[bucket] += count
       maxTotal += entry.max
       styles = @getStyles ".#{layer.className.split(' ').join('.')} rect.bucket"
@@ -187,7 +187,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
     j = @options.buckets
 
-    for bucket, sum of bucketTotals
+    for own bucket, sum of bucketTotals
       color = @_avgLab(entries, bucket)
       max = 0
       for entry in entries
@@ -213,7 +213,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
       continue unless entry.buckets[bucket]?
       total += entry.buckets[bucket]
 
-    for i, entry of entries
+    for own i, entry of entries
       if entry.buckets[bucket]?
         value = entry.buckets[bucket]|0
       else

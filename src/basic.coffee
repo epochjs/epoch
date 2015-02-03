@@ -195,7 +195,7 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Updates margins in response to a <code>option:margin.*</code> event.
   marginsChanged: ->
     return unless @options.margins?
-    for pos, size of @options.margins
+    for own pos, size of @options.margins
       unless size?
         @margins[pos] = 6
       else

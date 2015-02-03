@@ -147,7 +147,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # to that of the historySize defined in the chart's options.
   _annotateLayers: (prepared) ->
     data = []
-    for i, layer of prepared
+    for own i, layer of prepared
       copy = Epoch.Util.copy(layer)
       start = Math.max(0, layer.values.length - @options.historySize)
       copy.values = layer.values.slice(start)
@@ -352,7 +352,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   _shift: ->
     @trigger 'before:shift'
     entry = @_queue.shift()
-    layer.values.push(entry[i]) for i, layer of @data
+    layer.values.push(entry[i]) for own i, layer of @data
     @_updateTicks(entry[0].time)
     @_transitionRangeAxes()
     @trigger 'after:shift'
@@ -535,7 +535,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # Updates margins in response to an <code>option.margins.*</code> event.
   marginsChanged: ->
     return unless @options.margins?
-    for pos, size of @options.margins
+    for own pos, size of @options.margins
       unless size?
         @margins[pos] = 6
       else
@@ -566,7 +566,7 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
   # @param [Array] layers Layers to stack.
   _prepareLayers: (layers) ->
     y0 = 0
-    for i, d of layers
+    for own i, d of layers
       continue unless @data[i].visible
       d.y0 = y0
       y0 += d.y

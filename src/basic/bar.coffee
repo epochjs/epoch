@@ -84,7 +84,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       for entry in layer.values
         map[entry.x] ?= []
         map[entry.x].push { label: layer.category, y: entry.y, className: className }
-    ({group: k, values: v} for k, v of map)
+    ({group: k, values: v} for own k, v of map)
 
   # Draws the bar char.
   draw: ->

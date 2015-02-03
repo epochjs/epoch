@@ -43,7 +43,7 @@ Epoch.Data.Format.array = (->
   buildLayers = (data, options, mapFn) ->
     result = []
     if Epoch.isArray(data[0])
-      for i, series of data
+      for own i, series of data
         result.push applyLayerLabel({values: series.map(mapFn)}, options, parseInt(i))
     else
       result.push applyLayerLabel({values: data.map(mapFn)}, options, 0)
@@ -63,7 +63,7 @@ Epoch.Data.Format.array = (->
 
   formatPie = (data, options) ->
     result = []
-    for i, v of data
+    for own i, v of data
       return [] unless Epoch.isNumber(data[0])
       result.push applyLayerLabel({ value: v }, options, i)
     return result
@@ -130,7 +130,7 @@ Epoch.Data.Format.tuple = (->
     return [] unless Epoch.isArray(data[0])
     result = []
     if Epoch.isArray(data[0][0])
-      for i, series of data
+      for own i, series of data
         result.push applyLayerLabel({values: series.map(mapFn)}, options, parseInt(i))
     else
       result.push applyLayerLabel({values: data.map(mapFn)}, options, 0)
@@ -199,9 +199,9 @@ Epoch.Data.Format.keyvalue = (->
 
   buildLayers = (data, keys, options, mapFn) ->
     result = []
-    for j, key of keys
+    for own j, key of keys
       values = []
-      for i, d of data
+      for own i, d of data
         values.push mapFn(d, key, parseInt(i))
       result.push applyLayerLabel({ values: values }, options, parseInt(j), keys)
     return result

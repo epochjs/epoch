@@ -10,7 +10,7 @@ class Epoch.Chart.Area extends Epoch.Chart.Plot
   y: ->
     a = []
     for layer in @getVisibleLayers()
-      for k, v of layer.values
+      for own k, v of layer.values
         a[k] += v.y if a[k]?
         a[k] = v.y unless a[k]?
     d3.scale.linear()
