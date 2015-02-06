@@ -81,5 +81,8 @@ describe 'Epoch.Util', ->
       assert.notOk Epoch.isNonEmptyArray({})
       assert.notOk Epoch.isNonEmptyArray(->)
 
+    it 'should return false given a null value', ->
+      assert.notOk Epoch.isNonEmptyArray(null)
+
     it 'should return false given an empty array', ->
       assert.notOk Epoch.isNonEmptyArray([])

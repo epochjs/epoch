@@ -29,7 +29,7 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
     [y, w] = [@y(), @w()]
 
     for layer in @getVisibleLayers()
-      continue unless layer.values.length > 0
+      continue unless Epoch.isNonEmptyArray(layer.values)
       @setStyles(layer.className)
 
       [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
@@ -43,5 +43,5 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
 
         @ctx.fillRect.apply(@ctx, args)
         @ctx.strokeRect.apply(@ctx, args)
-        
+
     super()

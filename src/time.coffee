@@ -196,7 +196,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @topAxis.selectAll('.tick').remove() if @topAxis?
 
     for layer in @data
-      continue unless layer.values? and layer.values.length > 0
+      continue unless Epoch.isNonEmptyArray(layer.values)
       [i, k] = [@options.windowSize-1, layer.values.length-1]
       while i >= 0 and k >= 0
         @_pushTick i, layer.values[k].time, false, true
