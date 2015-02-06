@@ -141,7 +141,8 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
 
   # Redraws the entire heatmap for the current data.
   redraw: ->
-    return unless Epoch.isArray(@data) and @data.length > 0 and @data[0].length > 0
+    return unless Epoch.isArray(@data) and @data.length > 0 and @data[0].values? and @data[0].values.length > 0
+
     entryIndex = @data[0].values.length
     drawColumn = @options.windowSize
 
