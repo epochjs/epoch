@@ -38,7 +38,7 @@ Epoch.isElement = (v) ->
 Epoch.Util.copy = (original) ->
   return null unless original?
   copy = {}
-  copy[k] = v for k, v of original
+  copy[k] = v for own k, v of original
   return copy
 
 # Creates a deep copy of the given options filling in missing defaults.
@@ -46,7 +46,7 @@ Epoch.Util.copy = (original) ->
 # @param [Object] defaults Default values for the options.
 Epoch.Util.defaults = (options, defaults) ->
   result = Epoch.Util.copy(options)
-  for k, v of defaults
+  for own k, v of defaults
     opt = options[k]
     def = defaults[k]
     bothAreObjects = Epoch.isObject(opt) and Epoch.isObject(def)
@@ -75,7 +75,7 @@ Epoch.Util.formatSI = (v, fixed=1, fixIntegers=false) ->
     q = q.toFixed(fixed) unless (q|0) == q and !fixIntegers
     return q
 
-  for i, label of ['K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+  for own i, label of ['K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     base = Math.pow(10, ((i|0)+1)*3)
     if v >= base and v < Math.pow(10, ((i|0)+2)*3)
       q = v/base
@@ -93,8 +93,8 @@ Epoch.Util.formatBytes = (v, fixed=1, fix_integers=false) ->
     q = v
     q = q.toFixed(fixed) unless (q % 1) == 0 and !fix_integers
     return "#{q} B"
-    
-  for i, label of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+  for own i, label of ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     base = Math.pow(1024, (i|0)+1)
     if v >= base and v < Math.pow(1024, (i|0)+2)
       q = v/base
@@ -178,7 +178,7 @@ class Epoch.Events
   # @param [Object] map A map of event names to callbacks.
   onAll: (map) ->
     return unless Epoch.isObject(map)
-    @on(name, callback) for name, callback of map
+    @on(name, callback) for own name, callback of map
 
   # Removes a specific callback listener or all listeners for a given event.
   # @param [String] name Name of the event.
@@ -198,7 +198,7 @@ class Epoch.Events
     if Epoch.isArray(mapOrList)
       @off(name) for name in mapOrList
     else if Epoch.isObject(mapOrList)
-      @off(name, callback) for name, callback of mapOrList
+      @off(name, callback) for own name, callback of mapOrList
 
   # Triggers an event causing all active listeners to be executed.
   # @param [String] name Name of the event to fire.

@@ -85,7 +85,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # @param [Object] options Options to set.
   # @event option:* Triggers an option event for each key that was set
   _setManyOptions: (options, prefix='') ->
-    for key, value of options
+    for own key, value of options
       if Epoch.isObject(value)
         @_setManyOptions value, "#{prefix + key}."
       else
@@ -111,7 +111,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # @overload option(options)
   #   Sets multiple options at once.
   #   @param [Object] options Options to set for the chart.
-  #   @event option:* Triggers an option event for each key that was set. 
+  #   @event option:* Triggers an option event for each key that was set.
   option: ->
     if arguments.length == 0
       @_getAllOptions()
@@ -227,7 +227,7 @@ class Epoch.Chart.Base extends Epoch.Events
     @setData data
     @draw() if draw
 
-  # Draws the chart. Triggers the 'draw' event, subclasses should call super() after drawing to 
+  # Draws the chart. Triggers the 'draw' event, subclasses should call super() after drawing to
   # ensure that the event is triggered.
   # @abstract Must be overriden in child classes to perform chart specific drawing.
   draw: -> @trigger 'draw'

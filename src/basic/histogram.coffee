@@ -37,7 +37,7 @@ class Epoch.Chart.Histogram extends Epoch.Chart.Bar
         buckets[index] += parseInt point.y
 
       preparedLayer = { values: (buckets.map (d, i) -> {x: parseInt(i) * bucketSize, y: d}) }
-      for k, v of layer
+      for own k, v of layer
         preparedLayer[k] = v unless k == 'values'
 
       prepared.push preparedLayer
