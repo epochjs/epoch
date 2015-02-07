@@ -69,7 +69,7 @@ Epoch.Data.Format.array = (->
     return result
 
   format = (data=[], options={}) ->
-    return [] unless Epoch.isArray(data) and data.length > 0
+    return [] unless Epoch.isNonEmptyArray(data)
     opt = Epoch.Util.defaults options, defaultOptions
 
     if opt.type == 'time.heatmap'
@@ -137,7 +137,7 @@ Epoch.Data.Format.tuple = (->
     return result
 
   format = (data=[], options={}) ->
-    return [] unless Epoch.isArray(data) and data.length > 0
+    return [] unless Epoch.isNonEmptyArray(data)
     opt = Epoch.Util.defaults options, defaultOptions
 
     if opt.type == 'pie' or opt.type == 'time.heatmap' or opt.type == 'time.gauge'
@@ -224,7 +224,7 @@ Epoch.Data.Format.keyvalue = (->
       value
 
   format = (data=[], keys=[], options={}) ->
-    return [] unless Epoch.isArray(data) and data.length > 0 and keys.length > 0
+    return [] unless Epoch.isNonEmptyArray(data) and Epoch.isNonEmptyArray(keys)
     opt = Epoch.Util.defaults options, defaultOptions
 
     if opt.type == 'pie' or opt.type == 'time.gauge'
@@ -237,7 +237,7 @@ Epoch.Data.Format.keyvalue = (->
       formatBasicPlot data, keys, opt
 
   format.entry = (datum, keys=[], options={}) ->
-    return [] unless datum? and keys? and keys.length > 0
+    return [] unless datum? and Epoch.isNonEmptyArray(keys)
     unless options.startTime?
      options.startTime = parseInt(new Date().getTime() / 1000)
     (layer.values[0] for layer in format([datum], keys, options))
@@ -258,7 +258,7 @@ Epoch.data = (formatter, args...) ->
 # Abstracted here because we'd like to allow models and indivisual charts to
 # perform this action depending on the context.
 Epoch.Data.formatData = (data=[], type, dataFormat) ->
-  return data unless dataFormat? and data.length > 0
+  return data unless Epoch.isNonEmptyArray(data)
 
   if Epoch.isString(dataFormat)
     opts = { type: type }

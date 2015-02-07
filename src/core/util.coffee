@@ -32,6 +32,12 @@ Epoch.isElement = (v) ->
   else
     v? and Epoch.isObject(v) and v.nodeType == 1 and Epoch.isString(v.nodeName)
 
+# Determines if a given value is a non-empty array.
+# @param v Value to test.
+# @return [Boolean] <code>true</code> if the given value is an array with at least one element.
+Epoch.isNonEmptyArray = (v) ->
+  Epoch.isArray(v) and v.length > 0
+
 # Generates shallow copy of an object.
 # @return A shallow copy of the given object.
 # @param [Object] original Object for which to make the shallow copy.

@@ -68,3 +68,21 @@ describe 'Epoch.Util', ->
       assert.notOk Epoch.isElement({})
       assert.notOk Epoch.isElement([])
       assert.notOk Epoch.isElement(->)
+
+  describe 'isNonEmptyArray', ->
+    it 'should return true given a non-empty array', ->
+      assert.ok Epoch.isNonEmptyArray([1])
+      assert.ok Epoch.isNonEmptyArray([1, 3])
+      assert.ok Epoch.isNonEmptyArray(["foo", 4, "bar"])
+
+    it 'should return false given a non-array', ->
+      assert.notOk Epoch.isNonEmptyArray(2)
+      assert.notOk Epoch.isNonEmptyArray("five")
+      assert.notOk Epoch.isNonEmptyArray({})
+      assert.notOk Epoch.isNonEmptyArray(->)
+
+    it 'should return false given a null value', ->
+      assert.notOk Epoch.isNonEmptyArray(null)
+
+    it 'should return false given an empty array', ->
+      assert.notOk Epoch.isNonEmptyArray([])
