@@ -30,6 +30,7 @@
             <li><a href="#test-15">Padding Changes</a></li>
             <li><a href="#test-16">Hide/Show Layers</a></li>
             <li><a href="#test-17">Data Formatting</a></li>
+            <li><a href="#test-18">Many bars</a></li>
         </ol>
 
 
@@ -704,6 +705,40 @@
                     {x: 5, a: 5, b: 10 }
                 ]
             });
+        });
+        </script>
+
+        <div id="test-18" class="test">
+            <h2>18. Many Bars</h2>
+            <p>Ensure the chart works with many bars.<p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [],
+                size = 100;
+
+            for (var i = 0; i < size; i++) {
+                data.push({
+                    x: i + 1,
+                    a: 1 + Math.random()*2*i,
+                    b: 1 + Math.random()*2*i
+                });
+            }
+
+            var chart = $('#test-18 .epoch').epoch({
+                type: 'bar',
+                data: data,
+                dataFormat: {
+                    name: 'keyvalue',
+                    arguments: [['a', 'b']],
+                    options: {
+                        x: function(d, i) { return d.x; }
+                    }
+                },
+            });
+
+            console.log(chart.data);
         });
         </script>
     </body>

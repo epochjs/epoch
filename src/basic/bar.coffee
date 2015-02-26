@@ -30,16 +30,24 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     'option:outerPadding:group': 'paddingChanged'
 
   constructor: (@options={}) ->
-    if @options.orientation == 'horizontal'
+    if @_isHorizontal()
       @options = Epoch.Util.defaults(@options, horizontal_defaults)
     else
       @options = Epoch.Util.defaults(@options, defaults)
     super(@options)
     @onAll optionListeners
 
+  # @return [Boolean] True if the chart is vertical, false otherwise
+  _isVertical: ->
+    @options.orientation == 'vertical'
+
+  # @return [Boolean] True if the chart is horizontal, false otherwise
+  _isHorizontal: ->
+    @options.orientation == 'horizontal'
+
   # @return [Function] The scale used to generate the chart's x scale.
   x: ->
-    if @options.orientation == 'vertical'
+    if @_isVertical()
       d3.scale.ordinal()
         .domain(Epoch.Util.domain(@getVisibleLayers()))
         .rangeRoundBands([0, @innerWidth()], @options.padding.group, @options.outerPadding.group)
@@ -58,7 +66,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   # @return [Function] The y scale used to render the bar chart.
   y: ->
-    if @options.orientation == 'vertical'
+    if @_isVertical()
       extent = @extent((d) -> d.y)
       extent[0] = Math.min(0, extent[0])
       d3.scale.linear()
@@ -88,10 +96,10 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   # Draws the bar char.
   draw: ->
-    if @options.orientation == 'horizontal'
-      @_drawHorizontal()
-    else
+    if @_isVertical()
       @_drawVertical()
+    else
+      @_drawHorizontal()
     super()
 
   # Draws the bar chart with a vertical orientation
@@ -198,6 +206,53 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .style('opacity', '0')
       .remove()
 
+  # Generates specific tick marks to emulate d3's linear scale axis ticks
+  # for ordinal scales. Note: this should only be called if the user has
+  # defined a set number of ticks for a given axis.
+  # @param [Number] numTicks Number of ticks to generate
+  # @param [String] dataKey Property name of a datum to use for the tick value
+  # @return [Array] The ticks for the given axis
+  _getTickValues: (numTicks, dataKey='x') ->
+    total = @data[0].values.length
+    step = Math.ceil(total / numTicks)|0
+    tickValues = (@data[0].values[i].x for i in [0...total] by step)
+
+  # @return [Function] d3 axis to use for the bottom of the visualization.
+  bottomAxis: ->
+    axis = d3.svg.axis().scale(@x()).orient('bottom')
+      .ticks(@options.ticks.bottom)
+      .tickFormat(@options.tickFormats.bottom)
+    if @_isVertical() and @options.ticks.bottom?
+      axis.tickValues @_getTickValues(@options.ticks.bottom)
+    axis
+
+  # @return [Function] d3 axis to use for the top of the visualization.
+  topAxis: ->
+    axis = d3.svg.axis().scale(@x()).orient('top')
+      .ticks(@options.ticks.top)
+      .tickFormat(@options.tickFormats.top)
+    if @_isVertical() and @options.ticks.top?
+      axis.tickValues @_getTickValues(@options.ticks.top)
+    axis
+
+  # @return [Function] d3 axis to use on the left of the visualization.
+  leftAxis: ->
+    axis = d3.svg.axis().scale(@y()).orient('left')
+      .ticks(@options.ticks.left)
+      .tickFormat(@options.tickFormats.left)
+    if @_isHorizontal() and @options.ticks.left?
+      axis.tickValues @_getTickValues(@options.ticks.left)
+    axis
+
+  # @return [Function] d3 axis to use on the right of the visualization.
+  rightAxis: ->
+    axis = d3.svg.axis().scale(@y()).orient('right')
+      .ticks(@options.ticks.right)
+      .tickFormat(@options.tickFormats.right)
+    if @_isHorizontal() and @options.ticks.right?
+      axis.tickValues @_getTickValues(@options.ticks.right)
+    axis
+
   # Updates orientation in response <code>option:orientation</code>.
   orientationChanged: ->
     top = @options.tickFormats.top
@@ -211,7 +266,6 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
     @options.tickFormats.bottom = right
 
     @draw()
-
 
   # Updates padding in response to <code>option:padding:*</code> and <code>option:outerPadding:*</code>.
   paddingChanged: -> @draw()
