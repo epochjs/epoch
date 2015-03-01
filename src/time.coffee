@@ -233,7 +233,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     extent = @extent((d) -> d.y)
     ticks = @options.ticks.right
     axis = d3.svg.axis().scale(@ySvg()).orient('right')
-      .tickFormat(@options.tickFormats.left)
+      .tickFormat(@options.tickFormats.right)
     if ticks == 2
       axis.tickValues @extent((d) -> d.y)
     else
