@@ -12,6 +12,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     historySize: 120
     windowSize: 40
     queueSize: 10
+    duration: 1000
     axes: ['bottom']
     ticks:
       time: 15
@@ -111,10 +112,10 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @animation =
       interval: null
       active: false
-      delta: => -(@w() / @options.fps),
-      tickDelta: => -( (@w() / @pixelRatio) / @options.fps )
+      delta: => -(@w() / @animation.duration),
+      tickDelta: => -( (@w() / @pixelRatio) / @animation.duration )
       frame: 0,
-      duration: @options.fps
+      duration: (@options.duration / 1000) * @options.fps
 
     # Add SVG Axes
     @_buildAxes()
