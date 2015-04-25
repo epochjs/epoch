@@ -3,8 +3,8 @@
   "description": "A general purpose, real-time visualization library.",
   "version": "0.6.0",
   "main": [
-    "/epoch.min.js",
-    "/epoch.min.css"
+    "epoch.min.js",
+    "epoch.min.css"
   ],
   "license": "MIT",
   "ignore": [
