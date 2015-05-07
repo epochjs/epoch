@@ -45,6 +45,10 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   _isHorizontal: ->
     @options.orientation == 'horizontal'
 
+  # @return [Boolean] True if the chart style is stacked, false otherwise
+  _isStacked: ->
+    @options.style == 'stacked'
+
   # @return [Function] The scale used to generate the chart's x scale.
   x: ->
     if @_isVertical()
@@ -52,7 +56,10 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
         .domain(Epoch.Util.domain(@getVisibleLayers()))
         .rangeRoundBands([0, @innerWidth()], @options.padding.group, @options.outerPadding.group)
     else
-      extent = @extent((d) -> d.y)
+      if @_isStacked()
+        extent = @extent((d) -> d.y + d.y0)
+      else 
+        extent = @extent((d) -> d.y)
       extent[0] = Math.min(0, extent[0])
       d3.scale.linear()
         .domain(extent)
@@ -67,7 +74,10 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   # @return [Function] The y scale used to render the bar chart.
   y: ->
     if @_isVertical()
-      extent = @extent((d) -> d.y)
+      if @_isStacked()
+        extent = @extent((d) -> d.y + d.y0)
+      else 
+        extent = @extent((d) -> d.y)
       extent[0] = Math.min(0, extent[0])
       d3.scale.linear()
         .domain(extent)
@@ -83,6 +93,20 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       .domain((layer.category for layer in @getVisibleLayers()))
       .rangeRoundBands([0, y0.rangeBand()], @options.padding.bar, @options.outerPadding.bar)
 
+  # Performs post formatted data preparation.
+  # Override to add stacking (y0) if needed. 
+  # @param data Data to prepare before setting.
+  # @return The prepared data.
+  _prepareData: (data) ->
+    if @_isStacked()
+      stack = d3.layout.stack()
+        .values( (d) -> d.values )
+        .out( (d, y0, y) ->
+          
+        )
+      stack data
+    data
+
   # Remaps the bar chart data into a form that is easier to display.
   # @return [Array] The reorganized data.
   _remapData: ->
@@ -91,7 +115,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       className = 'bar ' + layer.className.replace(/\s*layer\s*/, '')
       for entry in layer.values
         map[entry.x] ?= []
-        map[entry.x].push { label: layer.category, y: entry.y, className: className }
+        map[entry.x].push Epoch.Util.defaults(entry, { label: layer.category, className: className })
     ({group: k, values: v} for own k, v of map)
 
   # Draws the bar char.
@@ -104,7 +128,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   # Draws the bar chart with a vertical orientation
   _drawVertical: ->
-    [x0, y] = [@x(), @y()]
+    [x0, y, isStacked] = [@x(), @y(), @_isStacked()]
     x1 = @x1(x0)
     height = @height - @margins.top - @margins.bottom
     data = @_remapData()
@@ -127,18 +151,32 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
     rects.attr('class', (d) -> d.className)
 
-    rects.transition().duration(600)
-      .attr('x', (d) -> x1(d.label))
-      .attr('y', (d) -> y(d.y))
-      .attr('width', x1.rangeBand())
-      .attr('height', (d) -> height - y(d.y))
+    if isStacked
+      rects.transition().duration(600)
+        .attr('x', (d) -> x0(d.category))
+        .attr('y', (d) -> y(d.y + d.y0))
+        .attr('width', x0.rangeBand())
+        .attr('height', (d) -> height - y(d.y))
 
-    rects.enter().append('rect')
-      .attr('class', (d) -> d.className)
-      .attr('x', (d) -> x1(d.label))
-      .attr('y', (d) -> y(d.y))
-      .attr('width', x1.rangeBand())
-      .attr('height', (d) -> height - y(d.y))
+      rects.enter().append('rect')
+        .attr('class', (d) -> d.className)
+        .attr('x', (d) -> x0(d.category))
+        .attr('y', (d) -> y(d.y + d.y0))
+        .attr('width', x0.rangeBand())
+        .attr('height', (d) -> height - y(d.y))
+    else
+      rects.transition().duration(600)
+        .attr('x', (d) -> x1(d.label))
+        .attr('y', (d) -> y(d.y))
+        .attr('width', x1.rangeBand())
+        .attr('height', (d) -> height - y(d.y))
+        
+      rects.enter().append('rect')
+        .attr('class', (d) -> d.className)
+        .attr('x', (d) -> x1(d.label))
+        .attr('y', (d) -> y(d.y))
+        .attr('width', x1.rangeBand())
+        .attr('height', (d) -> height - y(d.y))
 
     rects.exit().transition()
       .duration(150)
@@ -156,7 +194,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
   # Draws the bar chart with a horizontal orientation
   _drawHorizontal: ->
-    [x, y0] = [@x(), @y()]
+    [x, y0, isStacked] = [@x(), @y(),@_isStacked()]
     y1 = @y1(y0)
     width = @width - @margins.left - @margins.right
     data = @_remapData()
@@ -179,18 +217,32 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
 
     rects.attr('class', (d) -> d.className)
 
-    rects.transition().duration(600)
-      .attr('x', (d) -> 0)
-      .attr('y', (d) -> y1(d.label))
-      .attr('height', y1.rangeBand())
-      .attr('width', (d) -> x(d.y))
-
-    rects.enter().append('rect')
-      .attr('class', (d) -> d.className)
-      .attr('x', (d) -> 0)
-      .attr('y', (d) -> y1(d.label))
-      .attr('height', y1.rangeBand())
-      .attr('width', (d) -> x(d.y))
+    if isStacked
+      rects.transition().duration(600)
+        .attr('x', (d) -> x(d.y0))
+        .attr('y', (d) -> y0(d.category))
+        .attr('height', y0.rangeBand())
+        .attr('width', (d) -> x(d.y))
+   
+      rects.enter().append('rect')
+        .attr('class', (d) -> d.className)
+        .attr('x', (d) -> x(d.y0))
+        .attr('y', (d) -> y0(d.category))
+        .attr('height', y0.rangeBand())
+        .attr('width', (d) -> x(d.y))
+    else
+      rects.transition().duration(600)
+        .attr('x', (d) -> 0)
+        .attr('y', (d) -> y1(d.label))
+        .attr('height', y1.rangeBand())
+        .attr('width', (d) -> x(d.y))
+   
+      rects.enter().append('rect')
+        .attr('class', (d) -> d.className)
+        .attr('x', (d) -> 0)
+        .attr('y', (d) -> y1(d.label))
+        .attr('height', y1.rangeBand())
+        .attr('width', (d) -> x(d.y))
 
     rects.exit().transition()
       .duration(150)

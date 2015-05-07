@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../css/tests.css">
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../../../js/epoch.js"></script>
+        <script src="../js/data.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+    </head>
+    <body>
+        <h1>Basic Stacked Bar Chart Test</h1>
+        <p class="breadcrumbs"><a href="../index.html">Epoch Chart Tests</a> &raquo; Basic Bar</p>
+
+        <ol>
+            <li><a href="#test-1">Single Series</a></li>
+            <li><a href="#test-2">Single Series II</a></li>
+            <li><a href="#test-3">Multi Series</a></li>
+            <li><a href="#test-4">Multi Series II</a></li>
+            <li><a href="#test-5">Single Series Transition</a></li>
+            <li><a href="#test-6">Multi Series Transition</a></li>
+            <li><a href="#test-7">Single Series to Multi Series Transition</a></li>
+            <li><a href="#test-8">Layer Color Override</a></li>
+            <li><a href="#test-9">Categorical Color Switching</a></li>
+            <li><a href="#test-10">Multi Series without Labels</a></li>
+            <li><a href="#test-11">Horizontally Oriented Single Series</a></li>
+            <li><a href="#test-12">Horizontally Oriented Multi Series</a></li>
+            <li><a href="#test-13">Horizontally Oriented Multi Series Transition</a></li>
+            <li><a href="#test-14">Vertical to Horizontal Transition</a></li>
+            <li><a href="#test-15">Padding Changes</a></li>
+            <li><a href="#test-16">Hide/Show Layers</a></li>
+            <li><a href="#test-17">Data Formatting</a></li>
+            <li><a href="#test-18">Many bars</a></li>
+        </ol>
+
+
+        <!-- Test 1 -->
+        <div id="test-1" class="test">
+            <h2>1. Single Series</h2>
+            <p>Display a plot of <code>y = cos(x) + 1</code> over the range <code>[0, 2&pi;)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 32;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + 1;
+                data[0].values.push({x: x, y: y});
+            }
+
+            $('#test-1 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data,
+                tickFormats: {
+                    bottom: function(d) {
+                        return parseFloat(d).toFixed(1);
+                    }
+                }
+            });
+        });
+        </script>
+
+
+        <!-- Test 2 -->
+        <div id="test-2" class="test">
+            <h2>2. Single Series II</h2>
+            <p>Display a plot of <code>y = sin(x) + 1</code> over the range <code>[0, 2&pi;)</code>.</p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [{ label: 'A', values: [] }],
+                length = 32;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.sin(x) + 1;
+                data[0].values.push({x: x, y: y});
+            }
+
+            $('#test-2 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data,
+                tickFormats: {
+                    bottom: function(d) {
+                        return parseFloat(d).toFixed(1);
+                    }
+                }
+            });
+        });
+        </script>
+
+
+        <!-- Test 3 -->
+        <div id="test-3" class="test">
+            <h2>3. Multi-series Plot</h2>
+            <p>
+                Display a plot of the following functions stacked atop one another:
+                <ul>
+                    <li><code>y = x</code></li>
+                    <li><code>y = 2x</code></li>
+                    <li><code>y = 3x</code></li>
+                </ul>
+                over the range <code>[0, 10)</code>.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function(){
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 10;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length;
+                data[0].values.push({x: x, y: x});
+                data[1].values.push({x: x, y: 2*x});
+                data[2].values.push({x: x, y: 3*x});
+            }
+
+            $('#test-3 .epoch').epoch({
+                id: 'test-3',
+                type: 'bar',
+                style: 'stacked',
+                data: data
+            });
+        });
+        </script>
+
+
+        <!-- Test 4 -->
+        <div id="test-4" class="test">
+            <h2>4. Multi-series Plot II</h2>
+            <p>
+                Display a plot of the following functions stacked atop one another:
+                <ul>
+                    <li><code>y = |x|</code></li>
+                    <li><code>y = x<sup>2</sup></code></li>
+                    <li><code>y = |x<sup>3</sup>|</code></li>
+                </ul>
+                over the range [-1, 1).
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 20;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i - length / 2)  / (length / 2);
+                data[0].values.push({x: x, y: Math.abs(x)});
+                data[1].values.push({x: x, y: Math.pow(x, 2)});
+                data[2].values.push({x: x, y: Math.abs(Math.pow(x, 3))});
+            }
+
+            $('#test-4 .epoch').epoch({ type: 'bar', style: 'stacked', data: data });
+        });
+        </script>
+
+
+        <!-- Test 5 -->
+        <div id="test-5" class="test">
+            <h2>5. Single Series Transition</h2>
+            <p>
+                Correctly transition between the plots <code>y = |x|</code> over the range [-10, 10) and <code>y = x<sup>2</sup></code> over the range [-20, 20). The transition is initiated by pressing the buttons below the plot.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">y = x</button>
+                <button data-index="1">y = x^2</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data1 = [{label: 'A', values: []}],
+                data2 = [{label: 'B', values: []}],
+                data = [data1, data2],
+                length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x1 = (i - length / 2) * 10 / (length / 2),
+                    y1 = Math.abs(x1),
+                    x2 = (i - length / 2) * 20 / (length / 2),
+                    y2 = Math.pow(x2, 2);
+                data1[0].values.push({x: x1, y: y1});
+                data2[0].values.push({x: x2, y: y2});
+            }
+
+            var chart = $('#test-5 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data1
+            });
+
+            $('#test-5 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <!-- Test 6 -->
+        <div id="test-6" class="test">
+            <h2>6. Multi Series Transition</h2>
+            <p>
+                Correctly render and transition between Set A:
+                <ul>
+                    <li><code>y = x</code></li>
+                    <li><code>y = 2*x</code></li>
+                    <li><code>y = 3*x</code></li>
+                </ul>
+                over the range [1, 100). and Set B:
+                <ul>
+                    <li><code>y = ln(x)</code></li>
+                    <li><code>y = 2*ln(x)</code></li>
+                    <li><code>y = 3*ln(x)</code></li>
+                </ul>
+                over the range [1, 100). The transition is initiated by pressing the buttons below the plot.
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Set A</button>
+                <button data-index="1">Set B</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data1 = [
+                {label: 'A', values: []},
+                {label: 'B', values: []},
+                {label: 'C', values: []}
+            ];
+
+            var data2 = [
+                {label: 'A', values: []},
+                {label: 'B', values: []},
+                {label: 'C', values: []}
+            ];
+
+            var data = [data1, data2],
+                length = 10;
+
+            for (var i = 0; i < length; i++) {
+                var x = (i * 100 / length) + 1;
+
+                data1[0].values.push({x: x, y: x});
+                data1[1].values.push({x: x, y: 2*x});
+                data1[2].values.push({x: x, y: 3*x});
+
+                data2[0].values.push({x: x, y: Math.log(x)});
+                data2[1].values.push({x: x, y: 2*Math.log(x)});
+                data2[2].values.push({x: x, y: 3*Math.log(x)});
+            }
+
+            var chart = $('#test-6 .epoch').epoch({ type: 'bar', style: 'stacked', data: data1 });
+
+            $('#test-6 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+
+        <!-- Test 7 -->
+        <div id="test-7" class="test">
+            <h2>7. Single Series to Multi Series Transition</h2>
+            <p>
+                Correctly transition between a single series, plotting the functions:
+                <ul>
+                    <li><code>y = x<sup>2</sup> - 0.5*x</code></li>
+                </ul>
+                To a multi series set, plotting the functions:
+                <ul>
+                    <li><code>y = ln(x)</code></li>
+                    <li><code>y = x</code></li>
+                    <li><code>y = x * ln(x)</code></li>
+                </ul>
+                over the range [1, 4) for all plots. The transition is initiated by pressing the buttons below the plot.
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Single</button>
+                <button data-index="1">Multi</button>
+            </p>
+        </div>
+
+        <script>
+        $(function() {
+            var data1 = [{label: 'A', values: []}],
+                data2 = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                data = [data1, data2],
+                length = 32;
+
+            for (var i = 0; i < length; i++) {
+                var x = (3*i/length) + 1;
+                data1[0].values.push({x: x, y: x*x - 0.5*x});
+                data2[0].values.push({x: x, y: Math.log(x)});
+                data2[1].values.push({x: x, y: x});
+                data2[2].values.push({x: x, y: x * Math.log(x)});
+            }
+
+            var chart = $('#test-7 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data1,
+                tickFormats: {
+                    bottom: function(d) { return d.toFixed(1); }
+                }
+            });
+
+            $('#test-7 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <!-- Test 8 -->
+        <div id="test-8" class="test">
+            <h2>8. Layer Color Override</h2>
+            <p>
+                Display the first layer of the plot as pink, the second layer as green, and the third layer as blue.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <style>
+        #test-8 .epoch .bar.a { fill: pink; }
+        #test-8 .epoch .bar.b { fill: green; }
+        #test-8 .epoch .bar.c { fill: blue;  }
+        </style>
+
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []}
+                ],
+                length = 10;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 10 / length + 1,
+                    y = x * Math.log(x);
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({x: x, y: y});
+                }
+            }
+
+            $('#test-8 .epoch').epoch({ type: 'bar', style: 'stacked', data: data });
+        });
+        </script>
+
+        <!-- Test 9 -->
+        <div id="test-9" class="test">
+            <h2>9. Categorical Color Switching</h3>
+            <p>
+                Change layer colors automatically when switching between the following categorical color classes on the containing element:
+                <ul>
+                    <li><code>category10</code></li>
+                    <li><code>category20</code></li>
+                    <li><code>category20b</code></li>
+                    <li><code>category20c</code></li>
+                </ul>
+                Change the categorical colors by pressing the buttons below the chart.
+            </p>
+
+            <div class="epoch category10"></div>
+
+            <p>
+                <button data-class="category10">category10</button>
+                <button data-class="category20">category20</button>
+                <button data-class="category20b">category20b</button>
+                <button data-class="category20c">category20c</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    {label: 'A', values: []},
+                    {label: 'B', values: []},
+                    {label: 'C', values: []},
+                    {label: 'D', values: []},
+                    {label: 'E', values: []},
+                    {label: 'F', values: []},
+                    {label: 'G', values: []}
+                ],
+                length = 4,
+                className = 'category10';
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 1 / length;
+                for (var j = 0; j < data.length; j++) {
+                    data[j].values.push({x: x, y: Math.pow(x, j+1)});
+                }
+            }
+
+            $('#test-9 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data,
+                tickFormats: {
+                    bottom: function(d) { return d.toFixed(1); }
+                }
+            });
+
+            $('#test-9 button').on('click', function(e) {
+                $('#test-9 .epoch').removeClass(className);
+                className = $(e.target).attr('data-class');
+                $('#test-9 .epoch').addClass(className);
+            });
+        });
+        </script>
+
+        <!-- Test 10 -->
+        <div id="test-10" class="test">
+            <h2>10. Multi Series without Labels</h2>
+            <p>
+                Correctly render a multi-series plot of:
+                <ul>
+                    <li><code>y = sin(x) + 1</code></li>
+                    <li><code>y = cos(x) + 1</code></li>
+                </ul>
+                where the layers are given without labels.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [{values: []}, {values: []}],
+                length = 32;
+
+            for (var i = 0; i <= length; i++) {
+                var x = i * 4 * Math.PI / length;
+                data[0].values.push({x: x, y: Math.sin(x) + 1});
+                data[1].values.push({x: x, y: Math.cos(x) + 1});
+            }
+
+            $('#test-10 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data,
+                tickFormats: {
+                    bottom: function(d) { return d.toFixed(1); }
+                }
+            });
+        });
+        </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>11. Horizontally Oriented Single Series</h2>
+            <p>
+                Correctly render the single series plot of:
+                <ul>
+                    <li>A - 20</li>
+                    <li>B - 30</li>
+                    <li>C - 60</li>
+                </ul>
+                using a horizontal orientation.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [{values: [
+                {x: 'A', y: 20},
+                {x: 'B', y: 30},
+                {x: 'C', y: 60}
+            ]}];
+
+            $('#test-11 .epoch').epoch({
+                type: 'bar',
+                orientation: 'horizontal',
+                style: 'stacked',
+                data: data
+            });
+        });
+        </script>
+
+        <!-- Test 12 -->
+        <div id="test-12" class="test">
+            <h2>12. Horizontally Oriented Multi Series</h2>
+            <p>
+                Correctly render the multi series plot of:
+                <ul>
+                    <li>A - 10, 30</li>
+                    <li>B - 20, 50</li>
+                    <li>C - 60, 10</li>
+                </ul>
+                using a horizontal orientation.
+            </p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 60}] },
+                    { values: [{x: 'A', y: 30}, {x: 'B', y: 50}, {x: 'C', y: 10}] }
+                ];
+
+            $('#test-12 .epoch').epoch({
+                type: 'bar',
+                orientation: 'horizontal',
+                style: 'stacked',
+                data: data
+            });
+        });
+        </script>
+
+        <!-- Test 13 -->
+        <div id="test-13" class="test">
+            <h2>13. Horizontally Oriented Multi Series Transition</h2>
+            <p>
+                Correctly render the Horizontally oriented multi series plot of:
+                <ul>
+                    <li>A - 10, 10</li>
+                    <li>B - 20, 20</li>
+                    <li>C - 30, 30</li>
+                </ul>
+                and transition to the single series plot:
+                <ul>
+                    <li>A - 5</li>
+                    <li>B - 10</li>
+                    <li>C - 40</li>
+                </ul>
+            </p>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Multi</button>
+                <button data-index="1">Single</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data1 = [
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                    { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+                ],
+                data2 = [
+                    { values: [{x: 'A', y: 5}, {x: 'B', y: 10}, {x: 'C', y: 40}] }
+                ],
+                data = [data1, data2];
+
+            var chart = $('#test-13 .epoch').epoch({
+                type: 'bar',
+                orientation: 'horizontal',
+                style: 'stacked',
+                data: data1
+            });
+
+            $('#test-13 button').on('click', function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.update(data[index]);
+            });
+        });
+        </script>
+
+        <div id="test-14" class="test">
+            <h2>14. Vertical to Horizontal Transition</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-orientation="vertical">Vertical</button>
+                <button data-orientation="horizontal">Horizontal</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+            ];
+
+            var chart = $('#test-14 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data
+            });
+
+            $('#test-14 button').click(function(e) {
+                var orientation = $(e.target).attr('data-orientation');
+                chart.option('orientation', orientation);
+            });
+        });
+        </script>
+
+        <div id="test-15" class="test">
+            <h2>15. Padding Changes</h2>
+            <div class="epoch"></div>
+            <p>
+                <button data-index="0">Regular Padding</button>
+                <button data-index="1">Fat Padding</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var data = [
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] },
+                { values: [{x: 'A', y: 10}, {x: 'B', y: 20}, {x: 'C', y: 30}] }
+            ];
+
+            var padding = [
+                {
+                    padding: { bar: 0.08, group: 0.1 },
+                    outerPadding: { bar: 0.08, group: 0.1 }
+                },
+                {
+                    padding: { bar: 0.2, group: 0.3 },
+                    outerPadding: { bar: 0.1, group: 0.2 }
+                }
+            ];
+
+            var chart = $('#test-15 .epoch').epoch({ type: 'bar', style: 'stacked', data: data });
+            $('#test-15 button').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.option('padding', padding[index].padding);
+                chart.option('outerPadding', padding[index].outerPadding);
+            });
+        });
+        </script>
+
+        <div id="test-16" class="test">
+            <h2>16. Hide/Show Layers</h2>
+            <div class="epoch"></div>
+            <p>
+                <button class="toggle" data-index="0">Toggle A</button>
+                <button class="toggle" data-index="1">Toggle B</button>
+                <button class="toggle" data-index="2">Toggle C</button>
+                |
+                <button class="orientation">Orientation</button>
+            </p>
+        </div>
+        <script>
+        $(function() {
+            var chart = $('#test-16 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data().add(function(x) { return x; })
+                    .add(function(x) { return 1.5*x; })
+                    .add(function(x) { return 2.0*x; }).get([0, 10], 1)
+            });
+
+            $('#test-16 button.toggle').click(function(e) {
+                var index = parseInt($(e.target).attr('data-index'));
+                chart.toggleLayer(index);
+            });
+
+            $('#test-16 button.orientation').click(function(e) {
+                if (chart.option('orientation') == 'vertical')
+                    chart.option('orientation', 'horizontal')
+                else
+                    chart.option('orientation', 'vertical')
+            })
+        });
+        </script>
+
+        <div id="test-17" class="test">
+            <h2>17. Data Formatting</h2>
+            <p>Ensure the chart works with the array, tuple, and key-value data formats.<p>
+            <div class="epoch array"></div>
+            <div class="epoch tuple"></div>
+            <div class="epoch keyvalue"></div>
+        </div>
+        <script>
+        $(function() {
+            $('#test-17 .array').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: [1, 2, 4, 8, 16, 32],
+                dataFormat: 'array'
+            });
+
+            $('#test-17 .tuple').epoch({
+                type: 'bar',
+                style: 'stacked',
+                dataFormat: 'tuple',
+                data: [
+                    [[0, 1], [1, 2], [2, 4], [3, 8]],
+                    [[0, 1], [1, 3], [2, 9], [3, 27]]
+                ]
+            });
+
+            $('#test-17 .keyvalue').epoch({
+                type: 'bar',
+                style: 'stacked',
+                dataFormat: {
+                    name: 'keyvalue',
+                    arguments: [['a', 'b']],
+                    options: {
+                        x: function(d, i) { return d.x; }
+                    }
+                },
+                data: [
+                    {x: 1, a: 1, b: 1 },
+                    {x: 2, a: 2, b: 4 },
+                    {x: 3, a: 3, b: 6 },
+                    {x: 4, a: 4, b: 8 },
+                    {x: 5, a: 5, b: 10 }
+                ]
+            });
+        });
+        </script>
+
+        <div id="test-18" class="test">
+            <h2>18. Bar Ticks</h2>
+            <p>Ensure that we can use ticks option with bar charts.<p>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var data = [],
+                size = 100;
+
+            for (var i = 0; i < size; i++) {
+                data.push({
+                    x: i + 1,
+                    a: 1 + Math.random()*2*i,
+                    b: 1 + Math.random()*2*i
+                });
+            }
+
+            var chart = $('#test-18 .epoch').epoch({
+                type: 'bar',
+                style: 'stacked',
+                data: data,
+                dataFormat: {
+                    name: 'keyvalue',
+                    arguments: [['a', 'b']],
+                    options: {
+                        x: function(d, i) { return d.x; }
+                    }
+                },
+            });
+
+            console.log(chart.data);
+        });
+        </script>
+    </body>
+</html>
