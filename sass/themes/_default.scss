@@ -13,7 +13,7 @@
 // Axes and Ticks
 .epoch {
   .axis path, .axis line {
-    fill: none;
+    fill: transparent;
     stroke: #000;
   }
 
@@ -24,7 +24,7 @@
 
 // Line Charts
 .epoch .line {
-  fill: none;
+  fill: transparent;
   stroke-width: 2px;
 }
 
@@ -35,7 +35,7 @@
 
 // Area Charts
 .epoch .area {
-  stroke: none;
+  stroke: transparent;
 }
 
 // Pie Charts
@@ -46,7 +46,7 @@
   }
 
   .arc.pie text {
-    stroke: none;
+    stroke: transparent;
     fill: white;
     font-size: 9pt;
   }
