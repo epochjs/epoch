@@ -41,8 +41,8 @@ Epoch requires the following for development:
 Once both are installed on your machine you will need to run `npm install` from
 the repository's root directory in order to install other dependant libraries.
 
-Once you have installed the required npm packages you can use `grunt build` to
-fully rebuild the source (see more information about grunt tasks below).
+Once you have installed the required npm packages you can use `gulp build` to
+fully rebuild the source (see more information about gulp tasks below).
 
 
 #### Basic Development Process
