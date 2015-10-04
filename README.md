@@ -38,7 +38,8 @@ Epoch requires the following for development:
 2. [NPM](https://www.npmjs.com/) (v2.1.0+)
 
 Once both are installed on your machine you will need to run `npm install` from
-the repository's root directory in order to install other dependant libraries.
+the repository's root directory in order to install the npm packages required
+to develop epoch.
 
 Once you have installed the required npm packages you can use `gulp build` to
 fully rebuild the source (see more information about gulp tasks below).
