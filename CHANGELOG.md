@@ -1,5 +1,21 @@
 # Epoch Changelog
 
+## 0.7.0 - October 4th, 2015
+
+* New basic chart: Histogram
+* New Feature: Data formatters
+* Chart layers can now be hidden/shown
+* Ticks now working for ordinal scaled bar charts
+* Fixed CSS builds by updating NPM sass-node package
+* Removed versions from minified release files (@RyanNielson)
+* Time based graphs can now have fixed ranges (@willwhitney)
+* NPM Package: epoch-charting (@sompylasar)
+* Right axes now using correct formatters (@Dav1dde)
+* Add 'main' attribute enabling webpack support. (@WRidder)
+* Fixed Bower D3 Dependencies (@loopj)
+* Fixed CSS errors by using `transparent` instead of `none` (@mwsmith2)
+* Fixed bower "version" property (@kkirsche)
+
 ## 0.6.0 - July 21st, 2014
 
 ### Enhancements / Features
