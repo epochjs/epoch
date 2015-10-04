@@ -2,9 +2,12 @@
 
 ## 0.7.0 - October 4th, 2015
 
+### Enhancements / Features
 * New basic chart: Histogram
 * New Feature: Data formatters
 * Chart layers can now be hidden/shown
+
+### Bug Fixes
 * Ticks now working for ordinal scaled bar charts
 * Fixed CSS builds by updating NPM sass-node package
 * Removed versions from minified release files (@RyanNielson)
