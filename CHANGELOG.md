@@ -1,5 +1,9 @@
 # Epoch Changelog
 
+## 0.7.1 - October 4th, 2015
+* Moved minified source to `dist/js` and `dist/css` respectively
+* Added non-minified source to aforementioned directories
+
 ## 0.7.0 - October 4th, 2015
 
 ### Enhancements / Features
