@@ -162,8 +162,7 @@ Epoch.Util.toRGBA = (color, opacity) ->
 # jsdom doesn't have canvas support, and node-canvas is a pain in the
 # butt to install properly across different platforms.
 Epoch.Util.getContext = (node, type='2d') ->
-  return node.getContext(type) if node.getContext?
-  new Epoch.TestContext()
+  node.getContext(type)
 
 # Basic eventing base class for all Epoch classes.
 class Epoch.Events

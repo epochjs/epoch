@@ -6,18 +6,21 @@ url = require('url')
 
 html = "<html><head></head><body></body></html>"
 
+exec = require('child_process').exec
+exec 'pwd', (err, out) -> console.log out
+
 before (done) ->
   jsdom.env
     html: html
-    scripts: ["http://d3js.org/d3.v3.min.js", "../../js/epoch.js"]
+    scripts: ["http://d3js.org/d3.v3.min.js", "./dist/js/epoch.js"]
     done: (errors, window) ->
       global.Epoch = window.Epoch
+      # Override get context to use a test context by default
+      global.Epoch.Util.getContext = -> new window.Epoch.TestContext()
       global.d3 = window.d3
       global.doc = window.document
-
       # Set this to "retina" so we can test canvas based charts
       window.devicePixelRatio = 2
-      
       done()
 
 global.addStyleSheet = (css) ->
@@ -45,4 +48,3 @@ assert.data = (expected, result, checkAttributes) ->
 
 assert.timeData = (expected, result) ->
   assert.data(expected, result, ['time', 'y'])
-

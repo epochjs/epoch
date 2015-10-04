@@ -4,9 +4,9 @@
         <link rel="stylesheet" type="text/css" href="../css/tests.css">
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-        <script src="../../../js/epoch.js"></script>
+        <script src="../../../dist/js/epoch.js"></script>
         <script src="../js/data.js"></script>
-        <link rel="stylesheet" type="text/css" href="../../../css/epoch.css">
+        <link rel="stylesheet" type="text/css" href="../../../dist/css/epoch.css">
     </head>
     <body>
         <h1>Basic Area Chart Test</h1>
@@ -104,7 +104,7 @@
                 data[1].values.push({x: x, y: 2*x});
                 data[2].values.push({x: x, y: 3*x});
             }
-        
+
             $('#test-3 .epoch').epoch({ type: 'area', data: data });
         });
         </script>
@@ -144,7 +144,7 @@
             $('#test-4 .epoch').epoch({ type: 'area', data: data });
         });
         </script>
-        
+
 
         <!-- Test 5 -->
         <div id="test-5" class="test">
@@ -174,7 +174,7 @@
                 data1[0].values.push({x: x1, y: y1});
                 data2[0].values.push({x: x2, y: y2});
             }
-        
+
             var chart = $('#test-5 .epoch').epoch({
                 type: 'area',
                 data: data1
@@ -277,7 +277,7 @@
         $(function() {
             var data1 = [{label: 'A', values: []}],
                 data2 = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []}
                 ],
@@ -319,7 +319,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []}
                 ],
@@ -363,7 +363,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []},
                     {label: 'D', values: []},
