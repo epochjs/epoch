@@ -45,7 +45,7 @@ describe 'Epoch.Chart', ->
 
       it 'should set data when given as an option', ->
         data = [
-          {label: 'A', values: [{x: 0, y: 0}]}, 
+          {label: 'A', values: [{x: 0, y: 0}]},
           {label: 'B', values: [{x: 1, y: 1}]}
         ]
         c = new Epoch.Chart.Base({ data: data })
