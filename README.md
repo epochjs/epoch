@@ -17,7 +17,6 @@ The second is to visit the [project site](http://fastly.github.io/epoch), downlo
 **Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
 
 ### Public CDN URL's
-
 If you don't want to host the files yourself, you can use
 [jsDelivr](http://http://www.jsdelivr.com/) to serve the files:
 
