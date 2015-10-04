@@ -26,7 +26,7 @@
     "type": "git",
     "url": "https://github.com/fastly/epoch.git"
   },
-  "main": "epoch.min.js",
+  "main": "dist/js/epoch.js",
   "dependencies": {
     "d3": "^3.4.13"
   },
