@@ -20,7 +20,8 @@ The second is to visit the [project site](http://fastly.github.io/epoch), downlo
 
 If you don't want to host the files yourself, you can use **[jsDelivr](http://http://www.jsdelivr.com/)** to serve the files.
 
-Steps to get the epoch from jsDelivr  
+Steps to get the epoch from jsDelivr:
+
 1. Just search for [epoch](http://www.jsdelivr.com/?query=epoch).  
 2. Copy the URL's and you're good to go.
 
