@@ -99,15 +99,6 @@ gulp.task('watch', function () {
 });
 
 /**
- * Runs mocha unit tests for the project. This can also be initiated by calling
- * `npm test` (which simply calls into this gulp task).
- */
-gulp.task('unit', ['build'], function () {
-  gulp.src(path.test.unit + '**/*.coffee')
-    .pipe(mocha({ reporter: 'dot' }));
-});
-
-/**
  * Cleans all build and distribution files.
  */
 gulp.task('clean', function (cb) {

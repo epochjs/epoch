@@ -54,7 +54,7 @@ The best way to start contributing to Epoch is to follow these steps:
 3. Make changes in a source file (either in `src/` or `sass/`)
 4. In a web browser open the `test/index.html` and browse the rendering tests
 5. Use the rendering tests to see if your changes had the desired result
-6. Ensure unit tests with pass `gulp unit`
+6. Ensure unit tests with pass `npm test`
 
 #### Testing
 
@@ -85,7 +85,6 @@ Epoch uses [gulp](https://github.com/gulpjs/gulp) to perform various tasks. The
 * `gulp clean` - Cleans the `dist/` directory.
 * `gulp build` - Builds the CoffeeScript and Sass source into the `dist/`
   directory.
-* `gulp unit` - Runs unit tests for the project.
 * `gulp watch` - Starts a watch script to recompile CoffeeScript and Sass when
   any files change.
 * `gulp doc` - Generates codo documentation for the project.
@@ -123,7 +122,7 @@ tests/
 ### Release Checklist
 
 - Update CHANGELOG.md with the changes since last release
-- Run `gulp unit` and ensure all tests pass
+- Run `npm test` and ensure all tests pass
 - Copy new .zip of release source files to gh-pages branch
 - Update the website's library version in the _config.yml
 - Update the website's copy of Epoch

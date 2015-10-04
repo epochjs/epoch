@@ -47,6 +47,6 @@
   },
   "scripts": {
     "build": "gulp build",
-    "test": "gulp unit"
+    "test": "npm run build && mocha --recursive --compilers coffee:coffee-script/register tests/unit/"
   }
 }
