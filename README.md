@@ -1,6 +1,8 @@
 ## Epoch
 By Ryan Sandor Richards
 
+[![Build Status](https://travis-ci.org/epochjs/epoch.svg?branch=master)](https://travis-ci.org/epochjs/epoch)
+
 Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of visualization programming: **basic charts** for creating historical reports, and **real-time charts** for displaying frequently updating timeseries data.
 
 To get started using Epoch, please refer to the [Epoch Project Site](http://fastly.github.io/epoch). There you can find full documentation and guides to help you start using Epoch right away.
