@@ -26,18 +26,23 @@ Steps to get the epoch from jsDelivr
 
 ### Developing Epoch
 
-Developing Epoch is a reasonably straight forward process. In this section we'll cover the basic on how to develop Epoch by detailing common build task, exploring how the source is arranged, and finally show how to use rendering tests to aid development.
+Developing Epoch is a reasonably straight forward process. In this section we'll
+cover the basic on how to develop Epoch by detailing common build task, exploring
+how the source is arranged, and finally show how to use rendering tests to aid
+development.
 
 #### Configuring Development Environment
 
-Epoch uses several tools in its development:
+Epoch requires the following for development:
 
-1. [CoffeeScript](http://coffeescript.org/) (required)
-2. [node-sass](https://github.com/sass/node-sass) (required, needed for compiling SCSS to CSS)
-3. [node-minify](https://github.com/srod/node-minify) (optional, needed for building a minified release)
-4. [codo](https://github.com/coffeedoc/codo) (optional, needed for generating documentation)
+1. [Node.js](https://nodejs.org/en/) (v4.1.1+)
+2. [NPM](https://www.npmjs.com/) (v2.1.0+)
 
-All of the above tools can be installed via [npm](https://www.npmjs.org/). After cloning the repository, run `npm install` in the project directory to install the above requirements.
+Once both are installed on your machine you will need to run `npm install` from
+the repository's root directory in order to install other dependant libraries.
+
+Once you have installed the required npm packages you can use `grunt build` to
+fully rebuild the source (see more information about grunt tasks below).
 
 
 #### Basic Development Process
@@ -45,13 +50,11 @@ All of the above tools can be installed via [npm](https://www.npmjs.org/). After
 The best way to start contributing to Epoch is to follow these steps:
 
 1. Change to the source directory for the project
-2. Run `cake build` to build the JavaScript and CSS from source
-    1. Optionally run `cake documentation` to compile the API documentation into HTML
-3. In a web browser open the `test/index.html` and browse the rendering tests
-4. Make changes in the CoffeeScript Source and use `cake build` or `cake watch` so that your changes are compiled
+2. Run `gulp watch` to recompile the project after source files change
+3. Make changes in a source file (either in `src/` or `sass/`)
+4. In a web browser open the `test/index.html` and browse the rendering tests
 5. Use the rendering tests to see if your changes had the desired result
-6. Ensure unit tests with pass `cake test`
-
+6. Ensure unit tests with pass `gulp unit`
 
 #### Testing
 
