@@ -74,16 +74,18 @@ spot issues. Also, pull requests without appropriate testing will not be
 merged.
 
 
-#### Build and Testing Tasks
+#### Gulp Tasks
 
-Epoch uses [gulp](https://github.com/gulpjs/gulp) as a task runner to perform
-its build tasks. The `gulpfile.js` file defines the following tasks:
+Epoch uses [gulp](https://github.com/gulpjs/gulp) to perform various tasks. The
+`gulpfile.js` file defines the following tasks:
 
 * `gulp clean` - Cleans the `dist/` directory.
 * `gulp build` - Builds the CoffeeScript and Sass source into the `dist/`
   directory.
-* `gulp unit` - Runs unit tests for the project
-
+* `gulp unit` - Runs unit tests for the project.
+* `gulp watch` - Starts a watch script to recompile CoffeeScript and Sass when
+  any files change.
+* `gulp doc` - Generates codo documentation for the project.
 
 #### Source Structure
 
