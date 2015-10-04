@@ -30,5 +30,8 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/fastly/epoch.git"
+  },
+  "dependencies": {
+    "d3": "^3.4.13"
   }
 }
