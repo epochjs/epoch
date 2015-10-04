@@ -2,6 +2,8 @@
 By Ryan Sandor Richards
 
 [![Build Status](https://travis-ci.org/epochjs/epoch.svg?branch=master)](https://travis-ci.org/epochjs/epoch)
+[![Dependency Status](https://david-dm.org/epochjs/epoch.svg)](https://david-dm.org/epochjs/epoch)
+[![devDependency Status](https://david-dm.org/epochjs/epoch/dev-status.svg)](https://david-dm.org/epochjs/epoch#info=devDependencies)
 
 Epoch is a general purpose charting library for application developers and visualization designers. It focuses on two different aspects of visualization programming: **basic charts** for creating historical reports, and **real-time charts** for displaying frequently updating timeseries data.
 
