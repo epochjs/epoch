@@ -69,7 +69,7 @@ Unless otherwise stated, Epoch's real-time charts have the following common opti
   <tr>
     <td><code>fps</code></td>
     <td>
-      Number of frames per second that transitions animations should use. For most people, frame rates in excess of 60fps inpeceptible and can cause a big performance hit. The default value of <code>24</code> tends to work very well, but you can increase it to get smoother animations.<br>
+      Number of frames per second that transitions animations should use. For most people, frame rates in excess of 60fps imperceptible and can cause a big performance hit. The default value of <code>24</code> tends to work very well, but you can increase it to get smoother animations.<br>
       <i>Example:</i> <code>fps: 60</code></td>
   </tr>
   <tr>
