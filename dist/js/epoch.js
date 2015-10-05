@@ -780,6 +780,11 @@ Epoch.Chart.Canvas = (function(superClass) {
     });
   };
 
+  Canvas.prototype.redraw = function() {
+    Epoch.QueryCSS.purge();
+    return this.draw();
+  };
+
   return Canvas;
 
 })(Epoch.Chart.Base);

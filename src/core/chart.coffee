@@ -327,3 +327,8 @@ class Epoch.Chart.Canvas extends Epoch.Chart.Base
     super()
     @canvas.style {'width': "#{@width}px", 'height': "#{@height}px"}
     @canvas.attr { width: @getWidth(), height: @getHeight() }
+
+  # Purges QueryCSS cache and redraws the Canvas based chart.
+  redraw: ->
+    Epoch.QueryCSS.purge()
+    @draw()
