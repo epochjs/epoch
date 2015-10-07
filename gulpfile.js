@@ -106,15 +106,3 @@ gulp.task('clean', function (cb) {
     cb();
   });
 });
-
-/**
- * Generates codo documentation from the project's coffeescript source.
- */
-gulp.task('doc', function (cb) {
-  var command = [
-    './node_modules/.bin/codo --quiet --private',
-    '--name Epoch --readme README.md --title "Epoch Documentation"',
-    '--output #{dirs.doc} #{dirs.src} - LICENSE'
-  ].join('');
-  exec(command, cb);
-});
