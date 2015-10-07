@@ -221,7 +221,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   # @return [Object] The d3 left axis.
   leftAxis: ->
     ticks = @options.ticks.left
-    axis = d3.svg.axis().scale(@ySvg()).orient('left')
+    axis = d3.svg.axis().scale(@ySvgLeft()).orient('left')
       .tickFormat(@options.tickFormats.left)
     if ticks == 2
       axis.tickValues @extent((d) -> d.y)
@@ -232,7 +232,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
   rightAxis: ->
     extent = @extent((d) -> d.y)
     ticks = @options.ticks.right
-    axis = d3.svg.axis().scale(@ySvg()).orient('right')
+    axis = d3.svg.axis().scale(@ySvgRight()).orient('right')
       .tickFormat(@options.tickFormats.right)
     if ticks == 2
       axis.tickValues @extent((d) -> d.y)
@@ -379,18 +379,40 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @_updateTimeAxes()
 
   # @return [Function] The y scale for the plot
-  y: ->
-    domain = @options.range ? @extent((d) -> d.y)
+  y: (scaleDomain) ->
+    unless scaleDomain
+      scaleDomain = if Array.isArray(@options.range)
+        @options.range
+      else if @options.range && Array.isArray(@options.range.left)
+        @options.range.left
+      else
+        @extent((d) -> d.y)
     d3.scale.linear()
-      .domain(domain)
+      .domain(scaleDomain)
       .range([@innerHeight(), 0])
 
+  # @param [Array] domain Optional domain to override default
   # @return [Function] The y scale for the svg portions of the plot
-  ySvg: ->
-    domain = @options.range ? @extent((d) -> d.y)
+  ySvg: (domain) ->
+    unless domain?
+      domain = @options.range ? @extent((d) -> d.y)
     d3.scale.linear()
       .domain(domain)
       .range([@innerHeight() / @pixelRatio, 0])
+
+  # @return [Function] The y scale for the svg portion of the plot for the left axis
+  ySvgLeft: ->
+    if @options.range?
+      @ySvg @options.range.left
+    else
+      @ySvg()
+
+  # @return [Function] The y scale for the svg portion of the plot for the right axis
+  ySvgRight: ->
+    if @options.range?
+      @ySvg @options.range.right
+    else
+      @ySvg()
 
   # @return [Number] The width of a single section of the graph pertaining to a data point
   w: ->

@@ -214,10 +214,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # Calculates an array of layers in the charts data that are flagged as visible.
   # @return [Array] The chart's visible layers.
   getVisibleLayers: ->
-    visible = []
-    for layer in @data
-      visible.push(layer) if layer.visible
-    return visible
+    return @data.filter((layer) -> layer.visible)
 
   # Updates the chart with new data.
   # @param data Data to replace the current data for the chart.

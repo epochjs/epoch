@@ -16,13 +16,12 @@ class Epoch.Time.Line extends Epoch.Time.Plot
   # Draws the line chart.
   draw: (delta=0) ->
     @clear()
-    [y, w] = [@y(), @w()]
-
+    w = @w()
     for layer in @getVisibleLayers()
       continue unless Epoch.isNonEmptyArray(layer.values)
       @setStyles(layer.className)
       @ctx.beginPath()
-
+      y = @y(layer.range)
       [i, k, trans] = [@options.windowSize, layer.values.length, @inTransition()]
 
       while (--i >= -2) and (--k >= 0)

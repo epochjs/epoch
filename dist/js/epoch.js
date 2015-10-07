@@ -646,16 +646,9 @@ Epoch.Chart.Base = (function(superClass) {
   };
 
   Base.prototype.getVisibleLayers = function() {
-    var i, layer, len, ref, visible;
-    visible = [];
-    ref = this.data;
-    for (i = 0, len = ref.length; i < len; i++) {
-      layer = ref[i];
-      if (layer.visible) {
-        visible.push(layer);
-      }
-    }
-    return visible;
+    return this.data.filter(function(layer) {
+      return layer.visible;
+    });
   };
 
   Base.prototype.update = function(data, draw) {
@@ -2558,7 +2551,7 @@ Epoch.Time.Plot = (function(superClass) {
   Plot.prototype.leftAxis = function() {
     var axis, ticks;
     ticks = this.options.ticks.left;
-    axis = d3.svg.axis().scale(this.ySvg()).orient('left').tickFormat(this.options.tickFormats.left);
+    axis = d3.svg.axis().scale(this.ySvgLeft()).orient('left').tickFormat(this.options.tickFormats.left);
     if (ticks === 2) {
       return axis.tickValues(this.extent(function(d) {
         return d.y;
@@ -2574,7 +2567,7 @@ Epoch.Time.Plot = (function(superClass) {
       return d.y;
     });
     ticks = this.options.ticks.right;
-    axis = d3.svg.axis().scale(this.ySvg()).orient('right').tickFormat(this.options.tickFormats.right);
+    axis = d3.svg.axis().scale(this.ySvgRight()).orient('right').tickFormat(this.options.tickFormats.right);
     if (ticks === 2) {
       return axis.tickValues(this.extent(function(d) {
         return d.y;
@@ -2707,20 +2700,39 @@ Epoch.Time.Plot = (function(superClass) {
     return this._updateTimeAxes();
   };
 
-  Plot.prototype.y = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
-    return d3.scale.linear().domain(domain).range([this.innerHeight(), 0]);
+  Plot.prototype.y = function(scaleDomain) {
+    if (!scaleDomain) {
+      scaleDomain = Array.isArray(this.options.range) ? this.options.range : this.options.range && Array.isArray(this.options.range.left) ? this.options.range.left : this.extent(function(d) {
+        return d.y;
+      });
+    }
+    return d3.scale.linear().domain(scaleDomain).range([this.innerHeight(), 0]);
   };
 
-  Plot.prototype.ySvg = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
+  Plot.prototype.ySvg = function(domain) {
+    var ref;
+    if (domain == null) {
+      domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
+        return d.y;
+      });
+    }
     return d3.scale.linear().domain(domain).range([this.innerHeight() / this.pixelRatio, 0]);
+  };
+
+  Plot.prototype.ySvgLeft = function() {
+    if (this.options.range != null) {
+      return this.ySvg(this.options.range.left);
+    } else {
+      return this.ySvg();
+    }
+  };
+
+  Plot.prototype.ySvgRight = function() {
+    if (this.options.range != null) {
+      return this.ySvg(this.options.range.right);
+    } else {
+      return this.ySvg();
+    }
   };
 
   Plot.prototype.w = function() {
@@ -3700,21 +3712,22 @@ Epoch.Time.Line = (function(superClass) {
   };
 
   Line.prototype.draw = function(delta) {
-    var args, entry, i, j, k, layer, len, ref, ref1, ref2, trans, w, y;
+    var args, entry, i, j, k, layer, len, ref, ref1, trans, w, y;
     if (delta == null) {
       delta = 0;
     }
     this.clear();
-    ref = [this.y(), this.w()], y = ref[0], w = ref[1];
-    ref1 = this.getVisibleLayers();
-    for (j = 0, len = ref1.length; j < len; j++) {
-      layer = ref1[j];
+    w = this.w();
+    ref = this.getVisibleLayers();
+    for (j = 0, len = ref.length; j < len; j++) {
+      layer = ref[j];
       if (!Epoch.isNonEmptyArray(layer.values)) {
         continue;
       }
       this.setStyles(layer.className);
       this.ctx.beginPath();
-      ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref2[0], k = ref2[1], trans = ref2[2];
+      y = this.y(layer.range);
+      ref1 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref1[0], k = ref1[1], trans = ref1[2];
       while ((--i >= -2) && (--k >= 0)) {
         entry = layer.values[k];
         args = [(i + 1) * w + delta, y(entry.y)];

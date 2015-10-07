@@ -3,7 +3,7 @@
     <head>
         <link rel="stylesheet" type="text/css" href="../css/tests.css">
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
         <script src="../../../dist/js/epoch.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../dist/css/epoch.css">
 
@@ -28,6 +28,7 @@
             <li><a href="#test-8">Categorical Colors</a></li>
             <li><a href="#test-9">Show/Hide Layers</a></li>
             <li><a href="#test-10">Show/Hide Layers</a></li>
+            <li><a href="#test-11">Multiaxes</a></li>
         </ol>
 
         <!-- Test 1 -->
@@ -488,6 +489,53 @@ chart.draw();
                 axes: ['right', 'bottom'],
                 data: data,
                 range: [-2, 5]
+            });
+        });
+        </script>
+
+        <!-- Test 11 -->
+        <div id="test-11" class="test">
+            <h2>12. Multi-axes</h2>
+            <p>
+                Render a plot that uses independent axes ranges for the left and
+                right sides.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+              {
+                label: 'A',
+                values: [],
+                range: [-5, 5]
+              },
+              {
+                label: 'B',
+                values: [],
+                range: [0, 100]
+              }
+            ];
+            var length = 40;
+
+            for (var i = 0; i < length; i++) {
+                var x = i * 2 * Math.PI / length,
+                    y = Math.cos(x) + x / 4,
+                    y2 = i * 100/40,
+                    time = nextTime();
+                data[0].values.push({time: time, y: y});
+                data[1].values.push({time: time, y: y2});
+            }
+
+            $('#test-11 .epoch').epoch({
+                type: 'time.line',
+                axes: ['left', 'right'],
+                data: data,
+                range: {
+                    right: [-5, 5],
+                    left: [0, 100]
+                }
             });
         });
         </script>
