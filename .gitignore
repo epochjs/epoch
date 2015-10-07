@@ -1,5 +1,6 @@
 .stamp*
 /codo-doc/
+/doc/
 /css/
 /js/
 /build/
