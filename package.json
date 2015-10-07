@@ -47,6 +47,8 @@
   },
   "scripts": {
     "build": "gulp build",
-    "test": "npm run build && mocha --recursive --compilers coffee:coffee-script/register tests/unit/"
+    "unit": "mocha --recursive --compilers coffee:coffee-script/register tests/unit/",
+    "test": "npm run build && npm run unit",
+    "codo": "./node_modules/.bin/codo --quiet --private --name Epoch --readme README.md --title 'Epoch Documentation' --output codo-doc src - LICENSE"
   }
 }
