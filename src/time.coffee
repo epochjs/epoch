@@ -378,26 +378,48 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     @draw(@animation.frame * @animation.delta())
     @_updateTimeAxes()
 
+  # Determines a resulting scale domain for the y axis given a domain
+  # @param [Mixed] givenDomain A set domain, a label associated with mutliple
+  #   layers, or null.
+  # @return The domain for the y scale
+  _getScaleDomain: (givenDomain) ->
+    # Explicitly set given domain
+    if Array.isArray(givenDomain)
+      return givenDomain
+
+    # Check for "labeled" layer ranges
+    if Epoch.isString(givenDomain)
+      layers = @getVisibleLayers()
+        .filter((l) -> l.range == givenDomain)
+        .map((l) -> l.values)
+      if layers? && layers.length
+        values = Epoch.Util.flatten(layers).map((d) -> d.y)
+        minFn = (memo, curr) -> if curr < memo then curr else memo
+        maxFn = (memo, curr) -> if curr > memo then curr else memo
+        return [values.reduce(minFn, values[0]), values.reduce(maxFn, values[0])]
+
+    # Find the domain based on chart options
+    if Array.isArray(@options.range)
+      @options.range
+    else if @options.range && Array.isArray(@options.range.left)
+      @options.range.left
+    else if @options.range && Array.isArray(@options.range.right)
+      @options.range.right
+    else
+      @extent((d) -> d.y)
+
+  # @param [Array] givenDomain A given domain for the scale
   # @return [Function] The y scale for the plot
-  y: (scaleDomain) ->
-    unless scaleDomain
-      scaleDomain = if Array.isArray(@options.range)
-        @options.range
-      else if @options.range && Array.isArray(@options.range.left)
-        @options.range.left
-      else
-        @extent((d) -> d.y)
+  y: (givenDomain) ->
     d3.scale.linear()
-      .domain(scaleDomain)
+      .domain(@_getScaleDomain(givenDomain))
       .range([@innerHeight(), 0])
 
-  # @param [Array] domain Optional domain to override default
+  # @param [Array] givenDomain Optional domain to override default
   # @return [Function] The y scale for the svg portions of the plot
-  ySvg: (domain) ->
-    unless domain?
-      domain = @options.range ? @extent((d) -> d.y)
+  ySvg: (givenDomain) ->
     d3.scale.linear()
-      .domain(domain)
+      .domain(@_getScaleDomain(givenDomain))
       .range([@innerHeight() / @pixelRatio, 0])
 
   # @return [Function] The y scale for the svg portion of the plot for the left axis

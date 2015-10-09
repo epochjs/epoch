@@ -495,7 +495,7 @@ chart.draw();
 
         <!-- Test 11 -->
         <div id="test-11" class="test">
-            <h2>12. Multi-axes</h2>
+            <h2>11. Multi-axes</h2>
             <p>
                 Render a plot that uses independent axes ranges for the left and
                 right sides.
@@ -535,6 +535,59 @@ chart.draw();
                 range: {
                     right: [-5, 5],
                     left: [0, 100]
+                }
+            });
+        });
+        </script>
+
+        <!-- Test 12 -->
+        <div id="test-12" class="test">
+            <h2>12. Multi-axes with Labeled Ranges</h2>
+            <p>
+                Render a plot that uses independent axes ranges for the left and
+                right sides that are associated to labels in the chart data.
+            </p>
+            <div class="epoch"></div>
+        </div>
+
+        <script>
+        $(function() {
+            var data = [
+              {
+                label: 'A',
+                values: [],
+                range: 'range-one'
+              },
+              {
+                label: 'B',
+                values: [],
+                range: 'range-two'
+              },
+              {
+                label: 'C',
+                values: [],
+                range: 'range-one'
+              }
+            ];
+            var length = 50;
+
+            for (var i = 0; i < length; i++) {
+                var y = Math.random() * 100;
+                var y2 = Math.random() * 2;
+                var y3 = Math.random() * 50 + 75
+                var time = nextTime();
+                data[0].values.push({time: time, y: y});
+                data[1].values.push({time: time, y: y2});
+                data[2].values.push({time: time, y: y3});
+            }
+
+            $('#test-12 .epoch').epoch({
+                type: 'time.line',
+                axes: ['left', 'right'],
+                data: data,
+                range: {
+                    right: 'range-one',
+                    left: 'range-two'
                 }
             });
         });
