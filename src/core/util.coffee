@@ -219,3 +219,18 @@ class Epoch.Events
       unless fn?
         Epoch.exception "Callback for event '#{name}' is not a function or reference to a method."
       fn.apply @, args
+
+# Performs a single pass flatten on a multi-array
+# @param [Array] multiarray A deep multi-array to flatten
+# @returns [Array] A single pass flatten of the multi-array
+Epoch.Util.flatten = (multiarray) ->
+  if !Array.isArray(multiarray)
+    throw new Error('Epoch.Util.flatten only accepts arrays')
+  result = []
+  for array in multiarray
+    if Array.isArray(array)
+      for item in array
+        result.push item
+    else
+      result.push array
+  result

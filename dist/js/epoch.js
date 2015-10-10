@@ -31,7 +31,7 @@ Epoch.exception = function(msg) {
 Epoch.TestContext = (function() {
   var VOID_METHODS;
 
-  VOID_METHODS = ['arc', 'arcTo', 'beginPath', 'bezierCurveTo', 'clearRect', 'clip', 'closePath', 'drawImage', 'fill', 'fillRect', 'fillText', 'moveTo', 'quadraticCurveTo', 'rect', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+  VOID_METHODS = ['arc', 'arcTo', 'beginPath', 'bezierCurveTo', 'clearRect', 'clip', 'closePath', 'drawImage', 'fill', 'fillRect', 'fillText', 'moveTo', 'quadraticCurveTo', 'rect', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate', 'lineTo'];
 
   function TestContext() {
     var i, len, method;
@@ -368,6 +368,26 @@ Epoch.Events = (function() {
 
 })();
 
+Epoch.Util.flatten = function(multiarray) {
+  var array, item, j, l, len, len1, result;
+  if (!Array.isArray(multiarray)) {
+    throw new Error('Epoch.Util.flatten only accepts arrays');
+  }
+  result = [];
+  for (j = 0, len = multiarray.length; j < len; j++) {
+    array = multiarray[j];
+    if (Array.isArray(array)) {
+      for (l = 0, len1 = array.length; l < len1; l++) {
+        item = array[l];
+        result.push(item);
+      }
+    } else {
+      result.push(array);
+    }
+  }
+  return result;
+};
+
 d3.selection.prototype.width = function(value) {
   if ((value != null) && Epoch.isString(value)) {
     return this.style('width', value);
@@ -646,16 +666,9 @@ Epoch.Chart.Base = (function(superClass) {
   };
 
   Base.prototype.getVisibleLayers = function() {
-    var i, layer, len, ref, visible;
-    visible = [];
-    ref = this.data;
-    for (i = 0, len = ref.length; i < len; i++) {
-      layer = ref[i];
-      if (layer.visible) {
-        visible.push(layer);
-      }
-    }
-    return visible;
+    return this.data.filter(function(layer) {
+      return layer.visible;
+    });
   };
 
   Base.prototype.update = function(data, draw) {
@@ -670,6 +683,51 @@ Epoch.Chart.Base = (function(superClass) {
 
   Base.prototype.draw = function() {
     return this.trigger('draw');
+  };
+
+  Base.prototype._getScaleDomain = function(givenDomain) {
+    var layers, maxFn, minFn, values;
+    if (Array.isArray(givenDomain)) {
+      return givenDomain;
+    }
+    if (Epoch.isString(givenDomain)) {
+      layers = this.getVisibleLayers().filter(function(l) {
+        return l.range === givenDomain;
+      }).map(function(l) {
+        return l.values;
+      });
+      if ((layers != null) && layers.length) {
+        values = Epoch.Util.flatten(layers).map(function(d) {
+          return d.y;
+        });
+        minFn = function(memo, curr) {
+          if (curr < memo) {
+            return curr;
+          } else {
+            return memo;
+          }
+        };
+        maxFn = function(memo, curr) {
+          if (curr > memo) {
+            return curr;
+          } else {
+            return memo;
+          }
+        };
+        return [values.reduce(minFn, values[0]), values.reduce(maxFn, values[0])];
+      }
+    }
+    if (Array.isArray(this.options.range)) {
+      return this.options.range;
+    } else if (this.options.range && Array.isArray(this.options.range.left)) {
+      return this.options.range.left;
+    } else if (this.options.range && Array.isArray(this.options.range.right)) {
+      return this.options.range.right;
+    } else {
+      return this.extent(function(d) {
+        return d.y;
+      });
+    }
   };
 
   Base.prototype.extent = function(cmp) {
@@ -1545,12 +1603,8 @@ Epoch.Chart.Plot = (function(superClass) {
     return d3.scale.linear().domain(domain).range([0, this.innerWidth()]);
   };
 
-  Plot.prototype.y = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
-    return d3.scale.linear().domain(domain).range([this.innerHeight(), 0]);
+  Plot.prototype.y = function(givenDomain) {
+    return d3.scale.linear().domain(this._getScaleDomain(givenDomain)).range([this.innerHeight(), 0]);
   };
 
   Plot.prototype.bottomAxis = function() {
@@ -1562,11 +1616,15 @@ Epoch.Chart.Plot = (function(superClass) {
   };
 
   Plot.prototype.leftAxis = function() {
-    return d3.svg.axis().scale(this.y()).orient('left').ticks(this.options.ticks.left).tickFormat(this.options.tickFormats.left);
+    var range;
+    range = this.options.range ? this.options.range.left : null;
+    return d3.svg.axis().scale(this.y(range)).orient('left').ticks(this.options.ticks.left).tickFormat(this.options.tickFormats.left);
   };
 
   Plot.prototype.rightAxis = function() {
-    return d3.svg.axis().scale(this.y()).orient('right').ticks(this.options.ticks.right).tickFormat(this.options.tickFormats.right);
+    var range;
+    range = this.options.range ? this.options.range.right : null;
+    return d3.svg.axis().scale(this.y(range)).orient('right').ticks(this.options.ticks.right).tickFormat(this.options.tickFormats.right);
   };
 
   Plot.prototype.draw = function() {
@@ -2173,37 +2231,37 @@ Epoch.Chart.Line = (function(superClass) {
     Line.__super__.constructor.call(this, this.options);
   }
 
-  Line.prototype.line = function() {
+  Line.prototype.line = function(layer) {
     var ref, x, y;
-    ref = [this.x(), this.y()], x = ref[0], y = ref[1];
-    return d3.svg.line().x((function(_this) {
-      return function(d) {
-        return x(d.x);
-      };
-    })(this)).y((function(_this) {
-      return function(d) {
-        return y(d.y);
-      };
-    })(this));
+    ref = [this.x(), this.y(layer.range)], x = ref[0], y = ref[1];
+    return d3.svg.line().x(function(d) {
+      return x(d.x);
+    }).y(function(d) {
+      return y(d.y);
+    });
   };
 
   Line.prototype.draw = function() {
-    var layer, layers, line, ref, x, y;
-    ref = [this.x(), this.y(), this.line(), this.getVisibleLayers()], x = ref[0], y = ref[1], line = ref[2], layers = ref[3];
+    var layer, layers, ref, x, y;
+    ref = [this.x(), this.y(), this.getVisibleLayers()], x = ref[0], y = ref[1], layers = ref[2];
     if (layers.length === 0) {
       return this.g.selectAll('.layer').remove();
     }
     layer = this.g.selectAll('.layer').data(layers, function(d) {
       return d.category;
     });
-    layer.select('.line').transition().duration(500).attr('d', function(l) {
-      return line(l.values);
-    });
+    layer.select('.line').transition().duration(500).attr('d', (function(_this) {
+      return function(l) {
+        return _this.line(l)(l.values);
+      };
+    })(this));
     layer.enter().append('g').attr('class', function(l) {
       return l.className;
-    }).append('path').attr('class', 'line').attr('d', function(l) {
-      return line(l.values);
-    });
+    }).append('path').attr('class', 'line').attr('d', (function(_this) {
+      return function(l) {
+        return _this.line(l)(l.values);
+      };
+    })(this));
     layer.exit().transition().duration(750).style('opacity', '0').remove();
     return Line.__super__.draw.call(this);
   };
@@ -2558,7 +2616,7 @@ Epoch.Time.Plot = (function(superClass) {
   Plot.prototype.leftAxis = function() {
     var axis, ticks;
     ticks = this.options.ticks.left;
-    axis = d3.svg.axis().scale(this.ySvg()).orient('left').tickFormat(this.options.tickFormats.left);
+    axis = d3.svg.axis().scale(this.ySvgLeft()).orient('left').tickFormat(this.options.tickFormats.left);
     if (ticks === 2) {
       return axis.tickValues(this.extent(function(d) {
         return d.y;
@@ -2574,7 +2632,7 @@ Epoch.Time.Plot = (function(superClass) {
       return d.y;
     });
     ticks = this.options.ticks.right;
-    axis = d3.svg.axis().scale(this.ySvg()).orient('right').tickFormat(this.options.tickFormats.right);
+    axis = d3.svg.axis().scale(this.ySvgRight()).orient('right').tickFormat(this.options.tickFormats.right);
     if (ticks === 2) {
       return axis.tickValues(this.extent(function(d) {
         return d.y;
@@ -2707,20 +2765,28 @@ Epoch.Time.Plot = (function(superClass) {
     return this._updateTimeAxes();
   };
 
-  Plot.prototype.y = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
-    return d3.scale.linear().domain(domain).range([this.innerHeight(), 0]);
+  Plot.prototype.y = function(givenDomain) {
+    return d3.scale.linear().domain(this._getScaleDomain(givenDomain)).range([this.innerHeight(), 0]);
   };
 
-  Plot.prototype.ySvg = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
-    return d3.scale.linear().domain(domain).range([this.innerHeight() / this.pixelRatio, 0]);
+  Plot.prototype.ySvg = function(givenDomain) {
+    return d3.scale.linear().domain(this._getScaleDomain(givenDomain)).range([this.innerHeight() / this.pixelRatio, 0]);
+  };
+
+  Plot.prototype.ySvgLeft = function() {
+    if (this.options.range != null) {
+      return this.ySvg(this.options.range.left);
+    } else {
+      return this.ySvg();
+    }
+  };
+
+  Plot.prototype.ySvgRight = function() {
+    if (this.options.range != null) {
+      return this.ySvg(this.options.range.right);
+    } else {
+      return this.ySvg();
+    }
   };
 
   Plot.prototype.w = function() {
@@ -3700,21 +3766,22 @@ Epoch.Time.Line = (function(superClass) {
   };
 
   Line.prototype.draw = function(delta) {
-    var args, entry, i, j, k, layer, len, ref, ref1, ref2, trans, w, y;
+    var args, entry, i, j, k, layer, len, ref, ref1, trans, w, y;
     if (delta == null) {
       delta = 0;
     }
     this.clear();
-    ref = [this.y(), this.w()], y = ref[0], w = ref[1];
-    ref1 = this.getVisibleLayers();
-    for (j = 0, len = ref1.length; j < len; j++) {
-      layer = ref1[j];
+    w = this.w();
+    ref = this.getVisibleLayers();
+    for (j = 0, len = ref.length; j < len; j++) {
+      layer = ref[j];
       if (!Epoch.isNonEmptyArray(layer.values)) {
         continue;
       }
       this.setStyles(layer.className);
       this.ctx.beginPath();
-      ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref2[0], k = ref2[1], trans = ref2[2];
+      y = this.y(layer.range);
+      ref1 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref1[0], k = ref1[1], trans = ref1[2];
       while ((--i >= -2) && (--k >= 0)) {
         entry = layer.values[k];
         args = [(i + 1) * w + delta, y(entry.y)];

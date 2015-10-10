@@ -279,7 +279,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []}
                 ],
@@ -321,7 +321,7 @@
         <script>
         $(function() {
             var data = [
-                    {label: 'A', values: []}, 
+                    {label: 'A', values: []},
                     {label: 'B', values: []},
                     {label: 'C', values: []},
                     {label: 'D', values: []},
@@ -435,6 +435,35 @@
             $('#test-11 button').click(function(e) {
                 var index = parseInt($(e.target).attr('data-index'));
                 chart.toggleLayer(index);
+            });
+        });
+        </script>
+
+        <!-- Test 12 -->
+        <div id="test-12" class="test">
+            <h2>12. Multi-axis</h2>
+            <div class="epoch"></div>
+        </div>
+        <script>
+        $(function() {
+            var d = [
+              { range: 'left', values: [] },
+              { range: 'right', values: [] }
+            ];
+
+            for (var i = 0; i < 40; i++) {
+              d[0].values.push({ x: i, y: 10*i });
+              d[1].values.push({ x: i, y: Math.cos(2*Math.PI*i/40.0) });
+            }
+
+            var chart = $('#test-12 .epoch').epoch({
+                type: 'line',
+                data: d,
+                axes: ['left', 'right'],
+                range: {
+                  left: 'left',
+                  right: 'right'
+                }
             });
         });
         </script>

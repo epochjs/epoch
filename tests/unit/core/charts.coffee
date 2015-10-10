@@ -223,6 +223,46 @@ describe 'Epoch.Chart', ->
         chart.option('height', newHeight)
         assert.equal d3.select('#resizeDiv').height(), newHeight
 
+    describe '_getScaleDomain', ->
+      chart = null
+
+      beforeEach ->
+        chart = new Epoch.Chart.Base
+          data: [ layerWithRange(-2030, 5050) ]
+
+      it 'returns a given array', ->
+        assert.deepEqual(chart._getScaleDomain([0,1]), [0,1])
+
+      it 'returns @options.range if it is an array', ->
+        chart.options.range = [-100, 100]
+        assert.equal chart._getScaleDomain(), chart.options.range
+
+      it 'returns @options.range.left if it is an array', ->
+        chart.options.range = {left: [-100, 100]}
+        assert.equal chart._getScaleDomain(), chart.options.range.left
+
+      it 'returns @options.range.right if it is an array', ->
+        chart.options.range = {right: [-100, 100]}
+        assert.equal chart._getScaleDomain(), chart.options.range.right
+
+      it 'returns the extent of the data', ->
+        assert.deepEqual chart._getScaleDomain(), chart.extent((d) -> d.y)
+
+      describe 'with range grouped layers', ->
+        beforeEach ->
+          chart = new Epoch.Chart.Base
+            data: [
+              layerWithRange(0, 10, 'left'),
+              layerWithRange(-5000, 5000, 'right'),
+              layerWithRange(-10, -5, 'left')
+            ]
+
+        it 'returns the extent of the layers with the given range label', ->
+          assert.deepEqual chart._getScaleDomain('left'), [-10, 10]
+
+        it 'returns the extent of the data if the label is invalid', ->
+          assert.deepEqual chart._getScaleDomain('foobar'), chart.extent((d) -> d.y)
+
     describe 'layers', ->
       [chart, eventChart] = [null, null]
       labels = ['A', 'B', 'C']

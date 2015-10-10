@@ -5,7 +5,7 @@ class Epoch.TestContext
     'clip', 'closePath', 'drawImage', 'fill', 'fillRect', 'fillText',
     'moveTo', 'quadraticCurveTo', 'rect', 'restore', 'rotate', 'save',
     'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform',
-    'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'
+    'stroke', 'strokeRect', 'strokeText', 'transform', 'translate', 'lineTo'
   ]
 
   # Creates a new test rendering context.

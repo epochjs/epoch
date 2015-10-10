@@ -43,6 +43,7 @@
     "mocha": "^2.3.3",
     "node-minify": "^1.2.1",
     "node-sass": "^3.3.3",
+    "sinon": "^1.17.1",
     "xmlhttprequest": "^1.7.0"
   },
   "scripts": {

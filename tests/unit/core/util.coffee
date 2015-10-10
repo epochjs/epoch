@@ -77,3 +77,16 @@ describe 'Epoch.Util', ->
       styles = Epoch.Util.getComputedStyle(div)
       for k, v of overrideStyles
         assert.equal styles[k], v, "ComputedStyles['#{k}'] should be '#{v}'"
+
+  describe 'flatten', ->
+    it 'should flatten a given multi-array', ->
+      multiarray = [[1, 2], 3, [4, 5, 6, [7]]]
+      expected = [1, 2, 3, 4, 5, 6, [7]]
+      assert.deepEqual Epoch.Util.flatten(multiarray), expected
+
+    it 'should throw if given a non-array', ->
+      assert.throws (-> Epoch.Util.flatten null), /only accepts arrays/
+      assert.throws (-> Epoch.Util.flatten 1), /only accepts arrays/
+      assert.throws (-> Epoch.Util.flatten {}), /only accepts arrays/
+      assert.throws (-> Epoch.Util.flatten 'hellooo'), /only accepts arrays/
+      assert.throws (-> Epoch.Util.flatten new Error()), /only accepts arrays/

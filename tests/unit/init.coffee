@@ -31,6 +31,11 @@ global.addStyleSheet = (css) ->
   head.appendChild(style)
   style
 
+global.layerWithRange = (min, max, range) ->
+  layer = { values: [{time: 0, y: min}, {time: 1, y: max}] }
+  layer.range = range if range?
+  layer
+
 #
 # Helper assertion methods for data format testing
 #
