@@ -224,6 +224,8 @@ class Epoch.Events
 # @param [Array] multiarray A deep multi-array to flatten
 # @returns [Array] A single pass flatten of the multi-array
 Epoch.Util.flatten = (multiarray) ->
+  if !Array.isArray(multiarray)
+    throw new Error('Epoch.Util.flatten only accepts arrays')
   result = []
   for array in multiarray
     if Array.isArray(array)

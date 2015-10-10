@@ -370,6 +370,9 @@ Epoch.Events = (function() {
 
 Epoch.Util.flatten = function(multiarray) {
   var array, item, j, l, len, len1, result;
+  if (!Array.isArray(multiarray)) {
+    throw new Error('Epoch.Util.flatten only accepts arrays');
+  }
   result = [];
   for (j = 0, len = multiarray.length; j < len; j++) {
     array = multiarray[j];
