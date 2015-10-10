@@ -685,6 +685,51 @@ Epoch.Chart.Base = (function(superClass) {
     return this.trigger('draw');
   };
 
+  Base.prototype._getScaleDomain = function(givenDomain) {
+    var layers, maxFn, minFn, values;
+    if (Array.isArray(givenDomain)) {
+      return givenDomain;
+    }
+    if (Epoch.isString(givenDomain)) {
+      layers = this.getVisibleLayers().filter(function(l) {
+        return l.range === givenDomain;
+      }).map(function(l) {
+        return l.values;
+      });
+      if ((layers != null) && layers.length) {
+        values = Epoch.Util.flatten(layers).map(function(d) {
+          return d.y;
+        });
+        minFn = function(memo, curr) {
+          if (curr < memo) {
+            return curr;
+          } else {
+            return memo;
+          }
+        };
+        maxFn = function(memo, curr) {
+          if (curr > memo) {
+            return curr;
+          } else {
+            return memo;
+          }
+        };
+        return [values.reduce(minFn, values[0]), values.reduce(maxFn, values[0])];
+      }
+    }
+    if (Array.isArray(this.options.range)) {
+      return this.options.range;
+    } else if (this.options.range && Array.isArray(this.options.range.left)) {
+      return this.options.range.left;
+    } else if (this.options.range && Array.isArray(this.options.range.right)) {
+      return this.options.range.right;
+    } else {
+      return this.extent(function(d) {
+        return d.y;
+      });
+    }
+  };
+
   Base.prototype.extent = function(cmp) {
     return [
       d3.min(this.getVisibleLayers(), function(layer) {
@@ -1558,12 +1603,8 @@ Epoch.Chart.Plot = (function(superClass) {
     return d3.scale.linear().domain(domain).range([0, this.innerWidth()]);
   };
 
-  Plot.prototype.y = function() {
-    var domain, ref;
-    domain = (ref = this.options.range) != null ? ref : this.extent(function(d) {
-      return d.y;
-    });
-    return d3.scale.linear().domain(domain).range([this.innerHeight(), 0]);
+  Plot.prototype.y = function(givenDomain) {
+    return d3.scale.linear().domain(this._getScaleDomain(givenDomain)).range([this.innerHeight(), 0]);
   };
 
   Plot.prototype.bottomAxis = function() {
@@ -1575,11 +1616,15 @@ Epoch.Chart.Plot = (function(superClass) {
   };
 
   Plot.prototype.leftAxis = function() {
-    return d3.svg.axis().scale(this.y()).orient('left').ticks(this.options.ticks.left).tickFormat(this.options.tickFormats.left);
+    var range;
+    range = this.options.range ? this.options.range.left : null;
+    return d3.svg.axis().scale(this.y(range)).orient('left').ticks(this.options.ticks.left).tickFormat(this.options.tickFormats.left);
   };
 
   Plot.prototype.rightAxis = function() {
-    return d3.svg.axis().scale(this.y()).orient('right').ticks(this.options.ticks.right).tickFormat(this.options.tickFormats.right);
+    var range;
+    range = this.options.range ? this.options.range.right : null;
+    return d3.svg.axis().scale(this.y(range)).orient('right').ticks(this.options.ticks.right).tickFormat(this.options.tickFormats.right);
   };
 
   Plot.prototype.draw = function() {
@@ -2186,37 +2231,37 @@ Epoch.Chart.Line = (function(superClass) {
     Line.__super__.constructor.call(this, this.options);
   }
 
-  Line.prototype.line = function() {
+  Line.prototype.line = function(layer) {
     var ref, x, y;
-    ref = [this.x(), this.y()], x = ref[0], y = ref[1];
-    return d3.svg.line().x((function(_this) {
-      return function(d) {
-        return x(d.x);
-      };
-    })(this)).y((function(_this) {
-      return function(d) {
-        return y(d.y);
-      };
-    })(this));
+    ref = [this.x(), this.y(layer.range)], x = ref[0], y = ref[1];
+    return d3.svg.line().x(function(d) {
+      return x(d.x);
+    }).y(function(d) {
+      return y(d.y);
+    });
   };
 
   Line.prototype.draw = function() {
-    var layer, layers, line, ref, x, y;
-    ref = [this.x(), this.y(), this.line(), this.getVisibleLayers()], x = ref[0], y = ref[1], line = ref[2], layers = ref[3];
+    var layer, layers, ref, x, y;
+    ref = [this.x(), this.y(), this.getVisibleLayers()], x = ref[0], y = ref[1], layers = ref[2];
     if (layers.length === 0) {
       return this.g.selectAll('.layer').remove();
     }
     layer = this.g.selectAll('.layer').data(layers, function(d) {
       return d.category;
     });
-    layer.select('.line').transition().duration(500).attr('d', function(l) {
-      return line(l.values);
-    });
+    layer.select('.line').transition().duration(500).attr('d', (function(_this) {
+      return function(l) {
+        return _this.line(l)(l.values);
+      };
+    })(this));
     layer.enter().append('g').attr('class', function(l) {
       return l.className;
-    }).append('path').attr('class', 'line').attr('d', function(l) {
-      return line(l.values);
-    });
+    }).append('path').attr('class', 'line').attr('d', (function(_this) {
+      return function(l) {
+        return _this.line(l)(l.values);
+      };
+    })(this));
     layer.exit().transition().duration(750).style('opacity', '0').remove();
     return Line.__super__.draw.call(this);
   };
@@ -2421,7 +2466,7 @@ Epoch.Time.Plot = (function(superClass) {
   };
 
   function Plot(options) {
-    var givenMargins, len, m, pos, ref;
+    var givenMargins, l, len, pos, ref;
     this.options = options;
     givenMargins = Epoch.Util.copy(this.options.margins) || {};
     Plot.__super__.constructor.call(this, this.options = Epoch.Util.defaults(this.options, defaults));
@@ -2435,8 +2480,8 @@ Epoch.Time.Plot = (function(superClass) {
     this._queue = [];
     this.margins = {};
     ref = ['top', 'right', 'bottom', 'left'];
-    for (m = 0, len = ref.length; m < len; m++) {
-      pos = ref[m];
+    for (l = 0, len = ref.length; l < len; l++) {
+      pos = ref[l];
       this.margins[pos] = (this.options.margins != null) && (this.options.margins[pos] != null) ? this.options.margins[pos] : this.hasAxis(pos) ? defaultAxisMargins[pos] : 6;
     }
     this.svg = this.el.insert('svg', ':first-child').attr('width', this.width).attr('height', this.height).style('z-index', '1000');
@@ -2531,7 +2576,7 @@ Epoch.Time.Plot = (function(superClass) {
   };
 
   Plot.prototype._resetInitialTimeTicks = function() {
-    var i, k, layer, len, m, ref, ref1, results, tickInterval;
+    var i, k, l, layer, len, ref, ref1, results, tickInterval;
     tickInterval = this.options.ticks.time;
     this._ticks = [];
     this._tickTimer = tickInterval;
@@ -2543,8 +2588,8 @@ Epoch.Time.Plot = (function(superClass) {
     }
     ref = this.data;
     results = [];
-    for (m = 0, len = ref.length; m < len; m++) {
-      layer = ref[m];
+    for (l = 0, len = ref.length; l < len; l++) {
+      layer = ref[l];
       if (!Epoch.isNonEmptyArray(layer.values)) {
         continue;
       }
@@ -2628,13 +2673,13 @@ Epoch.Time.Plot = (function(superClass) {
   };
 
   Plot.prototype._stopTransition = function() {
-    var firstTick, lastTick, layer, len, m, ref, ref1;
+    var firstTick, l, lastTick, layer, len, ref, ref1;
     if (!this.inTransition()) {
       return;
     }
     ref = this.data;
-    for (m = 0, len = ref.length; m < len; m++) {
-      layer = ref[m];
+    for (l = 0, len = ref.length; l < len; l++) {
+      layer = ref[l];
       if (!(layer.values.length > this.options.windowSize + 1)) {
         continue;
       }
@@ -2718,51 +2763,6 @@ Epoch.Time.Plot = (function(superClass) {
     }
     this.draw(this.animation.frame * this.animation.delta());
     return this._updateTimeAxes();
-  };
-
-  Plot.prototype._getScaleDomain = function(givenDomain) {
-    var layers, maxFn, minFn, values;
-    if (Array.isArray(givenDomain)) {
-      return givenDomain;
-    }
-    if (Epoch.isString(givenDomain)) {
-      layers = this.getVisibleLayers().filter(function(l) {
-        return l.range === givenDomain;
-      }).map(function(l) {
-        return l.values;
-      });
-      if ((layers != null) && layers.length) {
-        values = Epoch.Util.flatten(layers).map(function(d) {
-          return d.y;
-        });
-        minFn = function(memo, curr) {
-          if (curr < memo) {
-            return curr;
-          } else {
-            return memo;
-          }
-        };
-        maxFn = function(memo, curr) {
-          if (curr > memo) {
-            return curr;
-          } else {
-            return memo;
-          }
-        };
-        return [values.reduce(minFn, values[0]), values.reduce(maxFn, values[0])];
-      }
-    }
-    if (Array.isArray(this.options.range)) {
-      return this.options.range;
-    } else if (this.options.range && Array.isArray(this.options.range.left)) {
-      return this.options.range.left;
-    } else if (this.options.range && Array.isArray(this.options.range.right)) {
-      return this.options.range.right;
-    } else {
-      return this.extent(function(d) {
-        return d.y;
-      });
-    }
   };
 
   Plot.prototype.y = function(givenDomain) {
@@ -2858,15 +2858,15 @@ Epoch.Time.Plot = (function(superClass) {
   };
 
   Plot.prototype._updateTimeAxes = function() {
-    var dop, dx, len, m, ref, ref1, results, tick;
+    var dop, dx, l, len, ref, ref1, results, tick;
     if (!(this.hasAxis('top') || this.hasAxis('bottom'))) {
       return;
     }
     ref = [this.animation.tickDelta(), 1 / this.options.fps], dx = ref[0], dop = ref[1];
     ref1 = this._ticks;
     results = [];
-    for (m = 0, len = ref1.length; m < len; m++) {
-      tick = ref1[m];
+    for (l = 0, len = ref1.length; l < len; l++) {
+      tick = ref1[l];
       tick.x += dx;
       if (this.hasAxis('bottom')) {
         tick.bottomEl.attr('transform', "translate(" + (tick.x + 1) + ",0)");
@@ -2911,10 +2911,10 @@ Epoch.Time.Plot = (function(superClass) {
   };
 
   Plot.prototype.axesChanged = function() {
-    var len, m, pos, ref;
+    var l, len, pos, ref;
     ref = ['top', 'right', 'bottom', 'left'];
-    for (m = 0, len = ref.length; m < len; m++) {
-      pos = ref[m];
+    for (l = 0, len = ref.length; l < len; l++) {
+      pos = ref[l];
       if ((this.options.margins != null) && (this.options.margins[pos] != null)) {
         continue;
       }
@@ -2977,18 +2977,18 @@ Epoch.Time.Stack = (function(superClass) {
   }
 
   Stack.prototype._stackLayers = function() {
-    var i, layer, layers, m, ref, results, y0;
+    var i, l, layer, layers, ref, results, y0;
     if (!((layers = this.getVisibleLayers()).length > 0)) {
       return;
     }
     results = [];
-    for (i = m = 0, ref = layers[0].values.length; 0 <= ref ? m < ref : m > ref; i = 0 <= ref ? ++m : --m) {
+    for (i = l = 0, ref = layers[0].values.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
       y0 = 0;
       results.push((function() {
-        var len, n, results1;
+        var len, m, results1;
         results1 = [];
-        for (n = 0, len = layers.length; n < len; n++) {
-          layer = layers[n];
+        for (m = 0, len = layers.length; m < len; m++) {
+          layer = layers[m];
           layer.values[i].y0 = y0;
           results1.push(y0 += layer.values[i].y);
         }
@@ -3019,14 +3019,14 @@ Epoch.Time.Stack = (function(superClass) {
   };
 
   Stack.prototype.extent = function() {
-    var i, j, layers, m, max, n, ref, ref1, ref2, sum;
+    var i, j, l, layers, m, max, ref, ref1, ref2, sum;
     ref = [0, this.getVisibleLayers()], max = ref[0], layers = ref[1];
     if (!layers.length) {
       return [0, 0];
     }
-    for (i = m = 0, ref1 = layers[0].values.length; 0 <= ref1 ? m < ref1 : m > ref1; i = 0 <= ref1 ? ++m : --m) {
+    for (i = l = 0, ref1 = layers[0].values.length; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
       sum = 0;
-      for (j = n = 0, ref2 = layers.length; 0 <= ref2 ? n < ref2 : n > ref2; j = 0 <= ref2 ? ++n : --n) {
+      for (j = m = 0, ref2 = layers.length; 0 <= ref2 ? m < ref2 : m > ref2; j = 0 <= ref2 ? ++m : --m) {
         sum += layers[j].values[i].y;
       }
       if (sum > max) {
@@ -3037,11 +3037,11 @@ Epoch.Time.Stack = (function(superClass) {
   };
 
   Stack.prototype.layerChanged = function() {
-    var layers, len, m, ref;
+    var l, layers, len, ref;
     this._stackLayers();
     ref = this._queue;
-    for (m = 0, len = ref.length; m < len; m++) {
-      layers = ref[m];
+    for (l = 0, len = ref.length; l < len; l++) {
+      layers = ref[l];
       this._prepareLayers(layers);
     }
     return Stack.__super__.layerChanged.call(this);

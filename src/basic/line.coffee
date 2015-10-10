@@ -5,13 +5,15 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
     super(@options)
 
   # @return [Function] The line generator used to construct the plot.
-  line: ->
-    [x, y] = [@x(), @y()]
-    d3.svg.line().x((d) => (x d.x)).y((d) => (y d.y))
+  line: (layer) ->
+    [x, y] = [@x(), @y(layer.range)]
+    d3.svg.line()
+      .x((d) -> x(d.x))
+      .y((d) -> y(d.y))
 
   # Draws the line chart.
   draw: ->
-    [x, y, line, layers] = [@x(), @y(), @line(), @getVisibleLayers()]
+    [x, y, layers] = [@x(), @y(), @getVisibleLayers()]
 
     # Zero visible layers, just drop all and get out
     if layers.length == 0
@@ -23,14 +25,14 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
 
     # 2) Update (only existing)
     layer.select('.line').transition().duration(500)
-      .attr('d', (l) -> line(l.values))
+      .attr('d', (l) => @line(l)(l.values))
 
     # 3) Enter (Create)
     layer.enter().append('g')
       .attr('class', (l) -> l.className)
       .append('path')
         .attr('class', 'line')
-        .attr('d', (l) -> line(l.values))
+        .attr('d', (l) => @line(l)(l.values))
 
     # 4) Update (existing & new)
     # Nuuupp
