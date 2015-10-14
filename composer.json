@@ -1,0 +1,22 @@
+{
+  "name": "epochjs/epoch",
+  "description": "A general purpose, real-time visualization library.",
+  "keywords": [
+    "epoch",
+    "d3",
+    "chart",
+    "graph",
+    "plot",
+    "real-time"
+  ],
+  "homepage": "https://github.com/epochjs/epoch",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ryan Sandor Richards"
+    }
+  ],
+  "require": {
+    "mbostock/d3": "@stable"
+  }
+}
