@@ -19,7 +19,7 @@ Epoch can be easily installed via the following package managers:
 If you don't see your favorite package manager in the list above feel free to
 [open up an issue](https://github.com/epochjs/epoch/issues/new) and let us know.
 
-The [latest release zip (0.8.0)](https://github.com/epochjs/epoch/archive/v0.8.0.zip) contains the compiled
+The [latest release zip (0.8.1)](https://github.com/epochjs/epoch/archive/v0.8.1.zip) contains the compiled
 and minified source in the `dist/js` and `dist/css` folders.
 
 **Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
