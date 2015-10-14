@@ -1746,6 +1746,7 @@ Epoch.Chart.Area = (function(superClass) {
       base.type = 'area';
     }
     Area.__super__.constructor.call(this, this.options);
+    this.draw();
   }
 
   Area.prototype.y = function() {
@@ -1858,6 +1859,7 @@ Epoch.Chart.Bar = (function(superClass) {
     }
     Bar.__super__.constructor.call(this, this.options);
     this.onAll(optionListeners);
+    this.draw();
   }
 
   Bar.prototype._isVertical = function() {
@@ -2050,6 +2052,9 @@ Epoch.Chart.Bar = (function(superClass) {
     if (dataKey == null) {
       dataKey = 'x';
     }
+    if (this.data[0] == null) {
+      return [];
+    }
     total = this.data[0].values.length;
     step = Math.ceil(total / numTicks) | 0;
     return tickValues = (function() {
@@ -2145,6 +2150,7 @@ Epoch.Chart.Histogram = (function(superClass) {
     this.options = options != null ? options : {};
     Histogram.__super__.constructor.call(this, this.options = Epoch.Util.defaults(this.options, defaults));
     this.onAll(optionListeners);
+    this.draw();
   }
 
   Histogram.prototype._prepareData = function(data) {
@@ -2229,6 +2235,7 @@ Epoch.Chart.Line = (function(superClass) {
       base.type = 'line';
     }
     Line.__super__.constructor.call(this, this.options);
+    this.draw();
   }
 
   Line.prototype.line = function(layer) {
@@ -2302,6 +2309,7 @@ Epoch.Chart.Pie = (function(superClass) {
     this.g = this.svg.append('g').attr("transform", "translate(" + (this.width / 2) + ", " + (this.height / 2) + ")");
     this.on('option:margin', 'marginChanged');
     this.on('option:inner', 'innerChanged');
+    this.draw();
   }
 
   Pie.prototype.draw = function() {
@@ -2364,6 +2372,7 @@ Epoch.Chart.Scatter = (function(superClass) {
     this.options = options != null ? options : {};
     Scatter.__super__.constructor.call(this, this.options = Epoch.Util.defaults(this.options, defaults));
     this.on('option:radius', 'radiusChanged');
+    this.draw();
   }
 
   Scatter.prototype.draw = function() {
@@ -3067,11 +3076,12 @@ Epoch.Time.Area = (function(superClass) {
       base.type = 'time.area';
     }
     Area.__super__.constructor.call(this, this.options);
+    this.draw();
   }
 
   Area.prototype.setStyles = function(layer) {
     var styles;
-    if (layer.className != null) {
+    if ((layer != null) && (layer.className != null)) {
       styles = this.getStyles("g." + (layer.className.replace(/\s/g, '.')) + " path.area");
     } else {
       styles = this.getStyles("g path.area");
@@ -3093,7 +3103,9 @@ Epoch.Time.Area = (function(superClass) {
     ref = [this.y(), this.w(), this.getVisibleLayers()], y = ref[0], w = ref[1], layers = ref[2];
     results = [];
     for (i = l = ref1 = layers.length - 1; ref1 <= 0 ? l <= 0 : l >= 0; i = ref1 <= 0 ? ++l : --l) {
-      layer = layers[i];
+      if (!(layer = layers[i])) {
+        continue;
+      }
       this.setStyles(layer);
       this.ctx.beginPath();
       ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], j = ref2[0], k = ref2[1], trans = ref2[2];
@@ -3131,7 +3143,9 @@ Epoch.Time.Area = (function(superClass) {
     ref = [this.y(), this.w(), this.getVisibleLayers()], y = ref[0], w = ref[1], layers = ref[2];
     results = [];
     for (i = l = ref1 = layers.length - 1; ref1 <= 0 ? l <= 0 : l >= 0; i = ref1 <= 0 ? ++l : --l) {
-      layer = layers[i];
+      if (!(layer = layers[i])) {
+        continue;
+      }
       this.setStyles(layer);
       this.ctx.beginPath();
       ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref2[0], k = ref2[1], trans = ref2[2];
@@ -3180,6 +3194,7 @@ Epoch.Time.Bar = (function(superClass) {
       base.type = 'time.bar';
     }
     Bar.__super__.constructor.call(this, this.options);
+    this.draw();
   }
 
   Bar.prototype._offsetX = function() {
@@ -3300,6 +3315,7 @@ Epoch.Time.Gauge = (function(superClass) {
       };
     })(this);
     this.onAll(optionListeners);
+    this.draw();
   }
 
   Gauge.prototype.update = function(value) {
@@ -3487,6 +3503,7 @@ Epoch.Time.Heatmap = (function(superClass) {
     this._setOpacityFunction();
     this._setupPaintCanvas();
     this.onAll(optionListeners);
+    this.draw();
   }
 
   Heatmap.prototype._setOpacityFunction = function() {
@@ -3758,6 +3775,7 @@ Epoch.Time.Line = (function(superClass) {
       base.type = 'time.line';
     }
     Line.__super__.constructor.call(this, this.options);
+    this.draw();
   }
 
   Line.prototype.setStyles = function(className) {
@@ -3834,7 +3852,6 @@ jQueryModule = function($) {
         Epoch.exception("Unknown chart type '" + options.type + "'");
       }
       this.data(DATA_NAME, (chart = new klass(options)));
-      chart.draw();
     }
     return chart;
   };
@@ -3859,7 +3876,6 @@ MooToolsModule = function() {
         Epoch.exception("Unknown chart type '" + options.type + "'");
       }
       self.store(DATA_NAME, (chart = new klass(options)));
-      chart.draw();
     }
     return chart;
   });
@@ -3893,7 +3909,6 @@ zeptoModule = function($) {
       this.data(DATA_NAME, (cid = next_cid()));
       chart = new klass(options);
       chartMap[cid] = chart;
-      chart.draw();
       return chart;
     }
   });

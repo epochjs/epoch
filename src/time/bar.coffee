@@ -4,6 +4,7 @@ class Epoch.Time.Bar extends Epoch.Time.Stack
   constructor: (@options={}) ->
     @options.type ?= 'time.bar'
     super(@options)
+    @draw()
 
   # @return [Number] An offset used to align the ticks to the center of the rendered bars.
   _offsetX: ->

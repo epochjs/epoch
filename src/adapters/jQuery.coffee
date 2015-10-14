@@ -13,7 +13,6 @@ jQueryModule = ($) ->
       unless klass?
         Epoch.exception "Unknown chart type '#{options.type}'"
       @data DATA_NAME, (chart = new klass options)
-      chart.draw()
     return chart
 
 jQueryModule(jQuery) if window.jQuery?

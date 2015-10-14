@@ -36,6 +36,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       @options = Epoch.Util.defaults(@options, defaults)
     super(@options)
     @onAll optionListeners
+    @draw()
 
   # @return [Boolean] True if the chart is vertical, false otherwise
   _isVertical: ->
@@ -213,6 +214,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
   # @param [String] dataKey Property name of a datum to use for the tick value
   # @return [Array] The ticks for the given axis
   _getTickValues: (numTicks, dataKey='x') ->
+    return [] unless @data[0]?
     total = @data[0].values.length
     step = Math.ceil(total / numTicks)|0
     tickValues = (@data[0].values[i].x for i in [0...total] by step)
