@@ -2800,6 +2800,9 @@ Epoch.Time.Plot = (function(superClass) {
     if (!((++this._tickTimer) % this.options.ticks.time)) {
       this._pushTick(this.options.windowSize, newTime, true);
     }
+    if (!(this._ticks.length > 0)) {
+      return;
+    }
     if (!(this._ticks[0].x - (this.w() / this.pixelRatio) >= 0)) {
       return this._ticks[0].exit = true;
     }
