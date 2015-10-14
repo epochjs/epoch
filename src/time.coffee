@@ -424,6 +424,7 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
       @_pushTick(@options.windowSize, newTime, true)
 
     # Outgoing ticks
+    return unless @_ticks.length > 0
     unless @_ticks[0].x - (@w()/@pixelRatio) >= 0
       @_ticks[0].exit = true
 
