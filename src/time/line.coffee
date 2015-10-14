@@ -4,6 +4,7 @@ class Epoch.Time.Line extends Epoch.Time.Plot
   constructor: (@options={}) ->
     @options.type ?= 'time.line'
     super(@options)
+    @draw()
 
   # Sets the graphics context styles based ont he given layer class name.
   # @param [String] className The class name of the layer for which to set the styles.

@@ -36,6 +36,7 @@ class Epoch.Chart.Bar extends Epoch.Chart.Plot
       @options = Epoch.Util.defaults(@options, defaults)
     super(@options)
     @onAll optionListeners
+    @draw()
 
   # @return [Boolean] True if the chart is vertical, false otherwise
   _isVertical: ->

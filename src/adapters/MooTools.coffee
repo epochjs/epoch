@@ -14,7 +14,6 @@ MooToolsModule = ->
       unless klass?
         Epoch.exception "Unknown chart type '#{options.type}'"
       self.store DATA_NAME, (chart = new klass options)
-      chart.draw()
     return chart
 
 MooToolsModule() if window.MooTools?

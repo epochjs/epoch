@@ -14,6 +14,7 @@ class Epoch.Chart.Histogram extends Epoch.Chart.Bar
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
     @onAll optionListeners
+    @draw()
 
   # Prepares data by sorting it into histogram buckets as instructed by the chart options.
   # @param [Array] data Data to prepare for rendering.

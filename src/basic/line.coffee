@@ -3,6 +3,7 @@ class Epoch.Chart.Line extends Epoch.Chart.Plot
   constructor: (@options={}) ->
     @options.type ?= 'line'
     super(@options)
+    @draw()
 
   # @return [Function] The line generator used to construct the plot.
   line: (layer) ->

@@ -42,6 +42,7 @@ class Epoch.Time.Heatmap extends Epoch.Time.Plot
     @_setOpacityFunction()
     @_setupPaintCanvas()
     @onAll optionListeners
+    @draw()
 
   _setOpacityFunction: ->
     if Epoch.isString(@options.opacity)

@@ -24,7 +24,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
   # @option options [Integer] tickSize The length (in pixels) for each tick (default: 5).
   # @option options [Integer] tickOffset The number of pixels by which to offset ticks from the outer arc (default: 5).
   # @option options [Integer] fps The number of animation frames to render per second (default: 34).
-  # @option options [Function] format The formatting function to use when rendering the gauge label 
+  # @option options [Function] format The formatting function to use when rendering the gauge label
   #   (default: Epoch.Formats.percent).
   constructor: (@options={}) ->
     super(@options = Epoch.Util.defaults(@options, defaults))
@@ -71,6 +71,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
       @draw()
 
     @onAll optionListeners
+    @draw()
 
   # Sets the value for the gauge to display and begins animating the guage.
   # @param [Number] value Value to set for the gauge.
@@ -161,7 +162,7 @@ class Epoch.Time.Gauge extends Epoch.Chart.Canvas
     @ctx.stroke()
 
     @drawNeedle()
-    
+
     super()
 
   # Draws the needle.

@@ -4,6 +4,7 @@ class Epoch.Time.Area extends Epoch.Time.Stack
   constructor: (@options={}) ->
     @options.type ?= 'time.area'
     super(@options)
+    @draw()
 
   # Sets the appropriate styles to the graphics context given a particular layer.
   # @param [Object] layer Layer for which to set the styles.
