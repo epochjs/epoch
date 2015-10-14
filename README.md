@@ -16,6 +16,9 @@ Epoch can be easily installed via the following package managers:
 * [bower](http://bower.io/search/?q=epoch)
 * [packagist](https://packagist.org/packages/epochjs/epoch)
 
+If you don't see your favorite package manager in the list above feel free to
+[open up an issue](https://github.com/epochjs/epoch/issues/new) and let us know.
+
 The [latest release zip (0.8.0)](https://github.com/epochjs/epoch/archive/v0.8.0.zip) contains the compiled
 and minified source in the `dist/js` and `dist/css` folders.
 
