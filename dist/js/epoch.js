@@ -2052,6 +2052,9 @@ Epoch.Chart.Bar = (function(superClass) {
     if (dataKey == null) {
       dataKey = 'x';
     }
+    if (this.data[0] == null) {
+      return [];
+    }
     total = this.data[0].values.length;
     step = Math.ceil(total / numTicks) | 0;
     return tickValues = (function() {
@@ -3078,7 +3081,7 @@ Epoch.Time.Area = (function(superClass) {
 
   Area.prototype.setStyles = function(layer) {
     var styles;
-    if (layer.className != null) {
+    if ((layer != null) && (layer.className != null)) {
       styles = this.getStyles("g." + (layer.className.replace(/\s/g, '.')) + " path.area");
     } else {
       styles = this.getStyles("g path.area");
@@ -3100,7 +3103,9 @@ Epoch.Time.Area = (function(superClass) {
     ref = [this.y(), this.w(), this.getVisibleLayers()], y = ref[0], w = ref[1], layers = ref[2];
     results = [];
     for (i = l = ref1 = layers.length - 1; ref1 <= 0 ? l <= 0 : l >= 0; i = ref1 <= 0 ? ++l : --l) {
-      layer = layers[i];
+      if (!(layer = layers[i])) {
+        continue;
+      }
       this.setStyles(layer);
       this.ctx.beginPath();
       ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], j = ref2[0], k = ref2[1], trans = ref2[2];
@@ -3138,7 +3143,9 @@ Epoch.Time.Area = (function(superClass) {
     ref = [this.y(), this.w(), this.getVisibleLayers()], y = ref[0], w = ref[1], layers = ref[2];
     results = [];
     for (i = l = ref1 = layers.length - 1; ref1 <= 0 ? l <= 0 : l >= 0; i = ref1 <= 0 ? ++l : --l) {
-      layer = layers[i];
+      if (!(layer = layers[i])) {
+        continue;
+      }
       this.setStyles(layer);
       this.ctx.beginPath();
       ref2 = [this.options.windowSize, layer.values.length, this.inTransition()], i = ref2[0], k = ref2[1], trans = ref2[2];
