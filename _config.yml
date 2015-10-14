@@ -1,5 +1,5 @@
 name: Epoch Real-time Visualzation Library
-version: 0.8.1
+version: 0.8.2
 markdown: redcarpet
 redcarpet:
     extensions: [with_toc_data]
