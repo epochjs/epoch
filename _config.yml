@@ -1,5 +1,5 @@
-name: Epoch by Fastly
-version: 0.6.0
+name: Epoch Real-time Visualzation Library
+version: 0.8.0
 markdown: redcarpet
 redcarpet:
     extensions: [with_toc_data]

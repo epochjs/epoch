@@ -2,3 +2,5 @@ doc/
 node_modules/
 .DS_Store
 _site/
+codo-doc/
+test.html
