@@ -1,0 +1,25 @@
+<h3 id="line">Left and Right Axes Ranges</h3>
+
+<div id="multi-axes-range" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    var leftRange = [0, 100];
+    var rightRange = [-10, 10];
+
+    var data = new RealTimeData(2);
+
+    var chart = $('#multi-axes-range').epoch({
+        type: 'time.line',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right'],
+        range: {
+            left: leftRange,
+            right: rightRange 
+        }
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>

@@ -430,3 +430,77 @@ element in HTML and use the jQuery bindings to create, place, and draw the chart
   });
 </script>
 ```
+
+{% include charts/realtime/multirange_line.html %}
+
+By default when `left` and `right` axes are configured, both display the same value range.  Each can be given custom ranges by providing a `[min, max]` 2-element array:
+
+```javascript
+// Specify the left and right ranges
+var leftRange = [0, 100];
+var rightRange = [-10, 10];
+```
+
+With the ranges defined, they can be applied to the datasets:
+
+```javascript
+// Setup two series, each using a different range
+var data = [
+  {
+    label: 'Left Ranged Series',
+    values: [
+      { time: 0, y: 0 },
+      ...
+    ],
+    // This is how your tell a layer to use a specific range...
+    range: leftRange
+  },
+  {
+    label: 'Right Ranged Series',
+    values: [
+      { time: 0, y: -9.8 },
+      ...
+    ],
+    // Again, we must define the range for this particular series...
+    range: rightRange
+  }
+];
+```
+
+Finally, apply the ranges to the chart
+
+```javascript
+// Create the real-time line plot with two ranges
+var chart = new Epoch.Time.Line({
+  range: {
+    left: leftRange,
+    right: rightRange
+  },
+  data: data,
+  axes: ['left', 'right', 'bottom']
+});
+```
+
+{% include charts/realtime/dynamic_multirange_line.html %}
+
+The above produces a chart with fixed ranges on the left and right axes. A range label can be provided instead of a `[min, max]` array in order to dynamically calculate what the axis range.  For example, take the data definition below:
+
+```javascript
+var data = [
+  { label: 'Layer 1', range: 'range-l', data: [...] },
+  { label: 'Layer 2', range: 'range-r', data: [...] },
+  { label: 'Layer 3', range: 'range-l', data: [...] }
+];
+```
+
+Each layer in the data is associated with a "range label" which can then be applied to the left or right side of the chart when you make it:
+
+```javascript
+var chart = new Epoch.Time.Line({
+  data: data,
+  range: {
+    left: 'range-l',
+    right: 'range-r'
+  }
+});
+```
