@@ -21,7 +21,8 @@ If you don't see your favorite package manager in the list above feel free to
 Finally, you can download any release of the library from the
 [project releases page](https://github.com/epochjs/epoch/releases).
 
-**Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
+**Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to
+work properly your page must load d3 before epoch.
 
 #### Public CDN URLs
 If you don't want to host the files yourself, you can use
