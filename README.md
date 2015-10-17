@@ -130,6 +130,5 @@ tests/
 
 - Update CHANGELOG.md with the changes since last release
 - Run `npm test` and ensure all tests pass
-- Copy new .zip of release source files to gh-pages branch
-- Update the website's library version in the _config.yml
-- Update the website's copy of Epoch
+- Run `npm version [major|minor|patch]`
+- Update the `gh-pages` branch's library version in `_config.yml`
