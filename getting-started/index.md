@@ -8,9 +8,31 @@ header-active: getting-started
 
 This page will help you get started using Epoch in your projects.
 
+### Getting Epoch
+
+Epoch can be installed from the following package managers:
+
+* [npm](https://www.npmjs.com/package/epoch-charting)
+* [bower](http://bower.io/search/?q=epoch)
+* [packagist](https://packagist.org/packages/epochjs/epoch)
+
+If you project does not use any of the package managers listed above you can
+download the latest release of the library from the
+[github repository release page](https://github.com/epochjs/epoch/archive/v{{ site.version }}.zip)
+and install it manually into your project.
+
+The release archives on github contain the entire source of Epoch. To use it in
+your project you'll need to use the following files:
+
+1. `dist/js/epoch.min.js`
+2. `dist/css/epoch.min.css`
+
+
 ### Prerequisites
 
-After [downloading epoch]({{ site.baseurl }}download/epoch.{{ site.version }}.zip) you'll need to setup your page so you can generate charts. First, Epoch requires [d3](https://github.com/mbostock/d3), thus the scripts must be added to your page like so:
+After installing epoch you'll need to setup your page so you can generate charts.
+First, Epoch requires [d3](https://github.com/mbostock/d3), thus the scripts must
+be added to your page like so:
 
 ```html
 <script src="js/d3.min.js"></script>
@@ -88,4 +110,3 @@ The method can be used in the following ways:
 4. `.option(object)` - Sets key-value pairs in the given object as options for the chart
 
 Note that all of the `key` strings can be hierarchical. For instance, you can use `.option('margins.left', 30)` to set the left margin, as opposed to having to use `.option({ margins: { left: 30 }})`.
-
