@@ -10,15 +10,19 @@ Epoch is a general purpose charting library for application developers and visua
 To get started using Epoch, please refer to the [Epoch Project Site](http://fastly.github.io/epoch). There you can find full documentation and guides to help you start using Epoch right away.
 
 ### Installation
-There are two easy options you can use to install epoch. The first is to use [bower](http://bower.io/) from the command-line, like so:
+Epoch can be easily installed via the following package managers:
 
-```
-bower install epoch
-```
+* [npm](https://www.npmjs.com/package/epoch-charting)
+* [bower](http://bower.io/search/?q=epoch)
+* [packagist](https://packagist.org/packages/epochjs/epoch)
 
-The second is to visit the [project site](http://fastly.github.io/epoch), download the latest release, and manually install it in your project. Both methods will provide you with the `epoch.min.js` and `epoch.min.css` files, simply include them along with d3 in your page and you're ready to go.
+If you don't see your favorite package manager in the list above feel free to
+[open up an issue](https://github.com/epochjs/epoch/issues/new) and let us know.
+Finally, you can download any release of the library from the
+[project releases page](https://github.com/epochjs/epoch/releases).
 
-**Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to work properly your page must load d3 before epoch.
+**Important:** Epoch requires [d3](https://github.com/mbostock/d3). In order to
+work properly your page must load d3 before epoch.
 
 #### Public CDN URLs
 If you don't want to host the files yourself, you can use

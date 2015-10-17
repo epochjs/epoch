@@ -1,6 +1,6 @@
 {
   "name": "epoch-charting",
-  "version": "0.7.1",
+  "version": "0.8.2",
   "description": "A general purpose real-time charting library for building beautiful, smooth, and high performance visualizations.",
   "keywords": [
     "chart",
@@ -43,10 +43,13 @@
     "mocha": "^2.3.3",
     "node-minify": "^1.2.1",
     "node-sass": "^3.3.3",
+    "sinon": "^1.17.1",
     "xmlhttprequest": "^1.7.0"
   },
   "scripts": {
     "build": "gulp build",
-    "test": "npm run build && mocha --recursive --compilers coffee:coffee-script/register tests/unit/"
+    "unit": "mocha --recursive --compilers coffee:coffee-script/register tests/unit/",
+    "test": "npm run build && npm run unit",
+    "codo": "./node_modules/.bin/codo --quiet --private --name Epoch --readme README.md --title 'Epoch Documentation' --output codo-doc src - LICENSE"
   }
 }

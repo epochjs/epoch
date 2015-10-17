@@ -21,6 +21,7 @@ class Epoch.Chart.Pie extends Epoch.Chart.SVG
       .attr("transform", "translate(#{@width/2}, #{@height/2})")
     @on 'option:margin', 'marginChanged'
     @on 'option:inner', 'innerChanged'
+    @draw()
 
   # Draws the pie chart
   draw: ->

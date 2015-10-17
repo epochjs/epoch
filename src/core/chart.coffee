@@ -214,10 +214,7 @@ class Epoch.Chart.Base extends Epoch.Events
   # Calculates an array of layers in the charts data that are flagged as visible.
   # @return [Array] The chart's visible layers.
   getVisibleLayers: ->
-    visible = []
-    for layer in @data
-      visible.push(layer) if layer.visible
-    return visible
+    return @data.filter((layer) -> layer.visible)
 
   # Updates the chart with new data.
   # @param data Data to replace the current data for the chart.
@@ -231,6 +228,36 @@ class Epoch.Chart.Base extends Epoch.Events
   # ensure that the event is triggered.
   # @abstract Must be overriden in child classes to perform chart specific drawing.
   draw: -> @trigger 'draw'
+
+  # Determines a resulting scale domain for the y axis given a domain
+  # @param [Mixed] givenDomain A set domain, a label associated with mutliple
+  #   layers, or null.
+  # @return The domain for the y scale
+  _getScaleDomain: (givenDomain) ->
+    # Explicitly set given domain
+    if Array.isArray(givenDomain)
+      return givenDomain
+
+    # Check for "labeled" layer ranges
+    if Epoch.isString(givenDomain)
+      layers = @getVisibleLayers()
+        .filter((l) -> l.range == givenDomain)
+        .map((l) -> l.values)
+      if layers? && layers.length
+        values = Epoch.Util.flatten(layers).map((d) -> d.y)
+        minFn = (memo, curr) -> if curr < memo then curr else memo
+        maxFn = (memo, curr) -> if curr > memo then curr else memo
+        return [values.reduce(minFn, values[0]), values.reduce(maxFn, values[0])]
+
+    # Find the domain based on chart options
+    if Array.isArray(@options.range)
+      @options.range
+    else if @options.range && Array.isArray(@options.range.left)
+      @options.range.left
+    else if @options.range && Array.isArray(@options.range.right)
+      @options.range.right
+    else
+      @extent((d) -> d.y)
 
   # Calculates an extent throughout the layers based on the given comparator.
   # @param [Function] cmp Comparator to use for performing the min and max for the extent

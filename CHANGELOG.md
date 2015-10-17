@@ -1,5 +1,10 @@
 # Epoch Changelog
 
+## 0.8.0 - October 10th, 2015
+### Enhancements / Features
+* Multi-axis support for basic and real-time line plots
+* Added new gulp build-system (for development)
+
 ## 0.7.1 - October 4th, 2015
 * Moved minified source to `dist/js` and `dist/css` respectively
 * Added non-minified source to aforementioned directories

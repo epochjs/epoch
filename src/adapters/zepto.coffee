@@ -22,8 +22,6 @@ zeptoModule = ($) ->
       chart = new klass options
       chartMap[cid] = chart
 
-      chart.draw()
-
       return chart
 
 zeptoModule(Zepto) if window.Zepto?

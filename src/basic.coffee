@@ -102,10 +102,9 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
       .range([0, @innerWidth()])
 
   # @return [Function] The y scale for the visualization.
-  y: ->
-    domain = @options.range ? @extent((d) -> d.y)
+  y: (givenDomain) ->
     d3.scale.linear()
-      .domain(domain)
+      .domain(@_getScaleDomain(givenDomain))
       .range([@innerHeight(), 0])
 
   # @return [Function] d3 axis to use for the bottom of the visualization.
@@ -122,13 +121,15 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
 
   # @return [Function] d3 axis to use on the left of the visualization.
   leftAxis: ->
-    d3.svg.axis().scale(@y()).orient('left')
+    range = if @options.range then @options.range.left else null
+    d3.svg.axis().scale(@y(range)).orient('left')
       .ticks(@options.ticks.left)
       .tickFormat(@options.tickFormats.left)
 
   # @return [Function] d3 axis to use on the right of the visualization.
   rightAxis: ->
-    d3.svg.axis().scale(@y()).orient('right')
+    range = if @options.range then @options.range.right else null
+    d3.svg.axis().scale(@y(range)).orient('right')
       .ticks(@options.ticks.right)
       .tickFormat(@options.tickFormats.right)
 
@@ -239,4 +240,4 @@ class Epoch.Chart.Plot extends Epoch.Chart.SVG
   # Updates chart in response to a <code>option:range</code> event.
   rangeChanged: -> @draw()
 
-# "They will waving from such great heights, come down now..." - The Postal Service
+# "They will see us waving from such great heights, come down now..." - The Postal Service

@@ -4,11 +4,12 @@ class Epoch.Time.Area extends Epoch.Time.Stack
   constructor: (@options={}) ->
     @options.type ?= 'time.area'
     super(@options)
+    @draw()
 
   # Sets the appropriate styles to the graphics context given a particular layer.
   # @param [Object] layer Layer for which to set the styles.
   setStyles: (layer) ->
-    if layer.className?
+    if layer? && layer.className?
       styles = @getStyles "g.#{layer.className.replace(/\s/g,'.')} path.area"
     else
       styles = @getStyles "g path.area"
@@ -23,7 +24,8 @@ class Epoch.Time.Area extends Epoch.Time.Stack
     [y, w, layers] = [@y(), @w(), @getVisibleLayers()]
 
     for i in [layers.length-1..0]
-      layer = layers[i]
+      continue unless (layer = layers[i])
+
       @setStyles layer
       @ctx.beginPath()
 
@@ -53,7 +55,7 @@ class Epoch.Time.Area extends Epoch.Time.Stack
     [y, w, layers] = [@y(), @w(), @getVisibleLayers()]
 
     for i in [layers.length-1..0]
-      layer = layers[i]
+      continue unless (layer = layers[i])
       @setStyles layer
       @ctx.beginPath()
 
