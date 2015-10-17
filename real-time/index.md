@@ -24,6 +24,35 @@ Every real-time chart has a name prefixed with `time.` and was built to use the 
 4. When you have a new data point to append to the chart, use the `.push` method:
   - `myChart.push(nextDataPoint);`
 
+#### CSS Styling and Redrawing
+
+Each real-time chart can be styled using CSS just like the basic charts. Epoch uses an internal CSS cache
+to quickly retrieve the color, size, and position values for each of the canvas rendered elements. When
+changing styles (via a class change, etc.) use the `.redraw()` method to purge the cache and requery
+the CSS styles.
+
+Here is an example of how to dynamically switch styles via jQuery:
+```html
+<div id="chart" class="styles1"></div>
+<button id="toggle">Switch Styles</button>
+<script>
+  var chart = $('#chart').epoch({
+    type: 'time.area',
+    data: []
+  });
+
+  // THe button swtiches the chart's class from styles1 to styles2 and back
+  $('#toggle').click(function (e) {
+    // This switches the class names...
+    var className = $('#chart').attr('class');
+    var newClassName = className === 'styles1' ? 'styles2' : 'styles1';
+    $('#chart').removeClass(className).addClass(newClassName);
+
+    // And this is required to see the updated styles...
+    chart.redraw();
+  });
+</script>
+```
 
 #### Device Pixel Ratio
 
