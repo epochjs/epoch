@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Basic Charts
+title: Real-time Charts
 nav: nav/realtime.html
 banner: banner/real-time.html
 header-active: real-time
@@ -32,6 +32,7 @@ changing styles (via a class change, etc.) use the `.redraw()` method to purge t
 the CSS styles.
 
 Here is an example of how to dynamically switch styles via jQuery:
+
 ```html
 <div id="chart" class="styles1"></div>
 <button id="toggle">Switch Styles</button>
@@ -41,7 +42,7 @@ Here is an example of how to dynamically switch styles via jQuery:
     data: []
   });
 
-  // THe button swtiches the chart's class from styles1 to styles2 and back
+  // The button swtiches the chart's class from styles1 to styles2 and back
   $('#toggle').click(function (e) {
     // This switches the class names...
     var className = $('#chart').attr('class');
