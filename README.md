@@ -128,7 +128,8 @@ tests/
 
 ### Release Checklist
 
-- Update CHANGELOG.md with the changes since last release
 - Run `npm test` and ensure all tests pass
 - Run `npm version [major|minor|patch]`
+- Run `npm publish`
+- Update CHANGELOG.md with the changes since last release
 - Update the `gh-pages` branch's library version in `_config.yml`
