@@ -1,5 +1,21 @@
 # Epoch Changelog
 
+## 0.8.3 - October 10th, 2015
+### Enhancements / Features
+* Added `redraw` method for clearing styles on canvas based charts (#196, @woozyking)
+
+## 0.8.2 - October 10th, 2015
+### Enhancements / Features
+* Charts now auto draw on construction (#195)
+
+## 0.8.0 - October 10th, 2015
+### Enhancements / Features
+* Added packagist/composer package manager support (#202)
+
+### Bug Fixes
+* Real-time charts no-longer error when pushing first data point after initialized
+  with empty data layers. (#203)
+
 ## 0.8.0 - October 10th, 2015
 ### Enhancements / Features
 * Multi-axis support for basic and real-time line plots
