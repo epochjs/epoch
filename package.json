@@ -1,6 +1,6 @@
 {
   "name": "epoch-charting",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "A general purpose real-time charting library for building beautiful, smooth, and high performance visualizations.",
   "keywords": [
     "chart",
