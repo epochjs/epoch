@@ -1,0 +1,23 @@
+<h3 id="line">Dynamic Left and Right Axes Ranges</h3>
+
+<div id="dynamic-multi-axes-range" class="epoch" style="height: 200px"></div>
+
+<script>
+$(function() {
+    console.log('three!');
+    var data = new RealTimeData(3, ['range-l', 'range-r', 'range-l'], [11, 444, 44]);
+
+    var chart = $('#dynamic-multi-axes-range').epoch({
+        type: 'time.line',
+        data: data.history(),
+        axes: ['left', 'bottom', 'right'],
+        range: {
+            left: 'range-l',
+            right: 'range-r' 
+        }
+    });
+
+    setInterval(function() { chart.push(data.next()); }, 1000);
+    chart.push(data.next());
+});
+</script>
