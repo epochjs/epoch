@@ -1,3 +1,5 @@
+sinon = require 'sinon'
+
 describe 'Epoch.Chart', ->
   [defaultWidth, defaultHeight] = [320, 240]
 
@@ -547,3 +549,25 @@ describe 'Epoch.Chart', ->
         chart.option 'height', newHeight
         assert.equal chart.canvas.attr('height'), pixelRatio * newHeight
         assert.equal chart.canvas.height(), newHeight
+
+    describe 'redraw', ->
+      chart = null
+      drawSpy = null
+      purgeSpy = null
+
+      before ->
+        chart = new Epoch.Chart.Canvas()
+
+      beforeEach ->
+        drawSpy = sinon.spy chart, 'draw'
+        purgeSpy = sinon.spy Epoch.QueryCSS, 'purge'
+
+      afterEach ->
+        chart.draw.restore()
+        Epoch.QueryCSS.purge.restore()
+
+      it 'should purge QueryCSS cache and redraw the canvas based chart with new styles', ->
+        chart.redraw()
+
+        assert drawSpy.calledOnce
+        assert purgeSpy.calledOnce
