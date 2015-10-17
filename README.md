@@ -95,7 +95,6 @@ Epoch uses [gulp](https://github.com/gulpjs/gulp) to perform various tasks. The
   directory.
 * `gulp watch` - Starts a watch script to recompile CoffeeScript and Sass when
   any files change.
-* `gulp doc` - Generates codo documentation for the project.
 
 #### Source Structure
 
