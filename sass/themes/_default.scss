@@ -159,10 +159,11 @@ $category20b:
 }
 
 $category20c:
-  #3182bd, #6baed6, #9ecae1, #c6dbef, #e6550d,
-  #fd8d3c, #fdae6b, #fdd0a2, #31a354, #74c476,
-  #a1d99b, #c7e9c0, #756bb1, #9e9ac8, #bcbddc,
-  #dadaeb, #636363, #969696, #bdbdbd, #d9d9d9;
+  #3182bd, #6baed6, #9ecae1, #c6dbef,
+  #e6550d, #fd8d3c, #fdae6b, #fdd0a2,
+  #31a354, #74c476, #a1d99b, #c7e9c0,
+  #756bb1, #9e9ac8, #bcbddc, #dadaeb,
+  #636363, #969696, #bdbdbd, #d9d9d9;
 
 .epoch.category20c {
   @include epoch-category-colors($category20c, 20);
@@ -171,11 +172,11 @@ $category20c:
 
 /*
  * Heatmap Colors
- * 
+ *
  * The heatmap real-time graph uses color blending to choose the color for which to render each bucket.
  * Basic d3 categorical colors do not work well in this instance because the colors in the sequence
  * vary wildly in precieved luminosity.
- * 
+ *
  * Below we define small subsets that should work well together because they are of similar luminosities.
  * Note: darker colors work better since we use opacity to denote "height" or "intensity" for each bucket
  *       after picking a mix color.
