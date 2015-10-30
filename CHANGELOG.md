@@ -1,5 +1,9 @@
 # Epoch Changelog
 
+## 0.8.4 - October 30th, 2015
+### Bug Fixes
+* Fixed bower css path (@ftaiolivista)
+
 ## 0.8.3 - October 17th, 2015
 ### Enhancements / Features
 * Added `redraw` method for clearing styles on canvas based charts (#196, @woozyking)
