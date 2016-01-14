@@ -26,7 +26,7 @@ work properly your page must load d3 before epoch.
 
 #### Public CDN URLs
 If you don't want to host the files yourself, you can use
-[jsDelivr](http://http://www.jsdelivr.com/) to serve the files:
+[jsDelivr](http://www.jsdelivr.com/) to serve the files:
 
 1. Visit [epoch page on jsDelvr](http://www.jsdelivr.com/projects/epoch).
 2. Copy the provided URL's and link to them in your project.
