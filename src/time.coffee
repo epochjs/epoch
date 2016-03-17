@@ -7,6 +7,7 @@
 # rendering text, glyphs, etc.
 class Epoch.Time.Plot extends Epoch.Chart.Canvas
   defaults =
+    domain: null
     range: null
     fps: 24
     historySize: 120
@@ -46,7 +47,9 @@ class Epoch.Time.Plot extends Epoch.Chart.Canvas
     'option:tickFormats.right': 'tickFormatsChanged'
     'option:tickFormats.bottom': 'tickFormatsChanged'
     'option:tickFormats.left': 'tickFormatsChanged'
-
+    'option:domain': 'domainChanged'
+    'option:range': 'rangeChanged'
+    
   # Creates a new real-time plot.
   #
   # @param [Object] options Options for the plot.
@@ -613,3 +616,8 @@ class Epoch.Time.Stack extends Epoch.Time.Plot
     @_stackLayers()
     @_prepareLayers(layers) for layers in @_queue
     super()
+  
+  domainChanged: -> @draw()
+ 
+  rangeChanged: -> @draw()
+  
