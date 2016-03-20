@@ -135,7 +135,23 @@ class Epoch.Chart.Base extends Epoch.Events
   setData: (data, options={}) ->
     prepared = @_prepareData (@rawData = @_formatData(data))
     @data = @_annotateLayers(prepared)
-
+  
+  
+  # Add data to chart.
+  # @param data Data to add. see setData() for more info.
+  addData: (data, options={}) {
+    prepared = @_prepareData (@rawData = @_formatData(data))
+    toadd_data = @_annotateLayers(prepared)
+    
+    for datum, i in @data
+        values = datum.values
+        toadd_values = toadd_data[i].values
+        
+        values.push toadd_values...
+    
+    return
+  
+  
   # Performs post formatted data preparation.
   # @param data Data to prepare before setting.
   # @return The prepared data.
