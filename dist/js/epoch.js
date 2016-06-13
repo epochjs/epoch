@@ -956,22 +956,26 @@ QueryCSS = (function() {
     if (logging) {
       console.log(selectorList);
     }
+    sel = 'WTF-' + selector.replace(' ', '');
     parent = root = put(selectorList.shift());
     while (selectorList.length) {
       el = put(selectorList.shift());
       parent.appendChild(el);
+      if (!selectorList.length) {
+        el.id = sel;
+      }
       parent = el;
     }
     if (logging) {
       console.log(root);
     }
     QueryCSS.getContainer().node().appendChild(root);
-    ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector);
+    ref = Epoch.Util.getComputedStyle(document.getElementById(sel), null);
     styles = {};
     ref2 = QueryCSS.styleList;
     for (k = 0, len2 = ref2.length; k < len2; k++) {
       name = ref2[k];
-      styles[name] = ref.style(name);
+      styles[name] = ref[name];
     }
     QueryCSS.cache[cacheKey] = styles;
     QueryCSS.getContainer().html('');
