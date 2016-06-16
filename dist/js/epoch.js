@@ -922,7 +922,7 @@ QueryCSS = (function() {
   };
 
   QueryCSS.getStyles = function(selector, container) {
-    var cache, cacheKey, el, element, i, j, k, len, len1, len2, name, parent, parentNode, parents, ref, ref1, ref2, root, sel, selectorList, styles, subSelector;
+    var cache, cacheKey, el, element, error, error1, i, j, k, len, len1, len2, name, parent, parentNode, parents, ref, ref1, ref2, ref3, root, sel, selectorList, styles, subSelector;
     cacheKey = QueryCSS.hash(selector, container);
     cache = QueryCSS.cache[cacheKey];
     if (cache != null) {
@@ -956,12 +956,12 @@ QueryCSS = (function() {
     if (logging) {
       console.log(selectorList);
     }
-    sel = 'WTF-' + selector.replace(' ', '');
+    sel = 'WTF-' + selector.replace(/(\.|\#| )/g, '__');
     parent = root = put(selectorList.shift());
     while (selectorList.length) {
       el = put(selectorList.shift());
       parent.appendChild(el);
-      if (!selectorList.length) {
+      if (!selectorList.length && !el.id) {
         el.id = sel;
       }
       parent = el;
@@ -970,12 +970,18 @@ QueryCSS = (function() {
       console.log(root);
     }
     QueryCSS.getContainer().node().appendChild(root);
-    ref = Epoch.Util.getComputedStyle(document.getElementById(sel), null);
+    ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector);
     styles = {};
-    ref2 = QueryCSS.styleList;
-    for (k = 0, len2 = ref2.length; k < len2; k++) {
-      name = ref2[k];
-      styles[name] = ref[name];
+    ref3 = QueryCSS.styleList;
+    for (k = 0, len2 = ref3.length; k < len2; k++) {
+      name = ref3[k];
+      try {
+        styles[name] = ref.style(name);
+      } catch (error1) {
+        error = error1;
+        ref2 = Epoch.Util.getComputedStyle(document.getElementById(sel), null);
+        styles[name] = ref2[name];
+      }
     }
     QueryCSS.cache[cacheKey] = styles;
     QueryCSS.getContainer().html('');

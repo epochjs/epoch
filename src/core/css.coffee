@@ -106,14 +106,14 @@ class QueryCSS
 
     console.log(selectorList) if logging
 
-    sel = 'WTF-' + selector.replace(' ', '')
+    sel = 'WTF-' + selector.replace(/(\.|\#| )/g, '__')
 
     parent = root = put(selectorList.shift())
     while selectorList.length
       el = put(selectorList.shift())
       parent.appendChild el
 
-      if !selectorList.length
+      if !selectorList.length && !el.id
         el.id = sel
 
       parent = el
@@ -123,17 +123,17 @@ class QueryCSS
     # 2) Place the reference tree and fetch styles given the selector
     QueryCSS.getContainer().node().appendChild(root)
 
-    ref = Epoch.Util.getComputedStyle(document.getElementById(sel), null)
+
+    ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector)
+
     styles = {}
 
     for name in QueryCSS.styleList
-      styles[name] = ref[name]
-
-
-    # ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector)
-    # styles = {}
-    # for name in QueryCSS.styleList
-    #   styles[name] = ref.style(name)
+      try
+        styles[name] = ref.style(name)
+      catch error
+        ref2 = Epoch.Util.getComputedStyle(document.getElementById(sel), null)
+        styles[name] = ref2[name]
 
     QueryCSS.cache[cacheKey] = styles
 
