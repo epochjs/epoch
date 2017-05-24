@@ -1,7 +1,7 @@
 {
-  "name": "epoch-charting",
-  "version": "0.8.4",
-  "description": "A general purpose real-time charting library for building beautiful, smooth, and high performance visualizations.",
+  "name": "epoch-charting-ie-patched",
+  "version": "0.8.4-patched",
+  "description": "A general purpose real-time charting library for building beautiful, smooth, and high performance visualizations. With patch resolving IE rendering.",
   "keywords": [
     "chart",
     "charting",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fastly/epoch.git"
+    "url": "https://github.com/fixanoid/epoch.git"
   },
   "main": "dist/js/epoch.js",
   "dependencies": {

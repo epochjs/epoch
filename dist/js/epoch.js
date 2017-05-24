@@ -922,7 +922,7 @@ QueryCSS = (function() {
   };
 
   QueryCSS.getStyles = function(selector, container) {
-    var cache, cacheKey, el, element, error, error1, i, j, k, len, len1, len2, name, parent, parentNode, parents, ref, ref1, ref2, ref3, root, sel, selectorList, styles, subSelector;
+    var cache, cacheKey, el, element, error, i, j, k, len, len1, len2, name, parent, parentNode, parents, ref, ref1, ref2, ref3, root, sel, selectorList, styles, subSelector;
     cacheKey = QueryCSS.hash(selector, container);
     cache = QueryCSS.cache[cacheKey];
     if (cache != null) {
