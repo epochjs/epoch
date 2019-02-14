@@ -59,7 +59,7 @@ Building a chart using epoch is a snap and each type of chart follows the same b
         { label: 'Layer 1', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 2} ] },
         { label: 'Layer 2', values: [ {x: 0, y: 0}, {x: 1, y: 1}, {x: 2, y: 4} ] }
     ];
-    $('#area').epoch({ type: 'area', data: data, axes: ['left', 'right', 'bottom'] });
+    new Epoch.Chart.Area({ el: '#area', data: data, axes: ['left', 'right', 'bottom'] });
 })();
 
 </script>
@@ -87,14 +87,14 @@ Each chart type expects a certain data format. For the most part they are very s
 #### 3. Initialize, Place, and Draw
 
 ```javascript
-var areaChartInstance = $('#area').epoch({
-    type: 'area',
+const areaChartInstance = new Epoch.Chart.Area({
+    el: '#area',
     data: data,
     axes: ['left', 'right', 'bottom']
 });
 ```
 
-Use the custom jQuery method `.epoch` to create the chart. The method will automatically insert the chart as a direct child of the selected container (in this case the `div` with an id of `area`). After the elements have been placed the method will resize the chart to completely fill the container and draw the chart based on the data it was given.
+Use the appropriate Epoch method to create the chart. The method will automatically insert the chart as a direct child of the selected container (in this case the `div` with an id of `area`). After the elements have been placed the method will resize the chart to completely fill the container and draw the chart based on the data it was given.
 
 The `.epoch` function returns a chart class instance that can be used to interact with the chart post initialization. In the example above we keep a reference to the chart instance in the `areaChartInstance` variable. For basic charts, such at the area chart we created, this instance can be used to update the chart's data via the `update` method.
 
@@ -110,3 +110,4 @@ The method can be used in the following ways:
 4. `.option(object)` - Sets key-value pairs in the given object as options for the chart
 
 Note that all of the `key` strings can be hierarchical. For instance, you can use `.option('margins.left', 30)` to set the left margin, as opposed to having to use `.option({ margins: { left: 30 }})`.
+---

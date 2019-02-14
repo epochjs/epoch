@@ -19,8 +19,8 @@ Every real-time chart has a name prefixed with `time.` and was built to use the 
 2. Fetch and format your data.
   - Each type of chart uses a specific (though often familiar) data format.
   - See the documentation below for how each chart is expecting the data.
-3. Use the jQuery method `.epoch` to create, append, and draw the chart.
-  - `var myChart = $('#myChart').epoch({ type: 'time.line', data: myData });`
+3. Use the appropriate Epoch method to create, append, and draw the chart.
+  - `const myChart = new Epoch.Time.Line({ el: '#myChart', data: myData });`
 4. When you have a new data point to append to the chart, use the `.push` method:
   - `myChart.push(nextDataPoint);`
 
@@ -60,10 +60,10 @@ Here is an example of how to dynamically switch styles via jQuery:
 Epoch supports high resolution displays by automatically detecting and setting the appropriate pixel ratio for the canvas based real-time charts. You can override this behavior by explicitly setting the pixel ratio for any chart described below. Here's an example of how to do this:
 
 ```javascript
-$('#my-chart').epoch({
-  type: 'time.line',
+new Epoch.Time.Line({
+  el: '#myChart',
   pixelRatio: 1
-})
+});
 ```
 
 Note that the `pixelRatio` option must be an integer >= 1.
@@ -179,13 +179,13 @@ The real-time chart requires that values in each layer have the exact same numbe
 entry have the same `time` value.
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
-element in HTML and use the jQuery bindings to create, place, and draw the chart:
+element in HTML and use one Epoch function to create, place, and draw the chart:
 
 ```html
 <div id="areaChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#areaChart').epoch({
-    type: 'time.area',
+  new Epoch.Time.Area({
+    el: '#areaChart',
     data: areaChartData
   });
 </script>
@@ -222,13 +222,13 @@ The real-time chart requires that values in each layer have the exact same numbe
 entry have the same `time` value.
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
-element in HTML and use the jQuery bindings to create, place, and draw the chart:
+element in HTML and use one Epoch function to create, place, and draw the chart:
 
 ```html
 <div id="barChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#barChart').epoch({
-    type: 'time.bar',
+  new Epoch.Time.Bar({
+    el: '#barChart',
     data: barChartData
   });
 </script>
@@ -256,8 +256,8 @@ for the chart to render correctly. Let's take a look at how one might create a n
 ```html
 <div id="gaugeChart" class="epoch gauge-small"></div>
 <script>
-  $('#gaugeChart').epoch({
-    type: 'time.gauge',
+  new Epoch.Time.Gauge({
+    el: '#gaugeChart',
     value: 0.5
   });
 </script>
@@ -356,13 +356,13 @@ As you can see the data is arranged as an array of layers. Each layer is an obje
   - `histogram` - A "sparse" frequency hash that maps values to frequencies
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
-element in HTML and use the jQuery bindings to create, place, and draw the chart:
+element in HTML and use one Epoch function to create, place, and draw the chart:
 
 ```html
 <div id="heatmapChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#heatmapChart').epoch({
-    type: 'time.heatmap',
+  new Epoch.Time.Heatmap({
+    el: '#heatmapChart',
     data: heatmapData
   });
 </script>
@@ -449,13 +449,13 @@ The real-time chart requires that values in each layer have the exact same numbe
 entry have the same `time` value.
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
-element in HTML and use the jQuery bindings to create, place, and draw the chart:
+element in HTML and use one Epoch function to create, place, and draw the chart:
 
 ```html
 <div id="lineChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#lineChart').epoch({
-    type: 'time.line',
+  new Epoch.Time.Line({
+    el: '#lineChart',
     data: lineChartData
   });
 </script>

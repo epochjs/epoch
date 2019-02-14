@@ -26,9 +26,9 @@ Each type of chart uses a specific (though often familiar) data format. Please r
 
 **3. Initialize &amp; Render the Plot**
 
-Use the jQuery method `.epoch` to create, append, and draw the chart:
+Use the appropriate Epoch method to create, append, and draw the chart:
 ```
-var myChart = $('#myChart').epoch({ type: 'line', data: myData });
+const myChart = new Epoch.Chart.Line({ el: '#myChart', data: myData });
 ```
 
 **4. Update the Plot as Needed**
@@ -145,13 +145,13 @@ For the best results each layer should contain the same number of values, with t
 d3 to make the best looking graphs possible. To create a single series plot simply include a single layer.
 
 Given that you have data in the appropriate format, instantiating a new chart is fairly easy. Simply create a container
-element in HTML and use the jQuery bindings to create, place, and draw the chart:
+element in HTML and use one Epoch function to create, place, and draw the chart:
 
 ```html
 <div id="areaChart" style="width: 800px; height: 200px"></div>
 <script>
-  $('#areaChart').epoch({
-    type: 'area',
+  new Epoch.Chart.Area({
+    el: '#areaChart',
     data: areaChartData
   });
 </script>
@@ -198,8 +198,8 @@ Next, let's take a look at the markup and scripting required to display our bar 
 ```html
 <div id="barChart" style="width: 300px; height: 100px"></div>
 <script>
-  $('#barChart').epoch({
-    type: 'bar',
+  new Epoch.Chart.Bar({
+    el: '#barChart',
     data: barChartData
   });
 </script>
@@ -279,8 +279,8 @@ Next let's take a look at how you would implement the chart with markup and scri
 ```html
 <div id="lineChart" style="width: 700px; height: 250px"></div>
 <script>
-  $('#lineChart').epoch({
-    type: 'line',
+  new Epoch.Chart.Line({
+    el: '#lineChart',
     data: lineChartData
   });
 </script>
@@ -310,8 +310,8 @@ Once you have your data formatted correctly you can easly add a chart to your pa
 ```html
 <div id="pie" style="width: 400px; height: 400px"></div>
 <script>
-  $('#pie').epoch({
-    type: 'pie',
+  new Epoch.Chart.Pie({
+    el: '#pie',
     data: pieData
   });
 </script>
@@ -391,8 +391,8 @@ Next, let's see the markup and scripting needed to add the plot to your page:
 ```html
 <div id="scatter" style="width: 500px; height: 500px"></div>
 <script>
-  $('#scatter').epoch({
-    type: 'scatter',
+  new Epoch.Chart.Scatter({
+    el: '#scatter',
     data: scatterData
   });
 </script>
